@@ -30,6 +30,7 @@ const CreateBlog: React.FC = () => {
     theme: 'modern',
     customDomain: '',
     monetizationEnabled: false,
+    allowFreeContent: true,
     subscriptionPrice: 0,
     payPerArticle: false,
     paywallEnabled: false,
@@ -84,6 +85,7 @@ const CreateBlog: React.FC = () => {
         customDomain: formData.customDomain || undefined,
         monetization: {
           enabled: formData.monetizationEnabled,
+          allowFreeContent: formData.allowFreeContent,
           subscriptionPrice: formData.subscriptionPrice,
           payPerArticle: formData.payPerArticle,
           paywallEnabled: formData.paywallEnabled

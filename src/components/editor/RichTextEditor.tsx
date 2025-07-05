@@ -25,7 +25,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         height={height}
         data-color-mode="light"
         hideToolbar={false}
-        visibleDragBar={false}
+        visibleDragbar={false}
       />
     </div>
   );
