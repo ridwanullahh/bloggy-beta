@@ -1,12 +1,13 @@
-
 import sdk from '../lib/sdk-instance';
 import { SocialMediaAccount, SocialMediaPost } from '../types/social';
 import { Post } from '../types/blog';
 
+type SocialPlatform = 'facebook' | 'twitter' | 'linkedin' | 'telegram' | 'instagram' | 'tiktok' | 'whatsapp' | 'snapchat';
+
 export class SocialMediaService {
   static async connectAccount(
     blogId: string,
-    platform: string,
+    platform: SocialPlatform,
     accountId: string,
     accountName: string,
     accessToken: string,

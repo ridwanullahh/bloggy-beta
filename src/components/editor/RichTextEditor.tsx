@@ -22,7 +22,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       <MDEditor
         value={value}
         onChange={(val) => onChange(val || '')}
-        placeholder={placeholder}
         height={height}
         data-color-mode="light"
         hideToolbar={false}

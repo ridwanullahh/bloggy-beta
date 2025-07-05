@@ -1,4 +1,3 @@
-
 export interface Blog {
   id: string;
   uid: string;
@@ -13,6 +12,7 @@ export interface Blog {
     allowFreeContent: boolean;
     subscriptionPrice?: number;
     payPerArticle?: boolean;
+    paywallEnabled?: boolean;
   };
   marketing?: {
     emailMarketing: boolean;
