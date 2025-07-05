@@ -1,3 +1,4 @@
+
 import UniversalSDK from './sdk';
 
 // SDK Configuration - Replace with your GitHub repo details
@@ -40,6 +41,7 @@ const sdkConfig = {
         description: 'string',
         theme: 'string',
         status: 'string',
+        customDomain: 'string',
         monetization: 'object',
         marketing: 'object',
         settings: 'object'
@@ -51,7 +53,8 @@ const sdkConfig = {
           enabled: false,
           allowFreeContent: true,
           subscriptionPrice: 0,
-          payPerArticle: false
+          payPerArticle: false,
+          paywallEnabled: false
         },
         marketing: {
           emailMarketing: false,
@@ -156,6 +159,21 @@ const sdkConfig = {
       },
       defaults: {
         status: 'pending',
+        createdAt: new Date().toISOString()
+      }
+    },
+    contactSubmissions: {
+      required: ['blogId', 'name', 'email', 'subject', 'message'],
+      types: {
+        blogId: 'string',
+        name: 'string',
+        email: 'string',
+        subject: 'string',
+        message: 'string',
+        status: 'string'
+      },
+      defaults: {
+        status: 'unread',
         createdAt: new Date().toISOString()
       }
     },

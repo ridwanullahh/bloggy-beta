@@ -1,18 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, BlogSubscriber } from '../types/blog';
+import { getThemeById } from '../constants/themes';
 import sdk from '../lib/sdk-instance';
-import { Calendar, User, Tag, Mail, Lock } from 'lucide-react';
+import { Calendar, User, Tag, Mail, Lock, Menu, X, Home, FileText, Phone } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
 
 const BlogView: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const { toast } = useToast();
   
   const [blog, setBlog] = useState<Blog | null>(null);
@@ -20,6 +22,7 @@ const BlogView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [subscriberEmail, setSubscriberEmail] = useState('');
   const [subscribing, setSubscribing] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchBlogData = async () => {
@@ -108,6 +111,10 @@ const BlogView: React.FC = () => {
       : textContent;
   };
 
+  const handlePostClick = (post: Post) => {
+    navigate(`/${slug}/${post.slug}`);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -130,14 +137,110 @@ const BlogView: React.FC = () => {
     );
   }
 
+  const theme = getThemeById(blog.theme);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ 
+      backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
+      fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
+    }}>
+      {/* Navigation */}
+      <nav className="bg-white border-b sticky top-0 z-50" style={{ 
+        backgroundColor: theme?.styles.primaryColor || '#1F2937',
+      }}>
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <h1 
+                className="text-xl font-bold cursor-pointer text-white"
+                onClick={() => navigate(`/${slug}`)}
+              >
+                {blog.title}
+              </h1>
+            </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-6">
+              <button 
+                onClick={() => navigate(`/${slug}`)}
+                className="text-white hover:text-gray-200 flex items-center"
+              >
+                <Home className="w-4 h-4 mr-1" />
+                Home
+              </button>
+              <button 
+                onClick={() => navigate(`/${slug}/about`)}
+                className="text-white hover:text-gray-200 flex items-center"
+              >
+                <User className="w-4 h-4 mr-1" />
+                About
+              </button>
+              <button 
+                onClick={() => navigate(`/${slug}/contact`)}
+                className="text-white hover:text-gray-200 flex items-center"
+              >
+                <Phone className="w-4 h-4 mr-1" />
+                Contact
+              </button>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="text-white"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          {mobileMenuOpen && (
+            <div className="md:hidden pb-4">
+              <div className="flex flex-col space-y-2">
+                <button 
+                  onClick={() => {
+                    navigate(`/${slug}`);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="text-white hover:text-gray-200 flex items-center py-2"
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Home
+                </button>
+                <button 
+                  onClick={() => {
+                    navigate(`/${slug}/about`);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="text-white hover:text-gray-200 flex items-center py-2"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  About
+                </button>
+                <button 
+                  onClick={() => {
+                    navigate(`/${slug}/contact`);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="text-white hover:text-gray-200 flex items-center py-2"
+                >
+                  <Phone className="w-4 h-4 mr-2" />
+                  Contact
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </nav>
+
       {/* Blog Header */}
-      <div className="bg-white border-b">
+      <div className="bg-white border-b" style={{ backgroundColor: theme?.styles.primaryColor || '#1F2937' }}>
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">{blog.title}</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">{blog.title}</h1>
           {blog.description && (
-            <p className="text-xl text-gray-600 mb-4">{blog.description}</p>
+            <p className="text-xl text-white/90 mb-4">{blog.description}</p>
           )}
           
           {/* Subscribe Section */}
@@ -149,11 +252,12 @@ const BlogView: React.FC = () => {
                   placeholder="Enter your email to subscribe"
                   value={subscriberEmail}
                   onChange={(e) => setSubscriberEmail(e.target.value)}
-                  className="flex-1"
+                  className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/70"
                 />
                 <Button 
                   onClick={handleSubscribe}
                   disabled={subscribing || !subscriberEmail}
+                  className="bg-white text-gray-900 hover:bg-gray-100"
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   {subscribing ? 'Subscribing...' : 'Subscribe'}
@@ -174,7 +278,11 @@ const BlogView: React.FC = () => {
         ) : (
           <div className="space-y-8">
             {posts.map((post) => (
-              <Card key={post.id} className="hover:shadow-lg transition-shadow">
+              <Card 
+                key={post.id} 
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => handlePostClick(post)}
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-2xl hover:text-blue-600">
@@ -232,6 +340,7 @@ const BlogView: React.FC = () => {
                   )}
                   
                   <Button variant="outline" className="w-full sm:w-auto">
+                    <FileText className="w-4 h-4 mr-2" />
                     Read More
                   </Button>
                 </CardContent>
