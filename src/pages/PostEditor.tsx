@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,7 +13,9 @@ import { Badge } from '../components/ui/badge';
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import sdk from '../lib/sdk-instance';
-import { Save, Eye, Calendar, Tags, Folder, Settings } from 'lucide-react';
+import { Save, Eye, Calendar, Tags, Folder, Settings, DollarSign } from 'lucide-react';
+import RichTextEditor from '../components/editor/RichTextEditor';
+import { SocialMediaService } from '../services/socialMediaService';
 
 const PostEditor: React.FC = () => {
   const { blogSlug, postId } = useParams<{ blogSlug: string; postId?: string }>();
@@ -35,7 +36,6 @@ const PostEditor: React.FC = () => {
     slug: '',
     content: '',
     excerpt: '',
-    featuredImage: '',
     status: 'draft' as 'draft' | 'published' | 'scheduled' | 'archived',
     selectedCategories: [] as string[],
     selectedTags: [] as string[],
@@ -43,7 +43,11 @@ const PostEditor: React.FC = () => {
     scheduledFor: '',
     seoTitle: '',
     seoDescription: '',
-    seoKeywords: ''
+    seoKeywords: '',
+    // Monetization fields
+    isPaid: false,
+    price: 0,
+    currency: 'NGN'
   });
 
   useEffect(() => {
@@ -87,7 +91,6 @@ const PostEditor: React.FC = () => {
               slug: foundPost.slug || '',
               content: foundPost.content,
               excerpt: foundPost.excerpt || '',
-              featuredImage: foundPost.featuredImage || '',
               status: foundPost.status,
               selectedCategories: foundPost.categories || [],
               selectedTags: foundPost.tags || [],
@@ -95,7 +98,10 @@ const PostEditor: React.FC = () => {
               scheduledFor: foundPost.scheduledFor || '',
               seoTitle: foundPost.seo?.metaTitle || '',
               seoDescription: foundPost.seo?.metaDescription || '',
-              seoKeywords: foundPost.seo?.keywords?.join(', ') || ''
+              seoKeywords: foundPost.seo?.keywords?.join(', ') || '',
+              isPaid: foundPost.monetization?.isPaid || false,
+              price: foundPost.monetization?.price || 0,
+              currency: foundPost.monetization?.currency || 'NGN'
             });
           }
         }
@@ -159,7 +165,6 @@ const PostEditor: React.FC = () => {
         slug: formData.slug,
         content: formData.content,
         excerpt: formData.excerpt,
-        featuredImage: formData.featuredImage || undefined,
         blogId: blog.id,
         authorId: user.id!,
         status: publishNow ? 'published' : formData.status,
@@ -171,17 +176,32 @@ const PostEditor: React.FC = () => {
           metaTitle: formData.seoTitle,
           metaDescription: formData.seoDescription,
           keywords: formData.seoKeywords.split(',').map(k => k.trim()).filter(k => k)
+        },
+        monetization: {
+          isPaid: formData.isPaid,
+          price: formData.price,
+          currency: formData.currency
         }
       };
 
+      let savedPost: Post;
       if (isNewPost) {
-        const newPost = await sdk.insert<Post>('posts', postData);
-        setPost(newPost);
+        savedPost = await sdk.insert<Post>('posts', postData);
+        setPost(savedPost);
         setIsNewPost(false);
-        navigate(`/blog/${blogSlug}/post/${newPost.slug || newPost.id}/edit`);
+        navigate(`/blog/${blogSlug}/post/${savedPost.slug || savedPost.id}/edit`);
       } else if (post) {
-        const updatedPost = await sdk.update<Post>('posts', post.id, postData);
-        setPost(updatedPost);
+        savedPost = await sdk.update<Post>('posts', post.id, postData);
+        setPost(savedPost);
+      }
+
+      // Auto-publish to social media if published
+      if (publishNow && blog.marketing?.socialAutoPost) {
+        try {
+          await SocialMediaService.autoPublishForPost(savedPost!.id);
+        } catch (error) {
+          console.error('Failed to auto-publish to social media:', error);
+        }
       }
 
       toast({
@@ -305,17 +325,12 @@ const PostEditor: React.FC = () => {
                 
                 <div>
                   <Label htmlFor="content">Content *</Label>
-                  <Textarea
-                    id="content"
+                  <RichTextEditor
                     value={formData.content}
-                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                    onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
                     placeholder="Write your post content here..."
-                    rows={15}
-                    className="font-mono"
+                    height={500}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Supports Markdown formatting
-                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -405,18 +420,61 @@ const PostEditor: React.FC = () => {
                     />
                   </div>
                 )}
-                
-                <div>
-                  <Label htmlFor="featuredImage">Featured Image URL</Label>
-                  <Input
-                    id="featuredImage"
-                    value={formData.featuredImage}
-                    onChange={(e) => setFormData(prev => ({ ...prev, featuredImage: e.target.value }))}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
               </CardContent>
             </Card>
+
+            {/* Monetization */}
+            {blog.monetization?.enabled && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    Monetization
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="isPaid"
+                      checked={formData.isPaid}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPaid: checked }))}
+                    />
+                    <Label htmlFor="isPaid">Paid Content</Label>
+                  </div>
+                  
+                  {formData.isPaid && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label htmlFor="price">Price</Label>
+                        <Input
+                          id="price"
+                          type="number"
+                          value={formData.price}
+                          onChange={(e) => setFormData(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
+                          min="0"
+                          step="50"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="currency">Currency</Label>
+                        <Select
+                          value={formData.currency}
+                          onValueChange={(value) => setFormData(prev => ({ ...prev, currency: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="NGN">NGN</SelectItem>
+                            <SelectItem value="USD">USD</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Categories */}
             <Card>

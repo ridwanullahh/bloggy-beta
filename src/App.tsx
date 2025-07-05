@@ -12,6 +12,7 @@ import CreateBlog from "./pages/CreateBlog";
 import BlogManagement from "./pages/BlogManagement";
 import PostEditor from "./pages/PostEditor";
 import NotFound from "./pages/NotFound";
+import BlogView from "./pages/BlogView";
 
 const queryClient = new QueryClient();
 
@@ -98,6 +99,9 @@ const AppRoutes = () => {
           <PostEditor />
         </ProtectedRoute>
       } />
+      
+      {/* Catch-all route for blog slugs */}
+      <Route path="/:slug" element={<BlogView />} />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />

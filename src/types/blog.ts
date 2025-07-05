@@ -8,12 +8,11 @@ export interface Blog {
   ownerId: string;
   theme: string;
   status: 'active' | 'inactive' | 'suspended';
-  customDomain?: string;
   monetization?: {
     enabled: boolean;
+    allowFreeContent: boolean;
     subscriptionPrice?: number;
     payPerArticle?: boolean;
-    paywallEnabled?: boolean;
   };
   marketing?: {
     emailMarketing: boolean;
@@ -36,7 +35,6 @@ export interface Post {
   slug: string;
   content: string;
   excerpt?: string;
-  featuredImage?: string;
   blogId: string;
   authorId: string;
   status: 'draft' | 'published' | 'scheduled' | 'archived';
@@ -46,6 +44,11 @@ export interface Post {
     metaTitle?: string;
     metaDescription?: string;
     keywords?: string[];
+  };
+  monetization?: {
+    isPaid: boolean;
+    price: number;
+    currency: string;
   };
   scheduledFor?: string;
   publishedAt?: string;

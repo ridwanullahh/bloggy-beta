@@ -1,4 +1,3 @@
-
 import UniversalSDK from './sdk';
 
 // SDK Configuration - Replace with your GitHub repo details
@@ -41,8 +40,6 @@ const sdkConfig = {
         description: 'string',
         theme: 'string',
         status: 'string',
-        customDomain: 'string',
-        featuredImage: 'string',
         monetization: 'object',
         marketing: 'object',
         settings: 'object'
@@ -52,9 +49,9 @@ const sdkConfig = {
         status: 'active',
         monetization: {
           enabled: false,
+          allowFreeContent: true,
           subscriptionPrice: 0,
-          payPerArticle: false,
-          paywallEnabled: false
+          payPerArticle: false
         },
         marketing: {
           emailMarketing: false,
@@ -76,7 +73,6 @@ const sdkConfig = {
         slug: 'string',
         content: 'string',
         excerpt: 'string',
-        featuredImage: 'string',
         blogId: 'string',
         authorId: 'string',
         status: 'string',
@@ -84,7 +80,8 @@ const sdkConfig = {
         categories: 'array',
         seo: 'object',
         scheduledFor: 'string',
-        publishedAt: 'string'
+        publishedAt: 'string',
+        monetization: 'object'
       },
       defaults: {
         status: 'draft',
@@ -94,6 +91,11 @@ const sdkConfig = {
           metaTitle: '',
           metaDescription: '',
           keywords: []
+        },
+        monetization: {
+          isPaid: false,
+          price: 0,
+          currency: 'NGN'
         },
         createdAt: new Date().toISOString()
       }
@@ -171,20 +173,131 @@ const sdkConfig = {
         createdAt: new Date().toISOString()
       }
     },
-    payments: {
-      required: ['userId', 'blogId', 'amount', 'currency'],
+    wallets: {
+      required: ['userId'],
       types: {
         userId: 'string',
-        blogId: 'string',
+        balance: 'number',
+        currency: 'string',
+        status: 'string'
+      },
+      defaults: {
+        balance: 0,
+        currency: 'NGN',
+        status: 'active',
+        createdAt: new Date().toISOString()
+      }
+    },
+    walletTransactions: {
+      required: ['walletId', 'type', 'amount', 'reference'],
+      types: {
+        walletId: 'string',
+        type: 'string',
+        amount: 'number',
+        currency: 'string',
+        reference: 'string',
+        description: 'string',
+        status: 'string',
+        metadata: 'object'
+      },
+      defaults: {
+        currency: 'NGN',
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      }
+    },
+    paystackTransactions: {
+      required: ['userId', 'walletId', 'reference', 'amount'],
+      types: {
+        userId: 'string',
+        walletId: 'string',
+        reference: 'string',
         amount: 'number',
         currency: 'string',
         status: 'string',
-        paymentMethod: 'string',
-        paystackReference: 'string'
+        paystackReference: 'string',
+        authorizationUrl: 'string'
       },
       defaults: {
-        status: 'pending',
         currency: 'NGN',
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      }
+    },
+    emailTemplates: {
+      required: ['blogId', 'name', 'subject', 'htmlContent'],
+      types: {
+        blogId: 'string',
+        name: 'string',
+        subject: 'string',
+        htmlContent: 'string',
+        textContent: 'string',
+        type: 'string'
+      },
+      defaults: {
+        type: 'newsletter',
+        textContent: '',
+        createdAt: new Date().toISOString()
+      }
+    },
+    emailCampaigns: {
+      required: ['blogId', 'templateId', 'name', 'subject'],
+      types: {
+        blogId: 'string',
+        templateId: 'string',
+        name: 'string',
+        subject: 'string',
+        scheduledFor: 'string',
+        status: 'string',
+        recipientCount: 'number',
+        sentCount: 'number',
+        openCount: 'number',
+        clickCount: 'number',
+        sentAt: 'string'
+      },
+      defaults: {
+        status: 'draft',
+        recipientCount: 0,
+        sentCount: 0,
+        openCount: 0,
+        clickCount: 0,
+        createdAt: new Date().toISOString()
+      }
+    },
+    socialMediaAccounts: {
+      required: ['blogId', 'platform', 'accountId', 'accessToken'],
+      types: {
+        blogId: 'string',
+        platform: 'string',
+        accountId: 'string',
+        accountName: 'string',
+        accessToken: 'string',
+        refreshToken: 'string',
+        expiresAt: 'string',
+        isActive: 'boolean'
+      },
+      defaults: {
+        isActive: true,
+        createdAt: new Date().toISOString()
+      }
+    },
+    socialMediaPosts: {
+      required: ['postId', 'blogId', 'platform', 'content'],
+      types: {
+        postId: 'string',
+        blogId: 'string',
+        platform: 'string',
+        content: 'string',
+        mediaUrls: 'array',
+        scheduledFor: 'string',
+        status: 'string',
+        platformPostId: 'string',
+        error: 'string',
+        publishedAt: 'string'
+      },
+      defaults: {
+        mediaUrls: [],
+        status: 'draft',
         createdAt: new Date().toISOString()
       }
     },
