@@ -299,10 +299,6 @@ class UniversalSDK {
     });
   }
 
-  // Continue with all other methods...
-  // (Including all remaining methods from the original SDK)
-  // [Rest of the SDK methods would be included here - truncated for brevity]
-
   async register(email: string, password: string, profile: Partial<User> = {}): Promise<User> {
     if (!this.validateEmailFormat(email)) throw new Error("Invalid email format");
     const users = await this.get<User>("users");
@@ -348,6 +344,16 @@ class UniversalSDK {
   getCurrentUser(token: string): User | null {
     const session = this.getSession(token);
     return session?.user || null;
+  }
+
+  // Public method to access auth configuration
+  getAuthConfig(): AuthConfig {
+    return this.authConfig;
+  }
+
+  // Public method to destroy a session
+  destroySession(token: string): void {
+    delete this.sessionStore[token];
   }
 
   validateEmailFormat(email: string): boolean {

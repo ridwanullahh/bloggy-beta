@@ -85,7 +85,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const newUser = await sdk.register(email, password, profile);
       
       // Auto-login after registration if no OTP required
-      if (!sdk.authConfig?.otpTriggers?.includes('register')) {
+      const authConfig = sdk.getAuthConfig();
+      if (!authConfig?.otpTriggers?.includes('register')) {
         const authToken = sdk.createSession(newUser);
         setUser(newUser);
         setToken(authToken);
