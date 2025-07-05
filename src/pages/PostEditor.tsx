@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -35,7 +36,7 @@ const PostEditor: React.FC = () => {
     content: '',
     excerpt: '',
     featuredImage: '',
-    status: 'draft' as 'draft' | 'published' | 'scheduled',
+    status: 'draft' as 'draft' | 'published' | 'scheduled' | 'archived',
     selectedCategories: [] as string[],
     selectedTags: [] as string[],
     newTags: '',
