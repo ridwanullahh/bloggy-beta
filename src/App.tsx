@@ -8,6 +8,9 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import CreateBlog from "./pages/CreateBlog";
+import BlogManagement from "./pages/BlogManagement";
+import PostEditor from "./pages/PostEditor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,7 +75,29 @@ const AppRoutes = () => {
         </ProtectedRoute>
       } />
       
-      {/* Blog routes will be added here */}
+      <Route path="/create-blog" element={
+        <ProtectedRoute>
+          <CreateBlog />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:slug/manage" element={
+        <ProtectedRoute>
+          <BlogManagement />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:blogSlug/post/new" element={
+        <ProtectedRoute>
+          <PostEditor />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:blogSlug/post/:postId/edit" element={
+        <ProtectedRoute>
+          <PostEditor />
+        </ProtectedRoute>
+      } />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />
