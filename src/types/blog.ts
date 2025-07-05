@@ -1,3 +1,4 @@
+
 export interface Blog {
   id: string;
   uid: string;
@@ -7,6 +8,7 @@ export interface Blog {
   ownerId: string;
   theme: string;
   status: 'active' | 'inactive' | 'suspended';
+  customDomain?: string;
   monetization?: {
     enabled: boolean;
     allowFreeContent: boolean;
