@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User } from '../lib/sdk';
 import sdk from '../lib/sdk-instance';
 
@@ -59,6 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (typeof result === 'object' && result.otpRequired) {
         setNeedsOTP(true);
         setOtpEmail(email);
+        setLoading(false);
       } else {
         const authToken = result as string;
         const currentUser = sdk.getCurrentUser(authToken);
@@ -69,13 +71,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           localStorage.setItem('authToken', authToken);
           setNeedsOTP(false);
           setOtpEmail(null);
+          
+          // Force redirect to dashboard
+          window.location.href = '/dashboard';
         }
+        setLoading(false);
       }
     } catch (error) {
       console.error('Login error:', error);
-      throw error;
-    } finally {
       setLoading(false);
+      throw error;
     }
   };
 
@@ -91,6 +96,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(newUser);
         setToken(authToken);
         localStorage.setItem('authToken', authToken);
+        
+        // Force redirect to dashboard
+        window.location.href = '/dashboard';
       } else {
         setNeedsOTP(true);
         setOtpEmail(email);
@@ -119,6 +127,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem('authToken', authToken);
         setNeedsOTP(false);
         setOtpEmail(null);
+        
+        // Force redirect to dashboard
+        window.location.href = '/dashboard';
       }
     } catch (error) {
       console.error('OTP verification error:', error);

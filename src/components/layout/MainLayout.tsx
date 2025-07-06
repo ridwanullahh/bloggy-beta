@@ -6,12 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { User, LogOut, Home, Edit, Settings, BarChart3, Palette, Bell } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { MobileNav } from './MobileNav';
 
 interface MainLayoutProps {
   children: React.ReactNode;
+  blogSlug?: string;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+export const MainLayout: React.FC<MainLayoutProps> = ({ children, blogSlug }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -34,6 +36,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
+              {/* Mobile Navigation */}
+              <MobileNav blogSlug={blogSlug} />
+              
               {/* Logo */}
               <Link to="/dashboard" className="flex items-center space-x-3 group">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
@@ -47,7 +52,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 </div>
               </Link>
               
-              {/* Navigation */}
+              {/* Desktop Navigation */}
               <nav className="hidden lg:flex space-x-1">
                 {navigation.map((item) => {
                   const Icon = item.icon;

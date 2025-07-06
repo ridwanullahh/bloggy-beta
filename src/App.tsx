@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/sonner';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 // Import all pages
 import Index from './pages/Index';
@@ -31,12 +32,12 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/create-blog" element={<CreateBlog />} />
-              <Route path="/blog/:slug/manage" element={<BlogManagement />} />
-              <Route path="/blog/:slug/settings" element={<BlogSettings />} />
-              <Route path="/blog/:slug/post/new" element={<PostEditor />} />
-              <Route path="/blog/:slug/post/:postId/edit" element={<PostEditor />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/create-blog" element={<ProtectedRoute><CreateBlog /></ProtectedRoute>} />
+              <Route path="/blog/:slug/manage" element={<ProtectedRoute><BlogManagement /></ProtectedRoute>} />
+              <Route path="/blog/:slug/settings" element={<ProtectedRoute><BlogSettings /></ProtectedRoute>} />
+              <Route path="/blog/:slug/post/new" element={<ProtectedRoute><PostEditor /></ProtectedRoute>} />
+              <Route path="/blog/:slug/post/:postId/edit" element={<ProtectedRoute><PostEditor /></ProtectedRoute>} />
               <Route path="/:slug" element={<BlogView />} />
               <Route path="/:blogSlug/:postSlug" element={<PostView />} />
               <Route path="/:slug/about" element={<BlogAbout />} />

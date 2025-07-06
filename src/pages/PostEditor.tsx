@@ -8,12 +8,11 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Switch } from '../components/ui/switch';
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category } from '../types/blog';
-import { Calendar, FileText, Globe, Tag, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import sdk from '../lib/sdk-instance';
-import RichTextEditor from '../components/editor/RichTextEditor';
+import ModernRichTextEditor from '../components/editor/ModernRichTextEditor';
 
 const PostEditor: React.FC = () => {
   const { slug, postId } = useParams<{ slug: string; postId: string }>();
@@ -215,7 +214,7 @@ const PostEditor: React.FC = () => {
 
   if (loading) {
     return (
-      <MainLayout>
+      <MainLayout blogSlug={slug}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
         </div>
@@ -238,7 +237,7 @@ const PostEditor: React.FC = () => {
   }
 
   return (
-    <MainLayout>
+    <MainLayout blogSlug={slug}>
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -302,7 +301,7 @@ const PostEditor: React.FC = () => {
                   <CardTitle>Content</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <RichTextEditor
+                  <ModernRichTextEditor
                     value={formData.content}
                     onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
                     height={500}
@@ -328,18 +327,9 @@ const PostEditor: React.FC = () => {
                       <SelectContent>
                         <SelectItem value="draft">Draft</SelectItem>
                         <SelectItem value="published">Published</SelectItem>
-                        {/* <SelectItem value="scheduled">Scheduled</SelectItem> */}
                       </SelectContent>
                     </Select>
                   </div>
-                  {/* <div>
-                    <Label htmlFor="scheduledFor">Scheduled For</Label>
-                    <Input
-                      type="datetime-local"
-                      value={formData.scheduledFor}
-                      onChange={(e) => setFormData(prev => ({ ...prev, scheduledFor: e.target.value }))}
-                    />
-                  </div> */}
                   <Button type="submit" disabled={loading} className="w-full">
                     {loading ? 'Saving...' : 'Save Post'}
                   </Button>
