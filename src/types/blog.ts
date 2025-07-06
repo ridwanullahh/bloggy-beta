@@ -9,6 +9,14 @@ export interface Blog {
   theme: string;
   status: 'active' | 'inactive' | 'suspended';
   customDomain?: string;
+  darkMode?: boolean;
+  aboutContent?: string;
+  contactInfo?: {
+    email?: string;
+    phone?: string;
+    address?: string;
+    socialLinks?: Record<string, string>;
+  };
   monetization?: {
     enabled: boolean;
     allowFreeContent: boolean;
@@ -25,6 +33,10 @@ export interface Blog {
     allowComments: boolean;
     moderateComments: boolean;
     seoOptimized: boolean;
+    showReadingTime?: boolean;
+    enableTableOfContents?: boolean;
+    enableSocialShare?: boolean;
+    enableRelatedPosts?: boolean;
   };
   createdAt: string;
   updatedAt: string;
@@ -54,6 +66,8 @@ export interface Post {
   };
   scheduledFor?: string;
   publishedAt?: string;
+  readingTime?: number;
+  featuredImage?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -67,7 +81,15 @@ export interface BlogTheme {
     primaryColor: string;
     secondaryColor: string;
     fontFamily: string;
-    layout: 'grid' | 'list' | 'magazine' | 'minimal';
+    layout: 'grid' | 'list' | 'magazine' | 'minimal' | 'masonry' | 'corporate' | 'lifestyle' | 'tech' | 'organic' | 'recipe' | 'adventure' | 'fitness' | 'educational' | 'gaming' | 'journal' | 'newspaper';
+    borderRadius?: string;
+    shadows?: string;
+    spacing?: string;
+    headerStyle?: string;
+    navigationStyle?: string;
+    postCardStyle?: string;
+    buttonStyle?: string;
+    animationStyle?: string;
   };
 }
 
@@ -101,6 +123,7 @@ export interface Category {
   blogId: string;
   description?: string;
   color?: string;
+  parentId?: string;
   createdAt: string;
 }
 
@@ -111,5 +134,60 @@ export interface Tag {
   slug: string;
   blogId: string;
   color?: string;
+  createdAt: string;
+}
+
+export interface BlogPage {
+  id: string;
+  uid: string;
+  blogId: string;
+  type: 'about' | 'contact' | 'terms' | 'privacy' | 'archive' | 'custom';
+  title: string;
+  content: string;
+  slug?: string;
+  isEnabled: boolean;
+  customFields?: Record<string, any>;
+  createdAt: string;
+}
+
+export interface BlogSettings {
+  id: string;
+  uid: string;
+  blogId: string;
+  customDomain?: string;
+  favicon?: string;
+  logo?: string;
+  socialLinks?: Record<string, string>;
+  analyticsCode?: string;
+  customCSS?: string;
+  customJS?: string;
+  seoSettings?: {
+    sitemap: boolean;
+    robotsTxt: boolean;
+    structuredData: boolean;
+  };
+  createdAt: string;
+}
+
+export interface UserBookmark {
+  id: string;
+  uid: string;
+  userId: string;
+  postId: string;
+  blogId: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface UserAnnotation {
+  id: string;
+  uid: string;
+  userId: string;
+  postId: string;
+  blogId: string;
+  selectedText: string;
+  annotation: string;
+  position?: Record<string, any>;
+  highlightColor?: string;
   createdAt: string;
 }
