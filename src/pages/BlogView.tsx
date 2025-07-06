@@ -396,7 +396,7 @@ const BlogView: React.FC = () => {
                 onClick={() => handlePostClick(post)}
                 style={{
                   borderRadius: theme?.styles?.borderRadius || '8px',
-                  boxShadow: theme?.styles?.shadow || '0 1px 3px rgba(0,0,0,0.1)'
+                  boxShadow: theme?.styles?.shadows || '0 1px 3px rgba(0,0,0,0.1)'
                 }}
               >
                 <CardHeader>
@@ -405,7 +405,7 @@ const BlogView: React.FC = () => {
                       className={`text-2xl hover:opacity-80 transition-opacity ${
                         isDark ? 'text-white' : 'text-gray-900'
                       }`}
-                      style={{ color: isDark ? 'white' : (theme?.styles?.textColor || '#1F2937') }}
+                      style={{ color: isDark ? 'white' : (theme?.styles?.primaryColor || '#1F2937') }}
                     >
                       {post.title}
                     </CardTitle>

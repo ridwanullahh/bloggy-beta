@@ -149,8 +149,7 @@ export const EnhancedSearchModal: React.FC<EnhancedSearchModalProps> = ({
               onKeyDown={handleKeyDown}
               className="pl-10 text-lg py-3 border-2 focus:ring-2"
               style={{ 
-                borderColor: theme?.styles?.primaryColor,
-                focusRingColor: `${theme?.styles?.primaryColor}20` 
+                borderColor: theme?.styles?.primaryColor
               }}
               autoFocus
             />
