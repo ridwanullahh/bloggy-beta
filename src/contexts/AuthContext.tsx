@@ -38,18 +38,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [otpEmail, setOtpEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for existing session
-    const savedToken = localStorage.getItem('authToken');
-    if (savedToken) {
-      const currentUser = sdk.getCurrentUser(savedToken);
-      if (currentUser) {
-        setUser(currentUser);
-        setToken(savedToken);
-      } else {
-        localStorage.removeItem('authToken');
+    const initializeAuth = async () => {
+      // Check for existing session
+      const savedToken = localStorage.getItem('authToken');
+      const savedUser = localStorage.getItem('authUser');
+      
+      if (savedToken && savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          const currentUser = sdk.getCurrentUser(savedToken);
+          
+          if (currentUser && currentUser.id === parsedUser.id) {
+            setUser(currentUser);
+            setToken(savedToken);
+          } else {
+            // Token is invalid, clear storage
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('authUser');
+          }
+        } catch (error) {
+          console.error('Error parsing saved user:', error);
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('authUser');
+        }
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -69,11 +85,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(currentUser);
           setToken(authToken);
           localStorage.setItem('authToken', authToken);
+          localStorage.setItem('authUser', JSON.stringify(currentUser));
           setNeedsOTP(false);
           setOtpEmail(null);
-          
-          // Force redirect to dashboard
-          window.location.href = '/dashboard';
         }
         setLoading(false);
       }
@@ -96,9 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(newUser);
         setToken(authToken);
         localStorage.setItem('authToken', authToken);
-        
-        // Force redirect to dashboard
-        window.location.href = '/dashboard';
+        localStorage.setItem('authUser', JSON.stringify(newUser));
       } else {
         setNeedsOTP(true);
         setOtpEmail(email);
@@ -125,11 +137,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(user);
         setToken(authToken);
         localStorage.setItem('authToken', authToken);
+        localStorage.setItem('authUser', JSON.stringify(user));
         setNeedsOTP(false);
         setOtpEmail(null);
-        
-        // Force redirect to dashboard
-        window.location.href = '/dashboard';
       }
     } catch (error) {
       console.error('OTP verification error:', error);
@@ -148,6 +158,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setNeedsOTP(false);
     setOtpEmail(null);
     localStorage.removeItem('authToken');
+    localStorage.removeItem('authUser');
   };
 
   const value: AuthContextType = {

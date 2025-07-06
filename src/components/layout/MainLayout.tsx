@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { User, LogOut, Home, Edit, Settings, BarChart3, Palette, Bell } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { MobileNav } from './MobileNav';
+import { AdminMobileNav } from './AdminMobileNav';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -37,7 +37,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, blogSlug }) =>
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               {/* Mobile Navigation */}
-              <MobileNav blogSlug={blogSlug} />
+              <AdminMobileNav blogSlug={blogSlug} />
               
               {/* Logo */}
               <Link to="/dashboard" className="flex items-center space-x-3 group">
