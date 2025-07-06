@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -177,7 +178,6 @@ const CreateBlog: React.FC = () => {
                       <SelectItem key={theme.id} value={theme.id}>
                         <div>
                           <div className="font-medium">{theme.name}</div>
-                          <div className="text-sm text-gray-500">{theme.description}</div>
                         </div>
                       </SelectItem>
                     ))}
