@@ -396,7 +396,7 @@ const BlogView: React.FC = () => {
                 onClick={() => handlePostClick(post)}
                 style={{
                   borderRadius: theme?.styles?.borderRadius || '8px',
-                  boxShadow: theme?.styles?.shadows || '0 1px 3px rgba(0,0,0,0.1)'
+                  boxShadow: theme?.styles?.shadows?.md || '0 1px 3px rgba(0,0,0,0.1)'
                 }}
               >
                 <CardHeader>

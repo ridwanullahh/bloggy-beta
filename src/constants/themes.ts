@@ -369,6 +369,9 @@ export const themes: ThemeStyle[] = [
   }
 ];
 
+// Export BLOG_THEMES as an alias for compatibility
+export const BLOG_THEMES = themes;
+
 export const getThemeById = (id: string): ThemeStyle | undefined => {
   return themes.find(theme => theme.id === id);
 };
