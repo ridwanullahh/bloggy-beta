@@ -11,9 +11,6 @@ interface AuthContextType {
   register: (email: string, password: string, profile?: Partial<User>) => Promise<void>;
   logout: () => void;
   loading: boolean;
-  verifyOTP: (email: string, otp: string) => Promise<void>;
-  needsOTP: boolean;
-  otpEmail: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,8 +31,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [needsOTP, setNeedsOTP] = useState(false);
-  const [otpEmail, setOtpEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -71,30 +66,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const result = await sdk.login(email, password);
+      const authToken = await sdk.login(email, password);
+      const currentUser = sdk.getCurrentUser(authToken);
       
-      if (typeof result === 'object' && result.otpRequired) {
-        setNeedsOTP(true);
-        setOtpEmail(email);
-        setLoading(false);
-      } else {
-        const authToken = result as string;
-        const currentUser = sdk.getCurrentUser(authToken);
-        
-        if (currentUser) {
-          setUser(currentUser);
-          setToken(authToken);
-          localStorage.setItem('authToken', authToken);
-          localStorage.setItem('authUser', JSON.stringify(currentUser));
-          setNeedsOTP(false);
-          setOtpEmail(null);
-        }
-        setLoading(false);
+      if (currentUser) {
+        setUser(currentUser);
+        setToken(authToken);
+        localStorage.setItem('authToken', authToken);
+        localStorage.setItem('authUser', JSON.stringify(currentUser));
       }
     } catch (error) {
       console.error('Login error:', error);
-      setLoading(false);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,46 +88,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const newUser = await sdk.register(email, password, profile);
       
-      // Auto-login after registration if no OTP required
-      const authConfig = sdk.getAuthConfig();
-      if (!authConfig?.otpTriggers?.includes('register')) {
-        const authToken = sdk.createSession(newUser);
-        setUser(newUser);
-        setToken(authToken);
-        localStorage.setItem('authToken', authToken);
-        localStorage.setItem('authUser', JSON.stringify(newUser));
-      } else {
-        setNeedsOTP(true);
-        setOtpEmail(email);
-      }
+      // Auto-login after registration
+      const authToken = sdk.createSession(newUser);
+      setUser(newUser);
+      setToken(authToken);
+      localStorage.setItem('authToken', authToken);
+      localStorage.setItem('authUser', JSON.stringify(newUser));
     } catch (error) {
       console.error('Registration error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const verifyOTP = async (email: string, otp: string) => {
-    setLoading(true);
-    try {
-      sdk.verifyOTP(email, otp);
-      
-      // Get user and create session
-      const users = await sdk.get<User>('users');
-      const user = users.find(u => u.email === email);
-      
-      if (user) {
-        const authToken = sdk.createSession(user);
-        setUser(user);
-        setToken(authToken);
-        localStorage.setItem('authToken', authToken);
-        localStorage.setItem('authUser', JSON.stringify(user));
-        setNeedsOTP(false);
-        setOtpEmail(null);
-      }
-    } catch (error) {
-      console.error('OTP verification error:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -155,8 +108,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     setUser(null);
     setToken(null);
-    setNeedsOTP(false);
-    setOtpEmail(null);
     localStorage.removeItem('authToken');
     localStorage.removeItem('authUser');
   };
@@ -167,10 +118,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
-    loading,
-    verifyOTP,
-    needsOTP,
-    otpEmail
+    loading
   };
 
   return (

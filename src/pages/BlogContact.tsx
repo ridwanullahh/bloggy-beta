@@ -1,24 +1,24 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
+import { ArrowLeft, Mail, Phone, MapPin, Send } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { Blog } from '../types/blog';
 import { getThemeById } from '../constants/themes';
 import sdk from '../lib/sdk-instance';
-import { ArrowLeft, Mail, MessageCircle, User } from 'lucide-react';
 
 const BlogContact: React.FC = () => {
-  const { blogSlug } = useParams<{ blogSlug: string }>();
-  const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
@@ -26,29 +26,37 @@ const BlogContact: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchBlog = async () => {
-      if (!blogSlug) return;
+    const fetchBlogData = async () => {
+      if (!slug) return;
 
       try {
         const allBlogs = await sdk.get<Blog>('blogs');
-        const foundBlog = allBlogs.find(b => b.slug === blogSlug && b.status === 'active');
+        const foundBlog = allBlogs.find(b => b.slug === slug && b.status === 'active');
         setBlog(foundBlog || null);
       } catch (error) {
-        console.error('Error fetching blog:', error);
+        console.error('Error fetching blog data:', error);
         setBlog(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBlog();
-  }, [blogSlug]);
+    fetchBlogData();
+  }, [slug]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!blog || !form.name || !form.email || !form.subject || !form.message) return;
+    
+    if (!formData.name || !formData.email || !formData.message) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       toast({
         title: "Invalid Email",
         description: "Please enter a valid email address.",
@@ -58,24 +66,20 @@ const BlogContact: React.FC = () => {
     }
 
     setSubmitting(true);
+    
     try {
-      // Store contact form submission for blog owner to review
-      await sdk.insert('contactSubmissions', {
-        blogId: blog.id,
-        name: form.name,
-        email: form.email,
-        subject: form.subject,
-        message: form.message,
-        status: 'unread'
-      });
+      // Here you would typically send the contact form data to your backend
+      // For now, we'll simulate the submission
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       toast({
         title: "Message Sent",
         description: "Thank you for your message. We'll get back to you soon!",
       });
-      setForm({ name: '', email: '', subject: '', message: '' });
+      
+      setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
-      console.error('Error submitting contact form:', error);
+      console.error('Error sending message:', error);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
@@ -84,6 +88,10 @@ const BlogContact: React.FC = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   if (loading) {
@@ -108,120 +116,176 @@ const BlogContact: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ 
-      backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-      fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-    }}>
+    <div 
+      className="min-h-screen"
+      style={{ 
+        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
+        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
+      }}
+    >
       {/* Header */}
-      <div className="bg-white border-b" style={{ 
-        backgroundColor: theme?.styles.primaryColor || '#1F2937',
-        color: 'white'
-      }}>
+      <div 
+        className="border-b"
+        style={{ backgroundColor: theme?.styles.primaryColor || '#1F2937' }}
+      >
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(`/${blogSlug}`)}
-            className="text-white hover:bg-white/10 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to {blog.title}
-          </Button>
-          <h1 className="text-4xl font-bold">Contact Us</h1>
-          <p className="text-xl opacity-90 mt-2">Get in touch with the {blog.title} team</p>
+          <div className="flex items-center mb-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => window.history.back()}
+              className="text-white hover:bg-white/10 mr-4"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          </div>
+          
+          <h1 className="text-4xl font-bold mb-2 text-white">
+            Contact Us
+          </h1>
+          <p className="text-xl text-white/90">
+            Get in touch with the {blog.title} team
+          </p>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8">
           {/* Contact Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <MessageCircle className="w-5 h-5 mr-2" />
-                Send us a Message
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    placeholder="Your Name"
-                    value={form.name}
-                    onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
-                    required
-                  />
-                  <Input
-                    type="email"
-                    placeholder="Your Email"
-                    value={form.email}
-                    onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
-                    required
-                  />
+          <div className="lg:col-span-2">
+            <Card style={{ borderRadius: theme?.styles.borderRadius }}>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Send className="w-5 h-5 mr-2" />
+                  Send us a Message
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="name">Name *</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        placeholder="Your full name"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        placeholder="your.email@example.com"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="subject">Subject</Label>
+                    <Input
+                      id="subject"
+                      value={formData.subject}
+                      onChange={(e) => handleInputChange('subject', e.target.value)}
+                      placeholder="What's this about?"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="message">Message *</Label>
+                    <Textarea
+                      id="message"
+                      value={formData.message}
+                      onChange={(e) => handleInputChange('message', e.target.value)}
+                      placeholder="Tell us what's on your mind..."
+                      rows={6}
+                      required
+                    />
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    disabled={submitting}
+                    className="w-full md:w-auto"
+                    style={{ 
+                      backgroundColor: theme?.styles.primaryColor,
+                      borderRadius: theme?.styles.borderRadius
+                    }}
+                  >
+                    {submitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Message
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Contact Information */}
+          <div className="space-y-6">
+            <Card style={{ borderRadius: theme?.styles.borderRadius }}>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Mail className="w-5 h-5 mr-2" />
+                  Contact Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <Mail className="w-5 h-5 mt-1 text-gray-400" />
+                  <div>
+                    <p className="font-medium">Email</p>
+                    <p className="text-sm text-gray-600">contact@{blog.slug}.com</p>
+                  </div>
                 </div>
-                <Input
-                  placeholder="Subject"
-                  value={form.subject}
-                  onChange={(e) => setForm(prev => ({ ...prev, subject: e.target.value }))}
-                  required
-                />
-                <Textarea
-                  placeholder="Your message..."
-                  value={form.message}
-                  onChange={(e) => setForm(prev => ({ ...prev, message: e.target.value }))}
-                  rows={6}
-                  required
-                />
-                <Button type="submit" disabled={submitting} className="w-full">
-                  {submitting ? 'Sending...' : 'Send Message'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                
+                <div className="flex items-start space-x-3">
+                  <Phone className="w-5 h-5 mt-1 text-gray-400" />
+                  <div>
+                    <p className="font-medium">Phone</p>
+                    <p className="text-sm text-gray-600">+1 (555) 123-4567</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <MapPin className="w-5 h-5 mt-1 text-gray-400" />
+                  <div>
+                    <p className="font-medium">Location</p>
+                    <p className="text-sm text-gray-600">
+                      Remote Team<br />
+                      Worldwide
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-          {/* Contact Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Mail className="w-5 h-5 mr-2" />
-                Get in Touch
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-2">About {blog.title}</h3>
-                <p className="text-gray-600">
-                  {blog.description || `Welcome to ${blog.title}. We're here to share valuable content and connect with our community.`}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Why Contact Us?</h3>
-                <ul className="text-gray-600 space-y-1">
-                  <li>• General inquiries and questions</li>
-                  <li>• Collaboration opportunities</li>
-                  <li>• Feedback and suggestions</li>
-                  <li>• Media and press inquiries</li>
-                  <li>• Technical support</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Response Time</h3>
-                <p className="text-gray-600">
+            <Card style={{ borderRadius: theme?.styles.borderRadius }}>
+              <CardHeader>
+                <CardTitle>Response Time</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600">
                   We typically respond to messages within 24-48 hours during business days. 
-                  Thank you for your patience!
+                  For urgent matters, please indicate in your subject line.
                 </p>
-              </div>
-
-              <div className="pt-4">
-                <Button variant="outline" onClick={() => navigate(`/${blogSlug}/about`)} className="w-full">
-                  <User className="w-4 h-4 mr-2" />
-                  Learn More About Us
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

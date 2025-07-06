@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,7 +10,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { useToast } from '../hooks/use-toast';
 import { Blog } from '../types/blog';
-import { BLOG_THEMES } from '../constants/themes';
+import { themes } from '../constants/themes';
 import sdk from '../lib/sdk-instance';
 
 const CreateBlog: React.FC = () => {
@@ -29,7 +28,7 @@ const CreateBlog: React.FC = () => {
     title: '',
     slug: '',
     description: '',
-    theme: 'modern'
+    theme: 'modern-minimal'
   });
 
   const generateSlug = (title: string) => {
@@ -174,7 +173,7 @@ const CreateBlog: React.FC = () => {
                     <SelectValue placeholder="Select a theme" />
                   </SelectTrigger>
                   <SelectContent>
-                    {BLOG_THEMES.map((theme) => (
+                    {themes.map((theme) => (
                       <SelectItem key={theme.id} value={theme.id}>
                         <div>
                           <div className="font-medium">{theme.name}</div>

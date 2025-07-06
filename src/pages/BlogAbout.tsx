@@ -1,37 +1,37 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '../components/ui/card';
+import { useParams } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
+import { ArrowLeft, User, Mail, Globe, Calendar } from 'lucide-react';
 import { Blog } from '../types/blog';
 import { getThemeById } from '../constants/themes';
 import sdk from '../lib/sdk-instance';
-import { ArrowLeft, User, Mail, Globe } from 'lucide-react';
 
 const BlogAbout: React.FC = () => {
-  const { blogSlug } = useParams<{ blogSlug: string }>();
-  const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchBlog = async () => {
-      if (!blogSlug) return;
+    const fetchBlogData = async () => {
+      if (!slug) return;
 
       try {
         const allBlogs = await sdk.get<Blog>('blogs');
-        const foundBlog = allBlogs.find(b => b.slug === blogSlug && b.status === 'active');
+        const foundBlog = allBlogs.find(b => b.slug === slug && b.status === 'active');
         setBlog(foundBlog || null);
       } catch (error) {
-        console.error('Error fetching blog:', error);
+        console.error('Error fetching blog data:', error);
         setBlog(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBlog();
-  }, [blogSlug]);
+    fetchBlogData();
+  }, [slug]);
 
   if (loading) {
     return (
@@ -55,84 +55,128 @@ const BlogAbout: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ 
-      backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-      fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-    }}>
+    <div 
+      className="min-h-screen"
+      style={{ 
+        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
+        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
+      }}
+    >
       {/* Header */}
-      <div className="bg-white border-b" style={{ 
-        backgroundColor: theme?.styles.primaryColor || '#1F2937',
-        color: 'white'
-      }}>
+      <div 
+        className="border-b"
+        style={{ backgroundColor: theme?.styles.primaryColor || '#1F2937' }}
+      >
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(`/${blogSlug}`)}
-            className="text-white hover:bg-white/10 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to {blog.title}
-          </Button>
-          <h1 className="text-4xl font-bold">About {blog.title}</h1>
+          <div className="flex items-center mb-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => window.history.back()}
+              className="text-white hover:bg-white/10 mr-4"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          </div>
+          
+          <h1 className="text-4xl font-bold mb-2 text-white">
+            About {blog.title}
+          </h1>
+          <p className="text-xl text-white/90">
+            Learn more about this blog and its mission
+          </p>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="p-8">
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <User className="w-12 h-12 text-gray-500" />
+        <div className="grid gap-6">
+          {/* Main About Section */}
+          <Card style={{ borderRadius: theme?.styles.borderRadius }}>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <User className="w-5 h-5 mr-2" />
+                About This Blog
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {blog.description ? (
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  {blog.description}
+                </p>
+              ) : (
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  Welcome to {blog.title}! This blog shares insights, stories, and valuable content 
+                  on topics that matter. We're passionate about creating quality content that 
+                  informs, inspires, and engages our readers.
+                </p>
+              )}
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold mb-3">Blog Details</h3>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center">
+                      <Globe className="w-4 h-4 mr-2" />
+                      <span>Theme: {theme?.name || 'Modern'}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      <span>Created: {new Date(blog.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
                 </div>
-                <h2 className="text-2xl font-bold mb-2">{blog.title}</h2>
-                {blog.description && (
-                  <p className="text-gray-600 text-lg">{blog.description}</p>
-                )}
+
+                <div>
+                  <h3 className="font-semibold mb-3">Categories</h3>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline">Technology</Badge>
+                    <Badge variant="outline">Lifestyle</Badge>
+                    <Badge variant="outline">Insights</Badge>
+                  </div>
+                </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="prose prose-lg max-w-none">
-                <h3>Welcome to {blog.title}</h3>
-                <p>
-                  This blog is dedicated to sharing insights, stories, and valuable content with our readers. 
-                  We're passionate about creating meaningful connections through the power of written word.
-                </p>
-                
-                <h3>Our Mission</h3>
-                <p>
-                  We believe in the power of authentic storytelling and aim to provide content that informs, 
-                  inspires, and engages our community. Every post is crafted with care and attention to detail.
-                </p>
+          {/* Mission Statement */}
+          <Card style={{ borderRadius: theme?.styles.borderRadius }}>
+            <CardHeader>
+              <CardTitle>Our Mission</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 leading-relaxed">
+                Our mission is to create meaningful content that adds value to our readers' lives. 
+                We believe in the power of storytelling and knowledge sharing to build connections 
+                and foster understanding in our community.
+              </p>
+            </CardContent>
+          </Card>
 
-                <h3>What You'll Find Here</h3>
-                <ul>
-                  <li>Thoughtful articles and insights</li>
-                  <li>Regular updates on topics that matter</li>
-                  <li>A community-focused approach to content</li>
-                  <li>Authentic perspectives and experiences</li>
-                </ul>
-
-                <h3>Connect With Us</h3>
-                <p>
-                  We love hearing from our readers! Feel free to reach out through our contact page 
-                  or engage with us through comments on our posts.
-                </p>
-              </div>
-
-              <div className="flex justify-center space-x-4 pt-6">
-                <Button onClick={() => navigate(`/${blogSlug}/contact`)}>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Contact Us
-                </Button>
-                <Button variant="outline" onClick={() => navigate(`/${blogSlug}`)}>
-                  <Globe className="w-4 h-4 mr-2" />
-                  Visit Blog
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Contact Info */}
+          <Card style={{ borderRadius: theme?.styles.borderRadius }}>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Mail className="w-5 h-5 mr-2" />
+                Get In Touch
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 mb-4">
+                Have questions or suggestions? We'd love to hear from you!
+              </p>
+              <Button 
+                onClick={() => window.location.href = `/${slug}/contact`}
+                style={{ 
+                  backgroundColor: theme?.styles.primaryColor,
+                  borderRadius: theme?.styles.borderRadius
+                }}
+              >
+                Contact Us
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

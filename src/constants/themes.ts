@@ -1,4 +1,3 @@
-
 export interface ThemeStyle {
   id: string;
   name: string;
@@ -369,9 +368,10 @@ export const themes: ThemeStyle[] = [
   }
 ];
 
-// Export BLOG_THEMES as an alias for compatibility
+// Update BLOG_THEMES to be an alias for themes
 export const BLOG_THEMES = themes;
 
+// Update getThemeById function to use the themes array
 export const getThemeById = (id: string): ThemeStyle | undefined => {
   return themes.find(theme => theme.id === id);
 };

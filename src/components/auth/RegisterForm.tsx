@@ -13,29 +13,19 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
-  const { register, loading, needsOTP, otpEmail, verifyOTP } = useAuth();
+  const { register, loading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
     firstName: '',
-    lastName: '',
-    otp: ''
+    lastName: ''
   });
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
-    if (needsOTP) {
-      try {
-        await verifyOTP(otpEmail!, formData.otp);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'OTP verification failed');
-      }
-      return;
-    }
     
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
@@ -65,12 +55,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>{needsOTP ? 'Verify Email' : 'Create Account'}</CardTitle>
+        <CardTitle>Create Account</CardTitle>
         <CardDescription>
-          {needsOTP 
-            ? `Enter the OTP sent to ${otpEmail}`
-            : 'Create your blogger account to get started'
-          }
+          Create your blogger account to get started
         </CardDescription>
       </CardHeader>
       
@@ -82,81 +69,64 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             </Alert>
           )}
           
-          {needsOTP ? (
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="otp">OTP Code</Label>
+              <Label htmlFor="firstName">First Name</Label>
               <Input
-                id="otp"
-                type="text"
-                placeholder="Enter 6-digit OTP"
-                value={formData.otp}
-                onChange={(e) => handleInputChange('otp', e.target.value)}
-                maxLength={6}
+                id="firstName"
+                placeholder="First name"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
                 required
               />
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    placeholder="First name"
-                    value={formData.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    placeholder="Last name"
-                    value={formData.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Create a password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  required
-                />
-              </div>
-            </>
-          )}
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                placeholder="Last name"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              required
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Create a password"
+              value={formData.password}
+              onChange={(e) => handleInputChange('password', e.target.value)}
+              required
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirm your password"
+              value={formData.confirmPassword}
+              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+              required
+            />
+          </div>
         </CardContent>
         
         <CardFooter className="flex flex-col space-y-4">
@@ -168,23 +138,21 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {needsOTP ? 'Verifying...' : 'Creating Account...'}
+                Creating Account...
               </>
             ) : (
-              needsOTP ? 'Verify Email' : 'Create Account'
+              'Create Account'
             )}
           </Button>
           
-          {!needsOTP && (
-            <Button 
-              type="button" 
-              variant="ghost" 
-              className="w-full"
-              onClick={onToggleMode}
-            >
-              Already have an account? Sign in
-            </Button>
-          )}
+          <Button 
+            type="button" 
+            variant="ghost" 
+            className="w-full"
+            onClick={onToggleMode}
+          >
+            Already have an account? Sign in
+          </Button>
         </CardFooter>
       </form>
     </Card>

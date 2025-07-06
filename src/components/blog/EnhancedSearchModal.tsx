@@ -1,20 +1,19 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Input } from '../ui/input';
-import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Search, Clock, Tag, Calendar, ArrowRight } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Search, Calendar, Tag, FileText, Clock, X } from 'lucide-react';
 import { Post } from '../../types/blog';
-import { useNavigate } from 'react-router-dom';
-import { useDebounce } from '../../hooks/useDebounce';
+import { ThemeStyle } from '../../constants/themes';
 
 interface EnhancedSearchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   posts: Post[];
   blogSlug: string;
-  theme?: any;
+  theme?: ThemeStyle;
 }
 
 export const EnhancedSearchModal: React.FC<EnhancedSearchModalProps> = ({
@@ -24,251 +23,211 @@ export const EnhancedSearchModal: React.FC<EnhancedSearchModalProps> = ({
   blogSlug,
   theme
 }) => {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Post[]>([]);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const navigate = useNavigate();
-  
-  const debouncedQuery = useDebounce(query, 300);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  // Reset search when modal opens/closes
   useEffect(() => {
-    const saved = localStorage.getItem(`searchHistory_${blogSlug}`);
-    if (saved) {
-      setRecentSearches(JSON.parse(saved));
+    if (!open) {
+      setSearchQuery('');
+      setSelectedTags([]);
     }
-  }, [blogSlug]);
+  }, [open]);
 
-  const performSearch = useCallback((searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setResults([]);
-      return;
-    }
-
-    const filtered = posts.filter(post => {
-      const searchLower = searchQuery.toLowerCase();
-      return (
-        post.title.toLowerCase().includes(searchLower) ||
-        post.content.toLowerCase().includes(searchLower) ||
-        post.excerpt?.toLowerCase().includes(searchLower) ||
-        post.tags?.some(tag => tag.toLowerCase().includes(searchLower))
-      );
+  // Get all unique tags from posts
+  const allTags = useMemo(() => {
+    const tags = new Set<string>();
+    posts.forEach(post => {
+      if (post.tags) {
+        post.tags.forEach(tag => tags.add(tag));
+      }
     });
-
-    // Sort by relevance (title matches first, then content matches)
-    filtered.sort((a, b) => {
-      const queryLower = searchQuery.toLowerCase();
-      const aTitle = a.title.toLowerCase().includes(queryLower);
-      const bTitle = b.title.toLowerCase().includes(queryLower);
-      
-      if (aTitle && !bTitle) return -1;
-      if (!aTitle && bTitle) return 1;
-      
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-
-    setResults(filtered.slice(0, 8));
+    return Array.from(tags).sort();
   }, [posts]);
 
-  useEffect(() => {
-    performSearch(debouncedQuery);
-  }, [debouncedQuery, performSearch]);
+  // Filter posts based on search query and selected tags
+  const filteredPosts = useMemo(() => {
+    let filtered = posts;
 
-  const handleSearch = (searchTerm: string) => {
-    if (!searchTerm.trim()) return;
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(post =>
+        post.title.toLowerCase().includes(query) ||
+        post.content.toLowerCase().includes(query) ||
+        (post.excerpt && post.excerpt.toLowerCase().includes(query)) ||
+        (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)))
+      );
+    }
 
-    // Add to recent searches
-    const updated = [searchTerm, ...recentSearches.filter(s => s !== searchTerm)].slice(0, 5);
-    setRecentSearches(updated);
-    localStorage.setItem(`searchHistory_${blogSlug}`, JSON.stringify(updated));
+    // Filter by selected tags
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(post =>
+        post.tags && selectedTags.every(tag => post.tags!.includes(tag))
+      );
+    }
 
-    onOpenChange(false);
-    setQuery('');
+    return filtered.sort((a, b) => 
+      new Date(b.publishedAt || b.createdAt).getTime() - 
+      new Date(a.publishedAt || a.createdAt).getTime()
+    );
+  }, [posts, searchQuery, selectedTags]);
+
+  const handleTagToggle = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
   };
 
   const handlePostClick = (post: Post) => {
-    handleSearch(query);
-    navigate(`/${blogSlug}/${post.slug}`);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSelectedIndex(prev => Math.min(prev + 1, results.length - 1));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSelectedIndex(prev => Math.max(prev - 1, 0));
-    } else if (e.key === 'Enter' && results[selectedIndex]) {
-      handlePostClick(results[selectedIndex]);
-    }
+    window.location.href = `/${blogSlug}/${post.slug}`;
+    onOpenChange(false);
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
       month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+      day: 'numeric'
     });
   };
 
-  const highlightMatch = (text: string, query: string) => {
-    if (!query) return text;
-    
-    const regex = new RegExp(`(${query})`, 'gi');
-    const parts = text.split(regex);
-    
-    return parts.map((part, index) => 
-      regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 px-1 rounded">
-          {part}
-        </mark>
-      ) : part
-    );
+  const truncateContent = (content: string, maxLength: number = 150) => {
+    const textContent = content.replace(/<[^>]*>/g, '').replace(/[#*`]/g, '');
+    return textContent.length > maxLength 
+      ? textContent.substring(0, maxLength) + '...' 
+      : textContent;
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
-        className="max-w-2xl max-h-[80vh] overflow-hidden p-0"
-        style={{ fontFamily: theme?.styles?.fontFamily }}
-      >
-        <DialogHeader className="p-6 pb-4">
-          <DialogTitle className="flex items-center gap-2">
-            <Search className="w-5 h-5" style={{ color: theme?.styles?.primaryColor }} />
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+        <DialogHeader>
+          <DialogTitle className="flex items-center">
+            <Search className="w-5 h-5 mr-2" />
             Search Posts
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-6">
+        <div className="flex flex-col space-y-4 flex-1 overflow-hidden">
+          {/* Search Input */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
             <Input
-              placeholder="Search for posts, topics, tags..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="pl-10 text-lg py-3 border-2 focus:ring-2"
-              style={{ 
-                borderColor: theme?.styles?.primaryColor
-              }}
+              placeholder="Search posts by title, content, or tags..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
               autoFocus
             />
           </div>
-        </div>
 
-        <div className="max-h-96 overflow-y-auto">
-          {query && results.length > 0 && (
-            <div className="px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-600 mb-3">
-                {results.length} result{results.length !== 1 ? 's' : ''} found
-              </h3>
-              <div className="space-y-3">
-                {results.map((post, index) => (
-                  <div
-                    key={post.id}
-                    className={`p-4 rounded-lg cursor-pointer transition-all duration-200 border ${
-                      index === selectedIndex 
-                        ? 'border-blue-200 bg-blue-50 shadow-sm' 
-                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
-                    }`}
-                    onClick={() => handlePostClick(post)}
+          {/* Tags Filter */}
+          {allTags.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-gray-700">Filter by tags:</p>
+              <div className="flex flex-wrap gap-2 max-h-20 overflow-y-auto">
+                {allTags.map(tag => (
+                  <Badge
+                    key={tag}
+                    variant={selectedTags.includes(tag) ? "default" : "outline"}
+                    className="cursor-pointer hover:bg-blue-100"
+                    onClick={() => handleTagToggle(tag)}
+                    style={{
+                      backgroundColor: selectedTags.includes(tag) 
+                        ? theme?.styles.primaryColor 
+                        : 'transparent',
+                      borderColor: theme?.styles.primaryColor
+                    }}
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-1">
-                          {highlightMatch(post.title, query)}
-                        </h4>
-                        {post.excerpt && (
-                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                            {highlightMatch(post.excerpt, query)}
-                          </p>
-                        )}
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {formatDate(post.createdAt)}
-                          </div>
-                          {post.readingTime && (
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              {post.readingTime} min read
-                            </div>
-                          )}
-                        </div>
-                        {post.tags && post.tags.length > 0 && (
-                          <div className="flex items-center gap-1 mt-2">
-                            <Tag className="w-3 h-3 text-gray-400" />
-                            <div className="flex gap-1">
-                              {post.tags.slice(0, 3).map((tag, tagIndex) => (
-                                <Badge key={tagIndex} variant="outline" className="text-xs">
-                                  {highlightMatch(tag, query)}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-gray-400 ml-4 flex-shrink-0" />
-                    </div>
+                    <Tag className="w-3 h-3 mr-1" />
+                    {tag}
+                    {selectedTags.includes(tag) && (
+                      <X className="w-3 h-3 ml-1" />
+                    )}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Search Results */}
+          <div className="flex-1 overflow-y-auto space-y-3">
+            {filteredPosts.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <p className="text-lg font-medium">No posts found</p>
+                <p className="text-sm">Try adjusting your search terms or tags</p>
+              </div>
+            ) : (
+              filteredPosts.map(post => (
+                <div
+                  key={post.id}
+                  className="p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer group"
+                  onClick={() => handlePostClick(post)}
+                  style={{ borderColor: theme?.styles.primaryColor + '20' }}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 
+                      className="font-semibold text-lg group-hover:opacity-80 transition-opacity line-clamp-2"
+                      style={{ color: theme?.styles.primaryColor }}
+                    >
+                      {post.title}
+                    </h3>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {query && results.length === 0 && (
-            <div className="px-6 py-8 text-center">
-              <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-600 mb-2">No results found</h3>
-              <p className="text-gray-500">Try adjusting your search terms or browse recent posts.</p>
-            </div>
-          )}
+                  <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+                    <div className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {formatDate(post.publishedAt || post.createdAt)}
+                    </div>
+                    {post.readingTime && (
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        {post.readingTime} min read
+                      </div>
+                    )}
+                  </div>
 
-          {!query && recentSearches.length > 0 && (
-            <div className="px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-600 mb-3">Recent Searches</h3>
-              <div className="space-y-2">
-                {recentSearches.map((search, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setQuery(search)}
-                    className="flex items-center gap-2 w-full text-left p-2 rounded-md hover:bg-gray-100 transition-colors"
-                  >
-                    <Clock className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm text-gray-700">{search}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+                  {post.excerpt ? (
+                    <p className="text-gray-700 mb-3 line-clamp-2">
+                      {post.excerpt}
+                    </p>
+                  ) : (
+                    <p className="text-gray-700 mb-3 line-clamp-2">
+                      {truncateContent(post.content)}
+                    </p>
+                  )}
 
-          {!query && recentSearches.length === 0 && (
-            <div className="px-6 py-8 text-center">
-              <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-600 mb-2">Start searching</h3>
-              <p className="text-gray-500">Find posts by title, content, or tags.</p>
-            </div>
-          )}
-        </div>
-
-        <div className="px-6 py-4 border-t bg-gray-50 text-xs text-gray-500 flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <kbd className="px-2 py-1 bg-white border rounded text-xs">↑</kbd>
-            <kbd className="px-2 py-1 bg-white border rounded text-xs">↓</kbd>
-            <span>Navigate</span>
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {post.tags.slice(0, 3).map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {post.tags.length > 3 && (
+                        <Badge variant="secondary" className="text-xs">
+                          +{post.tags.length - 3} more
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
-          <div className="flex items-center gap-2">
-            <kbd className="px-2 py-1 bg-white border rounded text-xs">Enter</kbd>
-            <span>Select</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <kbd className="px-2 py-1 bg-white border rounded text-xs">Esc</kbd>
-            <span>Close</span>
-          </div>
+
+          {/* Results Count */}
+          {filteredPosts.length > 0 && (
+            <div className="text-sm text-gray-500 text-center border-t pt-2">
+              Showing {filteredPosts.length} of {posts.length} posts
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
   );
 };
-
-export default EnhancedSearchModal;
