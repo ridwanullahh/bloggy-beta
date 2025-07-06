@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Calendar, ArrowRight } from 'lucide-react';
+import { Calendar, Tag } from 'lucide-react';
 import { Post, Blog } from '../../types/blog';
 import sdk from '../../lib/sdk-instance';
 
@@ -27,54 +27,30 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = ({
     const fetchRelatedPosts = async () => {
       try {
         const allPosts = await sdk.get<Post>('posts');
-        const blogPosts = allPosts.filter(p => 
-          p.blogId === blog.id && 
-          p.id !== currentPost.id && 
-          p.status === 'published'
-        );
-
-        // Simple related posts algorithm based on tags and categories
-        const scoredPosts = blogPosts.map(post => {
-          let score = 0;
-          
-          // Score based on shared tags
-          if (currentPost.tags && post.tags) {
-            const sharedTags = currentPost.tags.filter(tag => post.tags?.includes(tag));
-            score += sharedTags.length * 2;
-          }
-          
-          // Score based on shared categories
-          if (currentPost.categories && post.categories) {
-            const sharedCategories = currentPost.categories.filter(cat => post.categories?.includes(cat));
-            score += sharedCategories.length * 3;
-          }
-          
-          // Add recency bonus
-          const daysSincePublished = Math.floor(
-            (Date.now() - new Date(post.publishedAt || post.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+        const blogPosts = allPosts
+          .filter(post => 
+            post.blogId === blog.id && 
+            post.status === 'published' && 
+            post.id !== currentPost.id
           );
-          score += Math.max(0, 30 - daysSincePublished) * 0.1;
-          
-          return { post, score };
-        });
 
-        // Sort by score and take top 3
-        const topRelated = scoredPosts
-          .sort((a, b) => b.score - a.score)
-          .slice(0, 3)
-          .map(item => item.post);
+        // Simple related posts logic - based on shared tags
+        const related = blogPosts
+          .filter(post => 
+            post.tags && currentPost.tags && 
+            post.tags.some(tag => currentPost.tags?.includes(tag))
+          )
+          .slice(0, 3);
 
-        // If we don't have enough related posts, fill with recent posts
-        if (topRelated.length < 3) {
-          const recentPosts = blogPosts
-            .filter(p => !topRelated.find(rp => rp.id === p.id))
+        // If no tag matches, get latest posts
+        if (related.length === 0) {
+          related.push(...blogPosts
             .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime())
-            .slice(0, 3 - topRelated.length);
-          
-          topRelated.push(...recentPosts);
+            .slice(0, 3)
+          );
         }
 
-        setRelatedPosts(topRelated);
+        setRelatedPosts(related);
       } catch (error) {
         console.error('Error fetching related posts:', error);
       } finally {
@@ -93,69 +69,64 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = ({
     });
   };
 
-  const truncateText = (text: string, maxLength: number = 100) => {
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  const truncateContent = (content: string, maxLength: number = 120) => {
+    const textContent = content.replace(/<[^>]*>/g, '').replace(/[#*`]/g, '');
+    return textContent.length > maxLength 
+      ? textContent.substring(0, maxLength) + '...' 
+      : textContent;
   };
 
-  if (loading || relatedPosts.length === 0) return null;
+  if (loading || relatedPosts.length === 0) {
+    return null;
+  }
 
   return (
-    <Card className="mt-8">
+    <Card style={{ 
+      borderRadius: theme?.styles.borderRadius || '0.5rem',
+      fontFamily: theme?.styles.fontFamily 
+    }}>
       <CardHeader>
-        <CardTitle 
-          className="text-xl font-bold"
-          style={{ color: theme?.styles.primaryColor }}
-        >
+        <CardTitle style={{ color: theme?.styles.primaryColor }}>
           Related Articles
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+        <div className="space-y-4">
           {relatedPosts.map((post) => (
             <div 
-              key={post.id} 
-              className="group cursor-pointer p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:shadow-md"
+              key={post.id}
+              className="border-l-4 pl-4 cursor-pointer hover:bg-gray-50 p-3 rounded transition-colors"
+              style={{ borderColor: theme?.styles.primaryColor }}
               onClick={() => onPostClick(post)}
-              style={{ 
-                borderRadius: theme?.styles.borderRadius,
-                borderColor: theme?.styles.primaryColor + '20'
-              }}
             >
-              <div className="space-y-3">
-                <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-                  {post.title}
-                </h4>
-                
-                {post.excerpt && (
-                  <p className="text-sm text-gray-600 line-clamp-3">
-                    {truncateText(post.excerpt)}
-                  </p>
-                )}
-                
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    {formatDate(post.publishedAt || post.createdAt)}
-                  </div>
-                  {post.readingTime && (
-                    <span>{post.readingTime} min read</span>
-                  )}
+              <h4 className="font-medium text-lg mb-2 hover:text-blue-600 transition-colors">
+                {post.title}
+              </h4>
+              
+              {post.excerpt && (
+                <p className="text-gray-600 text-sm mb-2">
+                  {truncateContent(post.excerpt, 100)}
+                </p>
+              )}
+
+              <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center">
+                  <Calendar className="w-3 h-3 mr-1" />
+                  {formatDate(post.publishedAt || post.createdAt)}
                 </div>
                 
                 {post.tags && post.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {post.tags.slice(0, 2).map((tag, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
+                  <div className="flex items-center space-x-1">
+                    <Tag className="w-3 h-3" />
+                    <div className="flex space-x-1">
+                      {post.tags.slice(0, 2).map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 )}
-                
-                <div className="flex items-center text-sm text-blue-600 group-hover:text-blue-700 transition-colors">
-                  <span>Read more</span>
-                  <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
-                </div>
               </div>
             </div>
           ))}

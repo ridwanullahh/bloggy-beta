@@ -1,10 +1,9 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Input } from '../ui/input';
-import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Search, Calendar, Tag, X } from 'lucide-react';
+import { Search, Calendar, Tag } from 'lucide-react';
 import { Post, Blog } from '../../types/blog';
 import sdk from '../../lib/sdk-instance';
 
@@ -23,72 +22,71 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   theme,
   onPostSelect
 }) => {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const posts = await sdk.get<Post>('posts');
-        const blogPosts = posts.filter(p => p.blogId === blog.id && p.status === 'published');
-        setAllPosts(blogPosts);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    };
-
     if (isOpen) {
       fetchPosts();
     }
   }, [isOpen, blog.id]);
 
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
+    if (searchQuery.trim()) {
+      performSearch();
+    } else {
+      setSearchResults([]);
     }
-  }, [isOpen]);
+  }, [searchQuery, allPosts]);
 
-  useEffect(() => {
-    if (!query.trim()) {
-      setResults([]);
-      return;
-    }
-
+  const fetchPosts = async () => {
     setLoading(true);
-    const timeoutId = setTimeout(() => {
-      const filtered = allPosts.filter(post => {
-        const searchTerms = query.toLowerCase().split(' ');
-        const content = `${post.title} ${post.content} ${post.excerpt || ''} ${(post.tags || []).join(' ')} ${(post.categories || []).join(' ')}`.toLowerCase();
-        
-        return searchTerms.every(term => content.includes(term));
-      });
-
-      // Sort by relevance (title matches first, then content)
-      const sorted = filtered.sort((a, b) => {
-        const aTitle = a.title.toLowerCase();
-        const bTitle = b.title.toLowerCase();
-        const queryLower = query.toLowerCase();
-        
-        if (aTitle.includes(queryLower) && !bTitle.includes(queryLower)) return -1;
-        if (!aTitle.includes(queryLower) && bTitle.includes(queryLower)) return 1;
-        
-        return new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime();
-      });
-
-      setResults(sorted.slice(0, 10)); // Limit to 10 results
+    try {
+      const posts = await sdk.get<Post>('posts');
+      const blogPosts = posts.filter(post => 
+        post.blogId === blog.id && post.status === 'published'
+      );
+      setAllPosts(blogPosts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
 
-    return () => clearTimeout(timeoutId);
-  }, [query, allPosts]);
+  const performSearch = () => {
+    const query = searchQuery.toLowerCase().trim();
+    const results = allPosts.filter(post => {
+      const titleMatch = post.title.toLowerCase().includes(query);
+      const contentMatch = post.content.toLowerCase().includes(query);
+      const excerptMatch = post.excerpt?.toLowerCase().includes(query);
+      const tagMatch = post.tags?.some(tag => tag.toLowerCase().includes(query));
+      
+      return titleMatch || contentMatch || excerptMatch || tagMatch;
+    });
+
+    // Sort by relevance (title matches first)
+    results.sort((a, b) => {
+      const aTitle = a.title.toLowerCase().includes(query);
+      const bTitle = b.title.toLowerCase().includes(query);
+      
+      if (aTitle && !bTitle) return -1;
+      if (!aTitle && bTitle) return 1;
+      
+      return new Date(b.publishedAt || b.createdAt).getTime() - 
+             new Date(a.publishedAt || a.createdAt).getTime();
+    });
+
+    setSearchResults(results.slice(0, 10)); // Limit to 10 results
+  };
 
   const handlePostSelect = (post: Post) => {
     onPostSelect(post);
     onClose();
-    setQuery('');
+    setSearchQuery('');
+    setSearchResults([]);
   };
 
   const formatDate = (dateString: string) => {
@@ -99,117 +97,117 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     });
   };
 
-  const highlightText = (text: string, query: string) => {
-    if (!query) return text;
+  const highlightMatch = (text: string, query: string) => {
+    if (!query.trim()) return text;
     
-    const parts = text.split(new RegExp(`(${query})`, 'gi'));
-    return parts.map((part, index) => 
-      part.toLowerCase() === query.toLowerCase() ? 
-        <mark key={index} className="bg-yellow-200 px-1">{part}</mark> : part
-    );
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark class="bg-yellow-200">$1</mark>');
+  };
+
+  const truncateContent = (content: string, maxLength: number = 150) => {
+    const textContent = content.replace(/<[^>]*>/g, '').replace(/[#*`]/g, '');
+    return textContent.length > maxLength 
+      ? textContent.substring(0, maxLength) + '...' 
+      : textContent;
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Search className="w-5 h-5 mr-2" style={{ color: theme?.styles.primaryColor }} />
-              Search {blog.title}
-            </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="w-4 h-4" />
-            </Button>
+          <DialogTitle className="flex items-center">
+            <Search className="w-5 h-5 mr-2" />
+            Search {blog.title}
           </DialogTitle>
         </DialogHeader>
         
-        <div className="flex-1 flex flex-col min-h-0">
-          <div className="mb-4">
+        <div className="flex-1 flex flex-col space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              ref={inputRef}
-              type="text"
-              placeholder="Search articles, tags, categories..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full"
+              placeholder="Search articles, tags, or content..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+              autoFocus
               style={{ 
                 borderColor: theme?.styles.primaryColor + '40',
                 fontFamily: theme?.styles.fontFamily 
               }}
             />
           </div>
-          
+
           <div className="flex-1 overflow-y-auto">
             {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: theme?.styles.primaryColor }}></div>
+              <div className="flex justify-center items-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
               </div>
-            ) : query && results.length === 0 ? (
+            ) : searchQuery.trim() && searchResults.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No articles found for "{query}"</p>
-                <p className="text-sm mt-2">Try different keywords or check your spelling</p>
+                <Search className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <p>No articles found for "{searchQuery}"</p>
               </div>
             ) : (
               <div className="space-y-3">
-                {results.map((post) => (
+                {searchResults.map((post) => (
                   <div
                     key={post.id}
+                    className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => handlePostSelect(post)}
-                    className="p-4 rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer transition-all duration-200 hover:shadow-md"
                     style={{ 
-                      borderRadius: theme?.styles.borderRadius,
-                      borderColor: theme?.styles.primaryColor + '20'
+                      borderColor: theme?.styles.primaryColor + '20',
+                      borderRadius: theme?.styles.borderRadius || '0.5rem'
                     }}
                   >
-                    <h3 className="font-semibold text-gray-900 mb-2">
-                      {highlightText(post.title, query)}
-                    </h3>
+                    <h3 
+                      className="font-medium text-lg mb-2 hover:text-blue-600 transition-colors"
+                      dangerouslySetInnerHTML={{ 
+                        __html: highlightMatch(post.title, searchQuery) 
+                      }}
+                    />
                     
                     {post.excerpt && (
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                        {highlightText(post.excerpt.substring(0, 150), query)}
-                        {post.excerpt.length > 150 && '...'}
-                      </p>
+                      <p 
+                        className="text-gray-600 text-sm mb-2"
+                        dangerouslySetInnerHTML={{ 
+                          __html: highlightMatch(truncateContent(post.excerpt), searchQuery) 
+                        }}
+                      />
                     )}
-                    
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+
+                    <div className="flex items-center justify-between text-xs text-gray-500">
                       <div className="flex items-center">
                         <Calendar className="w-3 h-3 mr-1" />
                         {formatDate(post.publishedAt || post.createdAt)}
                       </div>
-                      {post.readingTime && (
-                        <span>{post.readingTime} min read</span>
+                      
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="flex items-center space-x-1">
+                          <Tag className="w-3 h-3" />
+                          <div className="flex space-x-1">
+                            {post.tags.slice(0, 3).map((tag, index) => (
+                              <Badge 
+                                key={index} 
+                                variant="outline" 
+                                className="text-xs"
+                                style={{ 
+                                  backgroundColor: searchQuery.toLowerCase().includes(tag.toLowerCase()) 
+                                    ? theme?.styles.primaryColor + '20' 
+                                    : undefined 
+                                }}
+                              >
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     </div>
-                    
-                    {(post.tags && post.tags.length > 0) || (post.categories && post.categories.length > 0) ? (
-                      <div className="flex flex-wrap gap-1">
-                        {post.categories?.slice(0, 2).map((category, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {highlightText(category, query)}
-                          </Badge>
-                        ))}
-                        {post.tags?.slice(0, 3).map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            <Tag className="w-2 h-2 mr-1" />
-                            {highlightText(tag, query)}
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : null}
                   </div>
                 ))}
               </div>
             )}
           </div>
-          
-          {query && results.length > 0 && (
-            <div className="mt-4 pt-4 border-t text-center text-sm text-gray-500">
-              Showing {results.length} result{results.length !== 1 ? 's' : ''} for "{query}"
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>

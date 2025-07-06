@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
-import { Card, CardContent } from '../ui/card';
-import { Share2, Facebook, Twitter, Linkedin, Link, Mail, MessageCircle } from 'lucide-react';
+import { Share2, Facebook, Twitter, Linkedin, Link } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
 interface SocialShareProps {
@@ -19,133 +18,99 @@ export const SocialShare: React.FC<SocialShareProps> = ({ url, title, descriptio
   const shareData = {
     title,
     text: description || title,
-    url: window.location.href
+    url
   };
 
   const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
+    try {
+      if (navigator.share) {
         await navigator.share(shareData);
-      } catch (error) {
-        console.error('Error sharing:', error);
+      } else {
+        setIsOpen(!isOpen);
       }
-    } else {
+    } catch (error) {
       setIsOpen(!isOpen);
     }
   };
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(url);
       toast({
-        title: "Link copied!",
-        description: "The link has been copied to your clipboard.",
+        title: "Link Copied",
+        description: "Post URL copied to clipboard!",
       });
     } catch (error) {
-      console.error('Failed to copy:', error);
+      toast({
+        title: "Error",
+        description: "Failed to copy link",
+        variant: "destructive",
+      });
     }
   };
 
-  const shareToSocial = (platform: string) => {
-    const encodedUrl = encodeURIComponent(window.location.href);
-    const encodedTitle = encodeURIComponent(title);
-    const encodedDescription = encodeURIComponent(description || title);
-
-    const urls = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-      twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-      whatsapp: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
-      email: `mailto:?subject=${encodedTitle}&body=${encodedDescription}%0A%0A${encodedUrl}`
-    };
-
-    if (urls[platform as keyof typeof urls]) {
-      window.open(urls[platform as keyof typeof urls], '_blank', 'width=600,height=400');
-    }
+  const shareUrls = {
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
   };
 
   return (
     <div className="relative">
       <Button
-        onClick={handleNativeShare}
-        variant="outline"
+        variant="ghost"
         size="sm"
-        className="flex items-center space-x-2"
-        style={{ 
-          borderColor: theme?.styles.primaryColor,
-          color: theme?.styles.primaryColor 
-        }}
+        onClick={handleNativeShare}
+        className="text-white hover:bg-white/10"
       >
         <Share2 className="w-4 h-4" />
-        <span>Share</span>
       </Button>
 
       {isOpen && (
-        <Card className="absolute top-12 right-0 z-50 w-64 shadow-lg">
-          <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => shareToSocial('facebook')}
-                className="flex items-center space-x-2"
-              >
-                <Facebook className="w-4 h-4 text-blue-600" />
-                <span>Facebook</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => shareToSocial('twitter')}
-                className="flex items-center space-x-2"
-              >
-                <Twitter className="w-4 h-4 text-blue-400" />
-                <span>Twitter</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => shareToSocial('linkedin')}
-                className="flex items-center space-x-2"
-              >
-                <Linkedin className="w-4 h-4 text-blue-700" />
-                <span>LinkedIn</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => shareToSocial('whatsapp')}
-                className="flex items-center space-x-2"
-              >
-                <MessageCircle className="w-4 h-4 text-green-600" />
-                <span>WhatsApp</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => shareToSocial('email')}
-                className="flex items-center space-x-2"
-              >
-                <Mail className="w-4 h-4 text-gray-600" />
-                <span>Email</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyToClipboard}
-                className="flex items-center space-x-2"
-              >
-                <Link className="w-4 h-4 text-gray-600" />
-                <span>Copy Link</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div 
+          className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg border p-4 z-50 w-48"
+          style={{ 
+            backgroundColor: theme?.styles.secondaryColor || 'white',
+            borderRadius: theme?.styles.borderRadius || '0.5rem'
+          }}
+        >
+          <div className="space-y-2">
+            <a
+              href={shareUrls.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-100 transition-colors"
+            >
+              <Facebook className="w-4 h-4 text-blue-600" />
+              <span className="text-sm">Facebook</span>
+            </a>
+            <a
+              href={shareUrls.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-100 transition-colors"
+            >
+              <Twitter className="w-4 h-4 text-blue-400" />
+              <span className="text-sm">Twitter</span>
+            </a>
+            <a
+              href={shareUrls.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-100 transition-colors"
+            >
+              <Linkedin className="w-4 h-4 text-blue-700" />
+              <span className="text-sm">LinkedIn</span>
+            </a>
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-100 transition-colors w-full text-left"
+            >
+              <Link className="w-4 h-4 text-gray-600" />
+              <span className="text-sm">Copy Link</span>
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
