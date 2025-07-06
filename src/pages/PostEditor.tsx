@@ -80,7 +80,7 @@ const PostEditor: React.FC = () => {
             slug: foundPost.slug || '',
             content: foundPost.content,
             excerpt: foundPost.excerpt || '',
-            status: foundPost.status,
+            status: foundPost.status === 'archived' ? 'draft' : foundPost.status,
             tags: foundPost.tags || []
           });
           setSelectedCategories(foundPost.categories || []);

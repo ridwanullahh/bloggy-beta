@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -102,26 +101,26 @@ const BlogSettings: React.FC = () => {
             linkedin: foundBlog.contactInfo?.socialLinks?.linkedin || '',
             youtube: foundBlog.contactInfo?.socialLinks?.youtube || ''
           },
-          monetization: foundBlog.monetization || {
-            enabled: false,
-            allowFreeContent: true,
-            subscriptionPrice: 0,
-            payPerArticle: false,
-            paywallEnabled: false
+          monetization: {
+            enabled: foundBlog.monetization?.enabled || false,
+            allowFreeContent: foundBlog.monetization?.allowFreeContent !== undefined ? foundBlog.monetization.allowFreeContent : true,
+            subscriptionPrice: foundBlog.monetization?.subscriptionPrice || 0,
+            payPerArticle: foundBlog.monetization?.payPerArticle || false,
+            paywallEnabled: foundBlog.monetization?.paywallEnabled || false
           },
           marketing: foundBlog.marketing || {
             emailMarketing: false,
             socialAutoPost: false,
             contentScheduling: false
           },
-          blogSettings: foundBlog.settings || {
-            allowComments: true,
-            moderateComments: false,
-            seoOptimized: true,
-            showReadingTime: true,
-            enableTableOfContents: true,
-            enableSocialShare: true,
-            enableRelatedPosts: true
+          blogSettings: {
+            allowComments: foundBlog.settings?.allowComments !== undefined ? foundBlog.settings.allowComments : true,
+            moderateComments: foundBlog.settings?.moderateComments || false,
+            seoOptimized: foundBlog.settings?.seoOptimized !== undefined ? foundBlog.settings.seoOptimized : true,
+            showReadingTime: foundBlog.settings?.showReadingTime !== undefined ? foundBlog.settings.showReadingTime : true,
+            enableTableOfContents: foundBlog.settings?.enableTableOfContents !== undefined ? foundBlog.settings.enableTableOfContents : true,
+            enableSocialShare: foundBlog.settings?.enableSocialShare !== undefined ? foundBlog.settings.enableSocialShare : true,
+            enableRelatedPosts: foundBlog.settings?.enableRelatedPosts !== undefined ? foundBlog.settings.enableRelatedPosts : true
           }
         });
       } catch (error) {

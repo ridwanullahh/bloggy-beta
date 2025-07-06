@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/sonner';
 
 // Import all pages
@@ -19,11 +19,13 @@ import BlogAbout from './pages/BlogAbout';
 import BlogContact from './pages/BlogContact';
 import NotFound from './pages/NotFound';
 
+const queryClient = new QueryClient();
+
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <QueryClient>
+        <QueryClientProvider client={queryClient}>
           <div className="min-h-screen bg-gray-50">
             <Toaster />
             <Routes>
@@ -42,7 +44,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
-        </QueryClient>
+        </QueryClientProvider>
       </AuthProvider>
     </Router>
   );
