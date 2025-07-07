@@ -66,14 +66,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const authToken = await sdk.login(email, password);
-      const currentUser = sdk.getCurrentUser(authToken);
+      const loginResponse = await sdk.login(email, password);
       
-      if (currentUser) {
-        setUser(currentUser);
-        setToken(authToken);
-        localStorage.setItem('authToken', authToken);
-        localStorage.setItem('authUser', JSON.stringify(currentUser));
+      // Check if the response is a string token or an OTP requirement object
+      if (typeof loginResponse === 'string') {
+        // It's a token, proceed with authentication
+        const authToken = loginResponse;
+        const currentUser = sdk.getCurrentUser(authToken);
+        
+        if (currentUser) {
+          setUser(currentUser);
+          setToken(authToken);
+          localStorage.setItem('authToken', authToken);
+          localStorage.setItem('authUser', JSON.stringify(currentUser));
+        }
+      } else if (loginResponse && typeof loginResponse === 'object' && 'otpRequired' in loginResponse) {
+        // OTP is required - since we removed OTP functionality, throw an error
+        throw new Error('OTP verification is no longer supported. Please contact support.');
       }
     } catch (error) {
       console.error('Login error:', error);
