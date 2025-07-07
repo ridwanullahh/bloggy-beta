@@ -11,7 +11,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#1F2937',
       secondaryColor: '#F3F4F6',
       fontFamily: 'Inter, sans-serif',
-      layout: 'minimal'
+      layout: 'minimal',
+      borderRadius: '0.5rem',
+      shadows: 'soft',
+      spacing: 'comfortable',
+      headerStyle: 'clean',
+      navigationStyle: 'horizontal',
+      postCardStyle: 'elevated',
+      buttonStyle: 'rounded',
+      animationStyle: 'subtle'
     }
   },
   {
@@ -21,9 +29,17 @@ export const BLOG_THEMES: BlogTheme[] = [
     preview: '/themes/dark.jpg',
     styles: {
       primaryColor: '#111827',
-      secondaryColor: '#374151',
+      secondaryColor: '#1F2937',
       fontFamily: 'JetBrains Mono, monospace',
-      layout: 'grid'
+      layout: 'grid',
+      borderRadius: '0',
+      shadows: 'sharp',
+      spacing: 'compact',
+      headerStyle: 'bold',
+      navigationStyle: 'sidebar',
+      postCardStyle: 'flat',
+      buttonStyle: 'square',
+      animationStyle: 'fast'
     }
   },
   {
@@ -35,7 +51,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#DC2626',
       secondaryColor: '#FEF2F2',
       fontFamily: 'Playfair Display, serif',
-      layout: 'magazine'
+      layout: 'magazine',
+      borderRadius: '0.25rem',
+      shadows: 'dramatic',
+      spacing: 'tight',
+      headerStyle: 'magazine',
+      navigationStyle: 'mega',
+      postCardStyle: 'featured',
+      buttonStyle: 'bold',
+      animationStyle: 'smooth'
     }
   },
   {
@@ -47,7 +71,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#7C3AED',
       secondaryColor: '#F3E8FF',
       fontFamily: 'Poppins, sans-serif',
-      layout: 'grid'
+      layout: 'masonry',
+      borderRadius: '1rem',
+      shadows: 'colorful',
+      spacing: 'artistic',
+      headerStyle: 'creative',
+      navigationStyle: 'floating',
+      postCardStyle: 'artistic',
+      buttonStyle: 'pill',
+      animationStyle: 'playful'
     }
   },
   {
@@ -59,7 +91,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#1E40AF',
       secondaryColor: '#EFF6FF',
       fontFamily: 'Roboto, sans-serif',
-      layout: 'list'
+      layout: 'corporate',
+      borderRadius: '0.375rem',
+      shadows: 'professional',
+      spacing: 'business',
+      headerStyle: 'corporate',
+      navigationStyle: 'business',
+      postCardStyle: 'professional',
+      buttonStyle: 'corporate',
+      animationStyle: 'professional'
     }
   },
   {
@@ -71,7 +111,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#EC4899',
       secondaryColor: '#FDF2F8',
       fontFamily: 'Crimson Text, serif',
-      layout: 'magazine'
+      layout: 'lifestyle',
+      borderRadius: '2rem',
+      shadows: 'elegant',
+      spacing: 'luxurious',
+      headerStyle: 'elegant',
+      navigationStyle: 'minimal',
+      postCardStyle: 'lifestyle',
+      buttonStyle: 'elegant',
+      animationStyle: 'graceful'
     }
   },
   {
@@ -83,7 +131,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#0891B2',
       secondaryColor: '#ECFEFF',
       fontFamily: 'Space Grotesk, sans-serif',
-      layout: 'grid'
+      layout: 'tech',
+      borderRadius: '0.75rem',
+      shadows: 'neon',
+      spacing: 'futuristic',
+      headerStyle: 'tech',
+      navigationStyle: 'tech',
+      postCardStyle: 'tech',
+      buttonStyle: 'futuristic',
+      animationStyle: 'dynamic'
     }
   },
   {
@@ -95,7 +151,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#059669',
       secondaryColor: '#ECFDF5',
       fontFamily: 'Merriweather, serif',
-      layout: 'minimal'
+      layout: 'organic',
+      borderRadius: '1.5rem',
+      shadows: 'natural',
+      spacing: 'organic',
+      headerStyle: 'organic',
+      navigationStyle: 'natural',
+      postCardStyle: 'organic',
+      buttonStyle: 'natural',
+      animationStyle: 'organic'
     }
   },
   {
@@ -107,7 +171,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#EA580C',
       secondaryColor: '#FFF7ED',
       fontFamily: 'Nunito, sans-serif',
-      layout: 'magazine'
+      layout: 'recipe',
+      borderRadius: '1.25rem',
+      shadows: 'warm',
+      spacing: 'cozy',
+      headerStyle: 'warm',
+      navigationStyle: 'cozy',
+      postCardStyle: 'recipe',
+      buttonStyle: 'warm',
+      animationStyle: 'cozy'
     }
   },
   {
@@ -119,7 +191,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#0369A1',
       secondaryColor: '#F0F9FF',
       fontFamily: 'Open Sans, sans-serif',
-      layout: 'grid'
+      layout: 'adventure',
+      borderRadius: '0.5rem',
+      shadows: 'adventure',
+      spacing: 'adventurous',
+      headerStyle: 'adventure',
+      navigationStyle: 'adventure',
+      postCardStyle: 'travel',
+      buttonStyle: 'adventure',
+      animationStyle: 'adventurous'
     }
   },
   {
@@ -131,7 +211,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#DC2626',
       secondaryColor: '#FEF2F2',
       fontFamily: 'Montserrat, sans-serif',
-      layout: 'list'
+      layout: 'fitness',
+      borderRadius: '0.375rem',
+      shadows: 'energetic',
+      spacing: 'dynamic',
+      headerStyle: 'energetic',
+      navigationStyle: 'fitness',
+      postCardStyle: 'fitness',
+      buttonStyle: 'energetic',
+      animationStyle: 'energetic'
     }
   },
   {
@@ -143,7 +231,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#7C2D12',
       secondaryColor: '#FEF7ED',
       fontFamily: 'Source Sans Pro, sans-serif',
-      layout: 'minimal'
+      layout: 'educational',
+      borderRadius: '0.5rem',
+      shadows: 'academic',
+      spacing: 'structured',
+      headerStyle: 'academic',
+      navigationStyle: 'educational',
+      postCardStyle: 'academic',
+      buttonStyle: 'academic',
+      animationStyle: 'structured'
     }
   },
   {
@@ -155,7 +251,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#7C3AED',
       secondaryColor: '#F3E8FF',
       fontFamily: 'Orbitron, monospace',
-      layout: 'grid'
+      layout: 'gaming',
+      borderRadius: '1rem',
+      shadows: 'gaming',
+      spacing: 'gaming',
+      headerStyle: 'gaming',
+      navigationStyle: 'gaming',
+      postCardStyle: 'gaming',
+      buttonStyle: 'gaming',
+      animationStyle: 'gaming'
     }
   },
   {
@@ -167,7 +271,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#92400E',
       secondaryColor: '#FFFBEB',
       fontFamily: 'Libre Baskerville, serif',
-      layout: 'minimal'
+      layout: 'journal',
+      borderRadius: '0.75rem',
+      shadows: 'personal',
+      spacing: 'intimate',
+      headerStyle: 'personal',
+      navigationStyle: 'intimate',
+      postCardStyle: 'journal',
+      buttonStyle: 'personal',
+      animationStyle: 'gentle'
     }
   },
   {
@@ -179,7 +291,15 @@ export const BLOG_THEMES: BlogTheme[] = [
       primaryColor: '#000000',
       secondaryColor: '#F9FAFB',
       fontFamily: 'Times New Roman, serif',
-      layout: 'list'
+      layout: 'newspaper',
+      borderRadius: '0',
+      shadows: 'newspaper',
+      spacing: 'news',
+      headerStyle: 'newspaper',
+      navigationStyle: 'news',
+      postCardStyle: 'news',
+      buttonStyle: 'news',
+      animationStyle: 'crisp'
     }
   }
 ];
