@@ -1,63 +1,69 @@
 
 import React, { useState, useEffect } from 'react';
-import { ThemeStyle } from '../../constants/themes';
-
-interface TableOfContentsProps {
-  content: string;
-  theme?: ThemeStyle;
-}
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { BookOpen, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface TocItem {
   id: string;
   text: string;
   level: number;
+  element: HTMLElement;
 }
 
-const TableOfContents: React.FC<TableOfContentsProps> = ({ content, theme }) => {
-  const [toc, setToc] = useState<TocItem[]>([]);
+interface TableOfContentsProps {
+  content: string;
+  theme?: any;
+}
+
+export const TableOfContents: React.FC<TableOfContentsProps> = ({ content, theme }) => {
+  const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
-    // Extract headings from markdown content
-    const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-    const headings: TocItem[] = [];
-    let match;
-
-    while ((match = headingRegex.exec(content)) !== null) {
-      const level = match[1].length;
-      const text = match[2].trim();
-      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const parseContent = () => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(content, 'text/html');
+      const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
       
-      headings.push({ id, text, level });
-    }
+      const items: TocItem[] = Array.from(headings).map((heading, index) => {
+        const id = heading.id || `toc-${index}`;
+        const level = parseInt(heading.tagName.charAt(1));
+        return {
+          id,
+          text: heading.textContent || '',
+          level,
+          element: heading as HTMLElement
+        };
+      });
 
-    setToc(headings);
+      setTocItems(items);
+    };
+
+    if (content) {
+      parseContent();
+    }
   }, [content]);
 
   useEffect(() => {
-    const observerOptions = {
-      rootMargin: '-20% 0px -80% 0px',
-      threshold: 0
-    };
+    const handleScroll = () => {
+      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      let current = '';
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveId(entry.target.id);
+      headings.forEach((heading) => {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= 100) {
+          current = heading.id || '';
         }
       });
-    }, observerOptions);
 
-    // Observe all headings
-    toc.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
-      }
-    });
+      setActiveId(current);
+    };
 
-    return () => observer.disconnect();
-  }, [toc]);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
@@ -66,31 +72,53 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ content, theme }) => 
     }
   };
 
-  if (toc.length === 0) return null;
+  if (tocItems.length === 0) return null;
 
   return (
-    <div className="sticky top-8">
-      <h4 className="font-semibold mb-4 text-gray-900">Table of Contents</h4>
-      <nav className="space-y-1">
-        {toc.map(({ id, text, level }) => (
-          <button
-            key={id}
-            onClick={() => scrollToHeading(id)}
-            className={`block text-left text-sm transition-colors hover:opacity-80 ${
-              activeId === id
-                ? 'font-medium'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-            style={{
-              paddingLeft: `${(level - 1) * 12}px`,
-              color: activeId === id ? theme?.styles.primaryColor : undefined
-            }}
+    <Card className="sticky top-24 z-10" style={{ 
+      fontFamily: theme?.styles.fontFamily,
+      borderRadius: theme?.styles.borderRadius === '0' ? '0' : '0.5rem'
+    }}>
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center justify-between text-sm">
+          <div className="flex items-center">
+            <BookOpen className="w-4 h-4 mr-2" />
+            Table of Contents
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="h-6 w-6 p-0"
           >
-            {text}
-          </button>
-        ))}
-      </nav>
-    </div>
+            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </Button>
+        </CardTitle>
+      </CardHeader>
+      {!isCollapsed && (
+        <CardContent className="pt-0">
+          <nav className="space-y-1">
+            {tocItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToHeading(item.id)}
+                className={`block w-full text-left text-sm py-1 px-2 rounded transition-colors ${
+                  activeId === item.id
+                    ? 'bg-blue-100 text-blue-700 font-medium'
+                    : 'hover:bg-gray-100 text-gray-600'
+                }`}
+                style={{ 
+                  paddingLeft: `${(item.level - 1) * 12 + 8}px`,
+                  color: activeId === item.id ? theme?.styles.primaryColor : undefined
+                }}
+              >
+                {item.text}
+              </button>
+            ))}
+          </nav>
+        </CardContent>
+      )}
+    </Card>
   );
 };
 

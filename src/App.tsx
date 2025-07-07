@@ -1,54 +1,134 @@
 
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from './components/ui/sonner';
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
-
-// Import all pages
-import Index from './pages/Index';
-import Auth from './pages/Auth';
-import Dashboard from './pages/Dashboard';
-import CreateBlog from './pages/CreateBlog';
-import BlogManagement from './pages/BlogManagement';
-import BlogSettings from './pages/BlogSettings';
-import PostEditor from './pages/PostEditor';
-import BlogView from './pages/BlogView';
-import PostView from './pages/PostView';
-import BlogAbout from './pages/BlogAbout';
-import BlogContact from './pages/BlogContact';
-import NotFound from './pages/NotFound';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import Index from "./pages/Index";
+import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
+import CreateBlog from "./pages/CreateBlog";
+import BlogManagement from "./pages/BlogManagement";
+import PostEditor from "./pages/PostEditor";
+import NotFound from "./pages/NotFound";
+import BlogView from "./pages/BlogView";
+import PostView from "./pages/PostView";
+import BlogAbout from "./pages/BlogAbout";
+import BlogContact from "./pages/BlogContact";
 
 const queryClient = new QueryClient();
 
-function App() {
+// Protected Route Component
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Public Route Component (redirects to dashboard if authenticated)
+const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+  
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+const AppRoutes = () => {
   return (
-    <Router>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <div className="min-h-screen bg-gray-50">
-            <Toaster />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/create-blog" element={<ProtectedRoute><CreateBlog /></ProtectedRoute>} />
-              <Route path="/blog/:slug/manage" element={<ProtectedRoute><BlogManagement /></ProtectedRoute>} />
-              <Route path="/blog/:slug/settings" element={<ProtectedRoute><BlogSettings /></ProtectedRoute>} />
-              <Route path="/blog/:slug/post/new" element={<ProtectedRoute><PostEditor /></ProtectedRoute>} />
-              <Route path="/blog/:slug/post/:postId/edit" element={<ProtectedRoute><PostEditor /></ProtectedRoute>} />
-              <Route path="/:slug" element={<BlogView />} />
-              <Route path="/:blogSlug/:postSlug" element={<PostView />} />
-              <Route path="/:slug/about" element={<BlogAbout />} />
-              <Route path="/:slug/contact" element={<BlogContact />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </QueryClientProvider>
-      </AuthProvider>
-    </Router>
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={
+        <PublicRoute>
+          <Index />
+        </PublicRoute>
+      } />
+      <Route path="/auth" element={
+        <PublicRoute>
+          <Auth />
+        </PublicRoute>
+      } />
+      
+      {/* Protected routes */}
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/create-blog" element={
+        <ProtectedRoute>
+          <CreateBlog />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:slug/manage" element={
+        <ProtectedRoute>
+          <BlogManagement />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:blogSlug/post/new" element={
+        <ProtectedRoute>
+          <PostEditor />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:blogSlug/post/:postId/edit" element={
+        <ProtectedRoute>
+          <PostEditor />
+        </ProtectedRoute>
+      } />
+      
+      {/* Blog public pages */}
+      <Route path="/:blogSlug/about" element={<BlogAbout />} />
+      <Route path="/:blogSlug/contact" element={<BlogContact />} />
+      <Route path="/:blogSlug/:postSlug" element={<PostView />} />
+      
+      {/* Catch-all route for blog slugs */}
+      <Route path="/:slug" element={<BlogView />} />
+      
+      {/* Catch-all route */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
-}
+};
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;

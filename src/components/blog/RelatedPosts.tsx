@@ -3,65 +3,82 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Calendar, Clock, Tag } from 'lucide-react';
-import { Blog, Post } from '../../types/blog';
-import { ThemeStyle } from '../../constants/themes';
+import { Calendar, ArrowRight } from 'lucide-react';
+import { Post, Blog } from '../../types/blog';
 import sdk from '../../lib/sdk-instance';
 
 interface RelatedPostsProps {
   currentPost: Post;
   blog: Blog;
-  theme?: ThemeStyle;
+  theme?: any;
   onPostClick: (post: Post) => void;
 }
 
-const RelatedPosts: React.FC<RelatedPostsProps> = ({ 
+export const RelatedPosts: React.FC<RelatedPostsProps> = ({ 
   currentPost, 
   blog, 
   theme, 
   onPostClick 
 }) => {
   const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRelatedPosts = async () => {
       try {
         const allPosts = await sdk.get<Post>('posts');
-        const blogPosts = allPosts
-          .filter(p => 
-            p.blogId === blog.id && 
-            p.status === 'published' && 
-            p.id !== currentPost.id
-          );
+        const blogPosts = allPosts.filter(p => 
+          p.blogId === blog.id && 
+          p.id !== currentPost.id && 
+          p.status === 'published'
+        );
 
-        // Simple related posts algorithm - match by tags and recent posts
-        let related = blogPosts;
-
-        // If current post has tags, prioritize posts with matching tags
-        if (currentPost.tags && currentPost.tags.length > 0) {
-          related = related.sort((a, b) => {
-            const aMatches = a.tags ? a.tags.filter(tag => currentPost.tags!.includes(tag)).length : 0;
-            const bMatches = b.tags ? b.tags.filter(tag => currentPost.tags!.includes(tag)).length : 0;
-            
-            if (aMatches !== bMatches) {
-              return bMatches - aMatches;
-            }
-            
-            // Secondary sort by date
-            return new Date(b.publishedAt || b.createdAt).getTime() - 
-                   new Date(a.publishedAt || a.createdAt).getTime();
-          });
-        } else {
-          // Sort by date if no tags
-          related = related.sort((a, b) => 
-            new Date(b.publishedAt || b.createdAt).getTime() - 
-            new Date(a.publishedAt || a.createdAt).getTime()
+        // Simple related posts algorithm based on tags and categories
+        const scoredPosts = blogPosts.map(post => {
+          let score = 0;
+          
+          // Score based on shared tags
+          if (currentPost.tags && post.tags) {
+            const sharedTags = currentPost.tags.filter(tag => post.tags?.includes(tag));
+            score += sharedTags.length * 2;
+          }
+          
+          // Score based on shared categories
+          if (currentPost.categories && post.categories) {
+            const sharedCategories = currentPost.categories.filter(cat => post.categories?.includes(cat));
+            score += sharedCategories.length * 3;
+          }
+          
+          // Add recency bonus
+          const daysSincePublished = Math.floor(
+            (Date.now() - new Date(post.publishedAt || post.createdAt).getTime()) / (1000 * 60 * 60 * 24)
           );
+          score += Math.max(0, 30 - daysSincePublished) * 0.1;
+          
+          return { post, score };
+        });
+
+        // Sort by score and take top 3
+        const topRelated = scoredPosts
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 3)
+          .map(item => item.post);
+
+        // If we don't have enough related posts, fill with recent posts
+        if (topRelated.length < 3) {
+          const recentPosts = blogPosts
+            .filter(p => !topRelated.find(rp => rp.id === p.id))
+            .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime())
+            .slice(0, 3 - topRelated.length);
+          
+          topRelated.push(...recentPosts);
         }
 
-        setRelatedPosts(related.slice(0, 3));
+        setRelatedPosts(topRelated);
       } catch (error) {
         console.error('Error fetching related posts:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -70,60 +87,58 @@ const RelatedPosts: React.FC<RelatedPostsProps> = ({
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
       month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+      day: 'numeric'
     });
   };
 
-  const truncateContent = (content: string, maxLength: number = 120) => {
-    const textContent = content.replace(/<[^>]*>/g, '').replace(/[#*`]/g, '');
-    return textContent.length > maxLength 
-      ? textContent.substring(0, maxLength) + '...' 
-      : textContent;
+  const truncateText = (text: string, maxLength: number = 100) => {
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
 
-  if (relatedPosts.length === 0) return null;
+  if (loading || relatedPosts.length === 0) return null;
 
   return (
-    <Card className="mb-8">
+    <Card className="mt-8">
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <Tag className="w-5 h-5 mr-2" />
-          Related Posts
+        <CardTitle 
+          className="text-xl font-bold"
+          style={{ color: theme?.styles.primaryColor }}
+        >
+          Related Articles
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
           {relatedPosts.map((post) => (
-            <div
-              key={post.id}
-              className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+            <div 
+              key={post.id} 
+              className="group cursor-pointer p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:shadow-md"
               onClick={() => onPostClick(post)}
-              style={{ borderColor: theme?.styles.primaryColor + '20' }}
+              style={{ 
+                borderRadius: theme?.styles.borderRadius,
+                borderColor: theme?.styles.primaryColor + '20'
+              }}
             >
-              <div className="flex-1">
-                <h4 
-                  className="font-semibold text-lg mb-2 hover:opacity-80 transition-opacity"
-                  style={{ color: theme?.styles.primaryColor }}
-                >
+              <div className="space-y-3">
+                <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                   {post.title}
                 </h4>
                 
-                <p className="text-gray-600 text-sm mb-3">
-                  {post.excerpt || truncateContent(post.content)}
-                </p>
+                {post.excerpt && (
+                  <p className="text-sm text-gray-600 line-clamp-3">
+                    {truncateText(post.excerpt)}
+                  </p>
+                )}
                 
-                <div className="flex items-center space-x-4 text-xs text-gray-500 mb-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
                   <div className="flex items-center">
                     <Calendar className="w-3 h-3 mr-1" />
                     {formatDate(post.publishedAt || post.createdAt)}
                   </div>
                   {post.readingTime && (
-                    <div className="flex items-center">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {post.readingTime} min
-                    </div>
+                    <span>{post.readingTime} min read</span>
                   )}
                 </div>
                 
@@ -136,6 +151,11 @@ const RelatedPosts: React.FC<RelatedPostsProps> = ({
                     ))}
                   </div>
                 )}
+                
+                <div className="flex items-center text-sm text-blue-600 group-hover:text-blue-700 transition-colors">
+                  <span>Read more</span>
+                  <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
             </div>
           ))}

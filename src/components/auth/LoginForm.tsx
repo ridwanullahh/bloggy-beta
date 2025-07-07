@@ -13,10 +13,11 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
-  const { login, loading } = useAuth();
+  const { login, loading, needsOTP, otpEmail, verifyOTP } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    otp: ''
   });
   const [error, setError] = useState('');
 
@@ -25,7 +26,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     setError('');
     
     try {
-      await login(formData.email, formData.password);
+      if (needsOTP) {
+        await verifyOTP(otpEmail!, formData.otp);
+      } else {
+        await login(formData.email, formData.password);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     }
@@ -38,9 +43,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
+        <CardTitle>{needsOTP ? 'Verify OTP' : 'Sign In'}</CardTitle>
         <CardDescription>
-          Enter your credentials to access your account
+          {needsOTP 
+            ? `Enter the OTP sent to ${otpEmail}`
+            : 'Enter your credentials to access your account'
+          }
         </CardDescription>
       </CardHeader>
       
@@ -52,29 +60,46 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             </Alert>
           )}
           
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              required
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
-              required
-            />
-          </div>
+          {needsOTP ? (
+            <div className="space-y-2">
+              <Label htmlFor="otp">OTP Code</Label>
+              <Input
+                id="otp"
+                type="text"
+                placeholder="Enter 6-digit OTP"
+                value={formData.otp}
+                onChange={(e) => handleInputChange('otp', e.target.value)}
+                maxLength={6}
+                required
+              />
+            </div>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  required
+                />
+              </div>
+            </>
+          )}
         </CardContent>
         
         <CardFooter className="flex flex-col space-y-4">
@@ -86,21 +111,23 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
+                {needsOTP ? 'Verifying...' : 'Signing in...'}
               </>
             ) : (
-              'Sign In'
+              needsOTP ? 'Verify OTP' : 'Sign In'
             )}
           </Button>
           
-          <Button 
-            type="button" 
-            variant="ghost" 
-            className="w-full"
-            onClick={onToggleMode}
-          >
-            Don't have an account? Sign up
-          </Button>
+          {!needsOTP && (
+            <Button 
+              type="button" 
+              variant="ghost" 
+              className="w-full"
+              onClick={onToggleMode}
+            >
+              Don't have an account? Sign up
+            </Button>
+          )}
         </CardFooter>
       </form>
     </Card>

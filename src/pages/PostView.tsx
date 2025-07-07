@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -12,7 +13,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import TableOfContents from '../components/blog/TableOfContents';
-import { ReadingProgress } from '../components/blog/ReadingProgress';
+import ReadingProgress from '../components/blog/ReadingProgress';
 import SocialShare from '../components/blog/SocialShare';
 import RelatedPosts from '../components/blog/RelatedPosts';
 import SearchModal from '../components/blog/SearchModal';

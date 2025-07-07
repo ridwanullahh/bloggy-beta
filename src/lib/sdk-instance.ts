@@ -10,7 +10,7 @@ const sdkConfig = {
   mediaPath: 'media',
   auth: {
     requireEmailVerification: false,
-    otpTriggers: ['register']
+    otpTriggers: ['register', 'login']
   },
   schemas: {
     users: {
