@@ -1,3 +1,4 @@
+
 import UniversalSDK from './sdk';
 
 // SDK Configuration - Replace with your GitHub repo details
@@ -43,22 +44,11 @@ const sdkConfig = {
         customDomain: 'string',
         monetization: 'object',
         marketing: 'object',
-        settings: 'object',
-        darkMode: 'boolean',
-        aboutContent: 'string',
-        contactInfo: 'object'
+        settings: 'object'
       },
       defaults: {
         theme: 'modern',
         status: 'active',
-        darkMode: false,
-        aboutContent: '',
-        contactInfo: {
-          email: '',
-          phone: '',
-          address: '',
-          socialLinks: {}
-        },
         monetization: {
           enabled: false,
           allowFreeContent: true,
@@ -74,11 +64,7 @@ const sdkConfig = {
         settings: {
           allowComments: true,
           moderateComments: false,
-          seoOptimized: true,
-          showReadingTime: true,
-          enableTableOfContents: true,
-          enableSocialShare: true,
-          enableRelatedPosts: true
+          seoOptimized: true
         },
         createdAt: new Date().toISOString()
       }
@@ -98,15 +84,12 @@ const sdkConfig = {
         seo: 'object',
         scheduledFor: 'string',
         publishedAt: 'string',
-        monetization: 'object',
-        readingTime: 'number',
-        featuredImage: 'string'
+        monetization: 'object'
       },
       defaults: {
         status: 'draft',
         tags: [],
         categories: [],
-        readingTime: 0,
         seo: {
           metaTitle: '',
           metaDescription: '',
@@ -127,8 +110,7 @@ const sdkConfig = {
         slug: 'string',
         blogId: 'string',
         description: 'string',
-        color: 'string',
-        parentId: 'string'
+        color: 'string'
       },
       defaults: {
         color: '#3B82F6',
@@ -192,76 +174,6 @@ const sdkConfig = {
       },
       defaults: {
         status: 'unread',
-        createdAt: new Date().toISOString()
-      }
-    },
-    blogPages: {
-      required: ['blogId', 'type', 'title', 'content'],
-      types: {
-        blogId: 'string',
-        type: 'string',
-        title: 'string',
-        content: 'string',
-        slug: 'string',
-        isEnabled: 'boolean',
-        customFields: 'object'
-      },
-      defaults: {
-        isEnabled: true,
-        customFields: {},
-        createdAt: new Date().toISOString()
-      }
-    },
-    blogSettings: {
-      required: ['blogId'],
-      types: {
-        blogId: 'string',
-        customDomain: 'string',
-        favicon: 'string',
-        logo: 'string',
-        socialLinks: 'object',
-        analyticsCode: 'string',
-        customCSS: 'string',
-        customJS: 'string',
-        seoSettings: 'object'
-      },
-      defaults: {
-        socialLinks: {},
-        seoSettings: {
-          sitemap: true,
-          robotsTxt: true,
-          structuredData: true
-        },
-        createdAt: new Date().toISOString()
-      }
-    },
-    userBookmarks: {
-      required: ['userId', 'postId'],
-      types: {
-        userId: 'string',
-        postId: 'string',
-        blogId: 'string',
-        notes: 'string'
-      },
-      defaults: {
-        notes: '',
-        createdAt: new Date().toISOString()
-      }
-    },
-    userAnnotations: {
-      required: ['userId', 'postId', 'selectedText', 'annotation'],
-      types: {
-        userId: 'string',
-        postId: 'string',
-        blogId: 'string',
-        selectedText: 'string',
-        annotation: 'string',
-        position: 'object',
-        highlightColor: 'string'
-      },
-      defaults: {
-        highlightColor: '#FFD700',
-        position: {},
         createdAt: new Date().toISOString()
       }
     },
