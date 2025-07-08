@@ -66,8 +66,18 @@ export interface BlogTheme {
   styles: {
     primaryColor: string;
     secondaryColor: string;
+    accentColor: string;
+    textColor: string;
     fontFamily: string;
+    headingFont: string;
     layout: 'grid' | 'list' | 'magazine' | 'minimal';
+    borderRadius: string;
+    shadows: string;
+    spacing: string;
+    cardStyle: string;
+    buttonStyle: string;
+    headerStyle: string;
+    navigationStyle: string;
   };
 }
 

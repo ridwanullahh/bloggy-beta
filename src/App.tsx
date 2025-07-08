@@ -16,6 +16,7 @@ import BlogView from "./pages/BlogView";
 import PostView from "./pages/PostView";
 import BlogAbout from "./pages/BlogAbout";
 import BlogContact from "./pages/BlogContact";
+import BlogSettings from "./pages/BlogSettings";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,12 @@ const AppRoutes = () => {
       <Route path="/blog/:blogSlug/post/:postId/edit" element={
         <ProtectedRoute>
           <PostEditor />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:slug/settings" element={
+        <ProtectedRoute>
+          <BlogSettings />
         </ProtectedRoute>
       } />
       
