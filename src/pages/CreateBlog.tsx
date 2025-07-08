@@ -28,7 +28,6 @@ const CreateBlog: React.FC = () => {
     slug: '',
     description: '',
     theme: 'modern',
-    customDomain: '',
     monetizationEnabled: false,
     allowFreeContent: true,
     subscriptionPrice: 0,
@@ -82,7 +81,6 @@ const CreateBlog: React.FC = () => {
         ownerId: user.id!,
         theme: formData.theme,
         status: 'active',
-        customDomain: formData.customDomain || undefined,
         monetization: {
           enabled: formData.monetizationEnabled,
           allowFreeContent: formData.allowFreeContent,
@@ -179,15 +177,6 @@ const CreateBlog: React.FC = () => {
                 />
               </div>
               
-              <div>
-                <Label htmlFor="customDomain">Custom Domain (Optional)</Label>
-                <Input
-                  id="customDomain"
-                  value={formData.customDomain}
-                  onChange={(e) => setFormData(prev => ({ ...prev, customDomain: e.target.value }))}
-                  placeholder="blog.yourdomain.com"
-                />
-              </div>
             </CardContent>
           </Card>
 

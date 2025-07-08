@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +16,9 @@ import PostView from "./pages/PostView";
 import BlogAbout from "./pages/BlogAbout";
 import BlogContact from "./pages/BlogContact";
 import BlogSettings from "./pages/BlogSettings";
+import UserDashboard from "./pages/UserDashboard";
+import BlogArchive from "./pages/BlogArchive";
+import PageManager from "./pages/PageManager";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +82,12 @@ const AppRoutes = () => {
         </ProtectedRoute>
       } />
       
+      <Route path="/user/dashboard" element={
+        <ProtectedRoute>
+          <UserDashboard />
+        </ProtectedRoute>
+      } />
+      
       <Route path="/create-blog" element={
         <ProtectedRoute>
           <CreateBlog />
@@ -89,6 +97,18 @@ const AppRoutes = () => {
       <Route path="/blog/:slug/manage" element={
         <ProtectedRoute>
           <BlogManagement />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:slug/pages" element={
+        <ProtectedRoute>
+          <PageManager />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:slug/pages/:pageType" element={
+        <ProtectedRoute>
+          <PageManager />
         </ProtectedRoute>
       } />
       
@@ -111,6 +131,7 @@ const AppRoutes = () => {
       } />
       
       {/* Blog public pages */}
+      <Route path="/:blogSlug/archive" element={<BlogArchive />} />
       <Route path="/:blogSlug/about" element={<BlogAbout />} />
       <Route path="/:blogSlug/contact" element={<BlogContact />} />
       <Route path="/:blogSlug/:postSlug" element={<PostView />} />

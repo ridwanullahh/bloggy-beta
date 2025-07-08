@@ -331,6 +331,101 @@ const sdkConfig = {
       defaults: {
         date: new Date().toISOString()
       }
+    },
+    bookmarks: {
+      required: ['userId', 'postId', 'blogId'],
+      types: {
+        userId: 'string',
+        postId: 'string',
+        blogId: 'string',
+        title: 'string',
+        excerpt: 'string',
+        url: 'string'
+      },
+      defaults: {
+        createdAt: new Date().toISOString()
+      }
+    },
+    notes: {
+      required: ['userId', 'postId', 'content'],
+      types: {
+        userId: 'string',
+        postId: 'string',
+        blogId: 'string',
+        content: 'string',
+        isPrivate: 'boolean',
+        tags: 'array'
+      },
+      defaults: {
+        isPrivate: true,
+        tags: [],
+        createdAt: new Date().toISOString()
+      }
+    },
+    userPreferences: {
+      required: ['userId'],
+      types: {
+        userId: 'string',
+        theme: 'string',
+        language: 'string',
+        notifications: 'object',
+        privacy: 'object',
+        display: 'object'
+      },
+      defaults: {
+        theme: 'light',
+        language: 'en',
+        notifications: {
+          email: true,
+          push: true,
+          newPosts: true,
+          comments: true
+        },
+        privacy: {
+          showProfile: true,
+          showActivity: false
+        },
+        display: {
+          density: 'comfortable',
+          fontSize: 'medium'
+        },
+        createdAt: new Date().toISOString()
+      }
+    },
+    blogPages: {
+      required: ['blogId', 'type', 'title', 'content'],
+      types: {
+        blogId: 'string',
+        type: 'string',
+        title: 'string',
+        content: 'string',
+        slug: 'string',
+        isPublished: 'boolean',
+        seo: 'object'
+      },
+      defaults: {
+        isPublished: true,
+        seo: {
+          metaTitle: '',
+          metaDescription: '',
+          keywords: []
+        },
+        createdAt: new Date().toISOString()
+      }
+    },
+    searches: {
+      required: ['blogId', 'query'],
+      types: {
+        blogId: 'string',
+        query: 'string',
+        results: 'array',
+        userId: 'string',
+        ipAddress: 'string'
+      },
+      defaults: {
+        results: [],
+        createdAt: new Date().toISOString()
+      }
     }
   }
 };

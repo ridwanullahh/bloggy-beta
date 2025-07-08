@@ -123,3 +123,81 @@ export interface Tag {
   color?: string;
   createdAt: string;
 }
+
+export interface BlogPage {
+  id: string;
+  uid: string;
+  blogId: string;
+  type: 'about' | 'contact' | 'terms' | 'privacy' | 'custom';
+  title: string;
+  content: string;
+  slug: string;
+  isPublished: boolean;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface Bookmark {
+  id: string;
+  uid: string;
+  userId: string;
+  postId: string;
+  blogId: string;
+  title: string;
+  excerpt?: string;
+  url: string;
+  createdAt: string;
+}
+
+export interface Note {
+  id: string;
+  uid: string;
+  userId: string;
+  postId: string;
+  blogId?: string;
+  content: string;
+  isPrivate: boolean;
+  tags: string[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface UserPreferences {
+  id: string;
+  uid: string;
+  userId: string;
+  theme: 'light' | 'dark' | 'auto';
+  language: string;
+  notifications: {
+    email: boolean;
+    push: boolean;
+    newPosts: boolean;
+    comments: boolean;
+  };
+  privacy: {
+    showProfile: boolean;
+    showActivity: boolean;
+  };
+  display: {
+    density: 'compact' | 'comfortable' | 'spacious';
+    fontSize: 'small' | 'medium' | 'large';
+  };
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface SearchRecord {
+  id: string;
+  uid: string;
+  blogId: string;
+  query: string;
+  results: any[];
+  userId?: string;
+  ipAddress?: string;
+  createdAt: string;
+}
