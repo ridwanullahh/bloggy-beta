@@ -9,8 +9,10 @@ import { useToast } from '../hooks/use-toast';
 import { Blog, Post, BlogSubscriber } from '../types/blog';
 import { getThemeById } from '../constants/themes';
 import sdk from '../lib/sdk-instance';
-import { Calendar, User, Tag, Mail, Lock, Menu, X, Home, FileText, Phone } from 'lucide-react';
+import { Calendar, User, Tag, Mail, Lock, Menu, X, Home, FileText, Phone, Search, Moon, Sun } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
+import { SearchModal } from '../components/blog/SearchModal';
+import { MobileNavigation } from '../components/blog/MobileNavigation';
 
 const BlogView: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -23,6 +25,8 @@ const BlogView: React.FC = () => {
   const [subscriberEmail, setSubscriberEmail] = useState('');
   const [subscribing, setSubscribing] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     const fetchBlogData = async () => {
@@ -169,6 +173,13 @@ const BlogView: React.FC = () => {
                 Home
               </button>
               <button 
+                onClick={() => navigate(`/${slug}/archive`)}
+                className="text-white hover:text-gray-200 flex items-center"
+              >
+                <FileText className="w-4 h-4 mr-1" />
+                Archive
+              </button>
+              <button 
                 onClick={() => navigate(`/${slug}/about`)}
                 className="text-white hover:text-gray-200 flex items-center"
               >
@@ -182,58 +193,40 @@ const BlogView: React.FC = () => {
                 <Phone className="w-4 h-4 mr-1" />
                 Contact
               </button>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
               <button 
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="text-white"
+                onClick={() => setSearchModalOpen(true)}
+                className="text-white hover:text-gray-200 flex items-center"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                <Search className="w-4 h-4 mr-1" />
+                Search
+              </button>
+              <button 
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className="text-white hover:text-gray-200 flex items-center"
+              >
+                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
             </div>
-          </div>
 
-          {/* Mobile Navigation */}
-          {mobileMenuOpen && (
-            <div className="md:hidden pb-4">
-              <div className="flex flex-col space-y-2">
-                <button 
-                  onClick={() => {
-                    navigate(`/${slug}`);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="text-white hover:text-gray-200 flex items-center py-2"
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  Home
-                </button>
-                <button 
-                  onClick={() => {
-                    navigate(`/${slug}/about`);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="text-white hover:text-gray-200 flex items-center py-2"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  About
-                </button>
-                <button 
-                  onClick={() => {
-                    navigate(`/${slug}/contact`);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="text-white hover:text-gray-200 flex items-center py-2"
-                >
-                  <Phone className="w-4 h-4 mr-2" />
-                  Contact
-                </button>
-              </div>
-            </div>
-          )}
+            {/* Mobile Navigation Component */}
+            <MobileNavigation
+              blog={blog}
+              blogSlug={slug}
+              onSearch={() => setSearchModalOpen(true)}
+              onThemeToggle={() => setIsDarkMode(!isDarkMode)}
+              isDarkMode={isDarkMode}
+            />
+          </div>
         </div>
       </nav>
+
+      {/* Search Modal */}
+      <SearchModal
+        isOpen={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
+        blog={blog}
+        blogSlug={slug || ''}
+      />
 
       {/* Blog Header */}
       <div className="bg-white border-b" style={{ backgroundColor: theme?.styles.primaryColor || '#1F2937' }}>

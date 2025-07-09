@@ -14,7 +14,7 @@ import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import sdk from '../lib/sdk-instance';
 import { Save, Eye, Calendar, Tags, Folder, Settings, DollarSign } from 'lucide-react';
-import RichTextEditor from '../components/editor/RichTextEditor';
+import { ModernRichTextEditor } from '../components/editor/ModernRichTextEditor';
 import { SocialMediaService } from '../services/socialMediaService';
 
 const PostEditor: React.FC = () => {
@@ -325,11 +325,14 @@ const PostEditor: React.FC = () => {
                 
                 <div>
                   <Label htmlFor="content">Content *</Label>
-                  <RichTextEditor
+                  <ModernRichTextEditor
                     value={formData.content}
                     onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
                     placeholder="Write your post content here..."
                     height={500}
+                    onSave={() => handleSave(false)}
+                    isSaving={saving}
+                    autosave={true}
                   />
                 </div>
               </CardContent>

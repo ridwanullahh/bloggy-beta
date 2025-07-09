@@ -299,26 +299,71 @@ const BlogSettings: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {BLOG_THEMES.map(theme => (
                     <div 
                       key={theme.id}
-                      className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                        formData.theme === theme.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                        formData.theme === theme.id ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => setFormData(prev => ({ ...prev, theme: theme.id }))}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-3">
                         <h3 className="font-medium">{theme.name}</h3>
+                        <div className="flex space-x-1">
+                          <div 
+                            className="w-3 h-3 rounded-full border"
+                            style={{ backgroundColor: theme.styles.primaryColor }}
+                          />
+                          <div 
+                            className="w-3 h-3 rounded-full border"
+                            style={{ backgroundColor: theme.styles.secondaryColor }}
+                          />
+                          <div 
+                            className="w-3 h-3 rounded-full border"
+                            style={{ backgroundColor: theme.styles.accentColor }}
+                          />
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">{theme.description}</p>
+                      
+                      {/* Theme Preview */}
+                      <div 
+                        className="w-full h-24 rounded border mb-2 p-2 text-xs"
+                        style={{ 
+                          backgroundColor: theme.styles.secondaryColor,
+                          fontFamily: theme.styles.fontFamily 
+                        }}
+                      >
                         <div 
-                          className="w-4 h-4 rounded-full border-2"
+                          className="w-full h-4 rounded mb-1"
                           style={{ backgroundColor: theme.styles.primaryColor }}
                         />
+                        <div className="space-y-1">
+                          <div 
+                            className="w-3/4 h-2 rounded"
+                            style={{ backgroundColor: theme.styles.textColor, opacity: 0.7 }}
+                          />
+                          <div 
+                            className="w-1/2 h-2 rounded"
+                            style={{ backgroundColor: theme.styles.textColor, opacity: 0.5 }}
+                          />
+                        </div>
+                        <div 
+                          className="w-16 h-4 rounded mt-1"
+                          style={{ backgroundColor: theme.styles.accentColor }}
+                        />
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">{theme.description}</p>
+                      
                       <div className="text-xs text-gray-500">
                         {theme.styles.fontFamily} • {theme.styles.layout}
                       </div>
+                      
+                      {formData.theme === theme.id && (
+                        <div className="mt-2 text-xs text-blue-600 font-medium">
+                          ✓ Currently Selected
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
