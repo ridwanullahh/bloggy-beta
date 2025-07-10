@@ -492,22 +492,44 @@ const BlogSettings: React.FC = () => {
                     <Label htmlFor="emailMarketing">Email Marketing</Label>
                     <p className="text-sm text-gray-500">Send newsletters to subscribers</p>
                   </div>
-                  <Switch
-                    id="emailMarketing"
-                    checked={formData.emailMarketing}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, emailMarketing: checked }))}
-                  />
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="emailMarketing"
+                      checked={formData.emailMarketing}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, emailMarketing: checked }))}
+                    />
+                    {formData.emailMarketing && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/blog/${blog.slug}/email-marketing`)}
+                      >
+                        Manage
+                      </Button>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="socialAutoPost">Social Auto-Post</Label>
                     <p className="text-sm text-gray-500">Automatically share new posts on social media</p>
                   </div>
-                  <Switch
-                    id="socialAutoPost"
-                    checked={formData.socialAutoPost}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, socialAutoPost: checked }))}
-                  />
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="socialAutoPost"
+                      checked={formData.socialAutoPost}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, socialAutoPost: checked }))}
+                    />
+                    {formData.socialAutoPost && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/blog/${blog.slug}/social-media`)}
+                      >
+                        Manage
+                      </Button>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div>

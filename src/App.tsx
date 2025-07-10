@@ -19,6 +19,8 @@ import BlogSettings from "./pages/BlogSettings";
 import UserDashboard from "./pages/UserDashboard";
 import BlogArchive from "./pages/BlogArchive";
 import PageManager from "./pages/PageManager";
+import SocialMediaManager from "./pages/SocialMediaManager";
+import EmailMarketingManager from "./pages/EmailMarketingManager";
 
 const queryClient = new QueryClient();
 
@@ -130,7 +132,20 @@ const AppRoutes = () => {
         </ProtectedRoute>
       } />
       
+      <Route path="/blog/:slug/social-media" element={
+        <ProtectedRoute>
+          <SocialMediaManager />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/blog/:slug/email-marketing" element={
+        <ProtectedRoute>
+          <EmailMarketingManager />
+        </ProtectedRoute>
+      } />
+      
       {/* Blog public pages */}
+      <Route path="/:blogSlug/dashboard" element={<UserDashboard />} />
       <Route path="/:blogSlug/archive" element={<BlogArchive />} />
       <Route path="/:blogSlug/about" element={<BlogAbout />} />
       <Route path="/:blogSlug/contact" element={<BlogContact />} />
