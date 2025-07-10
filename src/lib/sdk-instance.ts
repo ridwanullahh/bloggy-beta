@@ -3,9 +3,9 @@ import UniversalSDK from './sdk';
 
 // SDK Configuration - Replace with your GitHub repo details
 const sdkConfig = {
-  owner: 'ridwanullahh', // Replace with your GitHub username
-  repo: 'bloggybetadb', // Replace with your repository name
-  token: process.env.GITHUB_TOKEN || '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', // Replace with your GitHub token
+  owner: import.meta.env.VITE_GITHUB_OWNER, // Replace with your GitHub username
+  repo: import.meta.env.VITE_GITHUB_REPO, // Replace with your repository name
+  token: import.meta.env.VITE_GITHUB_TOKEN, // Replace with your GitHub token
   branch: 'main',
   basePath: 'db',
   mediaPath: 'media',
