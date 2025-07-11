@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { BlogSubscriberAuthProvider } from "./contexts/BlogSubscriberAuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -17,6 +18,8 @@ import BlogAbout from "./pages/BlogAbout";
 import BlogContact from "./pages/BlogContact";
 import BlogSettings from "./pages/BlogSettings";
 import UserDashboard from "./pages/UserDashboard";
+import BlogAuth from "./pages/BlogAuth";
+import BlogSubscriberDashboard from "./pages/BlogSubscriberDashboard";
 import BlogArchive from "./pages/BlogArchive";
 import PageManager from "./pages/PageManager";
 import SocialMediaManager from "./pages/SocialMediaManager";
@@ -145,7 +148,8 @@ const AppRoutes = () => {
       } />
       
       {/* Blog public pages */}
-      <Route path="/:blogSlug/dashboard" element={<UserDashboard />} />
+      <Route path="/:blogSlug/auth" element={<BlogAuth />} />
+      <Route path="/:blogSlug/dashboard" element={<BlogSubscriberDashboard />} />
       <Route path="/:blogSlug/archive" element={<BlogArchive />} />
       <Route path="/:blogSlug/about" element={<BlogAbout />} />
       <Route path="/:blogSlug/contact" element={<BlogContact />} />
@@ -164,11 +168,13 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <BlogSubscriberAuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </BlogSubscriberAuthProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

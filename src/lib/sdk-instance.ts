@@ -332,6 +332,61 @@ const sdkConfig = {
         date: new Date().toISOString()
       }
     },
+    blogSubscribers: {
+      required: ['email', 'blogId'],
+      types: {
+        email: 'string',
+        blogId: 'string',
+        status: 'string',
+        subscriptionTier: 'string',
+        subscribedAt: 'string',
+        preferences: 'object',
+        subscriberType: 'string'
+      },
+      defaults: {
+        status: 'active',
+        subscriptionTier: 'free',
+        subscribedAt: new Date().toISOString(),
+        subscriberType: 'blog_subscriber',
+        preferences: {
+          emailNotifications: true,
+          newPosts: true,
+          newsletter: true,
+          categories: []
+        },
+        createdAt: new Date().toISOString()
+      }
+    },
+    subscriberSessions: {
+      required: ['subscriberId', 'blogId'],
+      types: {
+        subscriberId: 'string',
+        blogId: 'string',
+        sessionToken: 'string',
+        expiresAt: 'string'
+      },
+      defaults: {
+        createdAt: new Date().toISOString()
+      }
+    },
+    smtpConfigurations: {
+      required: ['blogId', 'host', 'port', 'user', 'fromEmail'],
+      types: {
+        blogId: 'string',
+        host: 'string',
+        port: 'number',
+        user: 'string',
+        pass: 'string',
+        fromEmail: 'string',
+        fromName: 'string',
+        secure: 'boolean'
+      },
+      defaults: {
+        secure: true,
+        fromName: 'Blog Newsletter',
+        createdAt: new Date().toISOString()
+      }
+    },
     bookmarks: {
       required: ['userId', 'postId', 'blogId'],
       types: {
