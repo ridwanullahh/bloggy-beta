@@ -9,6 +9,21 @@ export interface Blog {
   theme: string;
   status: 'active' | 'inactive' | 'suspended';
   customDomain?: string;
+  customization?: {
+    brandColors?: {
+      primary: string;
+      secondary: string;
+      accent: string;
+    };
+    homepageSettings?: {
+      showFeaturedPosts: boolean;
+      showRecentPosts: boolean;
+      showCategories: boolean;
+      showNewsletter: boolean;
+      showTrending: boolean;
+      heroStyle: 'minimal' | 'full' | 'banner';
+    };
+  };
   monetization?: {
     enabled: boolean;
     allowFreeContent: boolean;

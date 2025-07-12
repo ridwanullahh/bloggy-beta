@@ -13,7 +13,7 @@ import { Badge } from '../components/ui/badge';
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import sdk from '../lib/sdk-instance';
-import { Save, Eye, Calendar, Tags, Folder, Settings, DollarSign } from 'lucide-react';
+import { Save, Eye, Calendar, Tags, Folder, Settings, DollarSign, Share2, Twitter, Facebook, Linkedin } from 'lucide-react';
 import { ModernRichTextEditor } from '../components/editor/ModernRichTextEditor';
 import { SocialMediaService } from '../services/socialMediaService';
 
@@ -47,7 +47,11 @@ const PostEditor: React.FC = () => {
     // Monetization fields
     isPaid: false,
     price: 0,
-    currency: 'NGN'
+    currency: 'NGN',
+    // Social media fields
+    autoPostToSocial: false,
+    customSocialMessage: '',
+    selectedPlatforms: [] as string[]
   });
 
   useEffect(() => {
@@ -101,7 +105,11 @@ const PostEditor: React.FC = () => {
               seoKeywords: foundPost.seo?.keywords?.join(', ') || '',
               isPaid: foundPost.monetization?.isPaid || false,
               price: foundPost.monetization?.price || 0,
-              currency: foundPost.monetization?.currency || 'NGN'
+              currency: foundPost.monetization?.currency || 'NGN',
+              // Social media fields - defaults for existing posts
+              autoPostToSocial: false,
+              customSocialMessage: '',
+              selectedPlatforms: []
             });
           }
         }
@@ -474,6 +482,93 @@ const PostEditor: React.FC = () => {
                         </Select>
                       </div>
                     </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Social Media Posting */}
+            {blog.marketing?.socialAutoPost && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Social Media
+                  </CardTitle>
+                  <CardDescription>Share this post on social platforms</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="autoPostToSocial"
+                      checked={formData.autoPostToSocial}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, autoPostToSocial: checked }))}
+                    />
+                    <Label htmlFor="autoPostToSocial">Auto-post when published</Label>
+                  </div>
+                  
+                  {formData.autoPostToSocial && (
+                    <>
+                      <div>
+                        <Label>Select Platforms</Label>
+                        <div className="space-y-2 mt-2">
+                          {[
+                            { id: 'twitter', name: 'Twitter', icon: Twitter },
+                            { id: 'facebook', name: 'Facebook', icon: Facebook },
+                            { id: 'linkedin', name: 'LinkedIn', icon: Linkedin }
+                          ].map((platform) => (
+                            <div key={platform.id} className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                id={`platform-${platform.id}`}
+                                checked={formData.selectedPlatforms.includes(platform.id)}
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked;
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    selectedPlatforms: isChecked
+                                      ? [...prev.selectedPlatforms, platform.id]
+                                      : prev.selectedPlatforms.filter(p => p !== platform.id)
+                                  }));
+                                }}
+                                className="rounded"
+                              />
+                              <platform.icon className="w-4 h-4" />
+                              <Label 
+                                htmlFor={`platform-${platform.id}`}
+                                className="text-sm cursor-pointer"
+                              >
+                                {platform.name}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="customSocialMessage">Custom Message (Optional)</Label>
+                        <Textarea
+                          id="customSocialMessage"
+                          value={formData.customSocialMessage}
+                          onChange={(e) => setFormData(prev => ({ ...prev, customSocialMessage: e.target.value }))}
+                          placeholder="Custom message for social media (defaults to post title + link)"
+                          rows={3}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Leave empty to use post title automatically
+                        </p>
+                      </div>
+                      
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <h4 className="font-medium text-blue-900 text-sm mb-1">Preview</h4>
+                        <p className="text-blue-800 text-sm">
+                          {formData.customSocialMessage || formData.title || 'Your post title will appear here'}
+                        </p>
+                        <p className="text-blue-600 text-xs mt-1">
+                          {window.location.origin}/{blog.slug}/{formData.slug || 'post-url'}
+                        </p>
+                      </div>
+                    </>
                   )}
                 </CardContent>
               </Card>

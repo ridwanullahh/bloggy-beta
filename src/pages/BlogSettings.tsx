@@ -39,6 +39,18 @@ const BlogSettings: React.FC = () => {
     description: '',
     theme: '',
     customDomain: '',
+    // Brand colors
+    primaryColor: '',
+    secondaryColor: '',
+    accentColor: '',
+    // Homepage settings
+    showFeaturedPosts: true,
+    showRecentPosts: true,
+    showCategories: true,
+    showNewsletter: true,
+    showTrending: true,
+    heroStyle: 'minimal' as 'minimal' | 'full' | 'banner',
+    // Other settings
     allowComments: true,
     moderateComments: false,
     seoOptimized: true,
@@ -76,6 +88,18 @@ const BlogSettings: React.FC = () => {
           description: foundBlog.description || '',
           theme: foundBlog.theme,
           customDomain: foundBlog.customDomain || '',
+          // Brand colors
+          primaryColor: foundBlog.customization?.brandColors?.primary || '',
+          secondaryColor: foundBlog.customization?.brandColors?.secondary || '',
+          accentColor: foundBlog.customization?.brandColors?.accent || '',
+          // Homepage settings
+          showFeaturedPosts: foundBlog.customization?.homepageSettings?.showFeaturedPosts !== false,
+          showRecentPosts: foundBlog.customization?.homepageSettings?.showRecentPosts !== false,
+          showCategories: foundBlog.customization?.homepageSettings?.showCategories !== false,
+          showNewsletter: foundBlog.customization?.homepageSettings?.showNewsletter !== false,
+          showTrending: foundBlog.customization?.homepageSettings?.showTrending !== false,
+          heroStyle: foundBlog.customization?.homepageSettings?.heroStyle || 'minimal',
+          // Other settings
           allowComments: foundBlog.settings?.allowComments || true,
           moderateComments: foundBlog.settings?.moderateComments || false,
           seoOptimized: foundBlog.settings?.seoOptimized || true,
@@ -114,6 +138,21 @@ const BlogSettings: React.FC = () => {
         description: formData.description,
         theme: formData.theme,
         customDomain: formData.customDomain,
+        customization: {
+          brandColors: {
+            primary: formData.primaryColor,
+            secondary: formData.secondaryColor,
+            accent: formData.accentColor
+          },
+          homepageSettings: {
+            showFeaturedPosts: formData.showFeaturedPosts,
+            showRecentPosts: formData.showRecentPosts,
+            showCategories: formData.showCategories,
+            showNewsletter: formData.showNewsletter,
+            showTrending: formData.showTrending,
+            heroStyle: formData.heroStyle
+          }
+        },
         settings: {
           allowComments: formData.allowComments,
           moderateComments: formData.moderateComments,
@@ -366,6 +405,152 @@ const BlogSettings: React.FC = () => {
                       )}
                     </div>
                   ))}
+                </div>
+
+                {/* Brand Color Customization */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium mb-4">Brand Colors</h3>
+                  <p className="text-sm text-gray-600 mb-4">Override theme colors with your brand colors</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="primaryColor">Primary Color</Label>
+                      <div className="flex space-x-2">
+                        <Input
+                          id="primaryColor"
+                          type="color"
+                          value={formData.primaryColor}
+                          onChange={(e) => setFormData(prev => ({ ...prev, primaryColor: e.target.value }))}
+                          className="w-16 h-10 p-1 border rounded"
+                        />
+                        <Input
+                          value={formData.primaryColor}
+                          onChange={(e) => setFormData(prev => ({ ...prev, primaryColor: e.target.value }))}
+                          placeholder="#1F2937"
+                          className="flex-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="secondaryColor">Secondary Color</Label>
+                      <div className="flex space-x-2">
+                        <Input
+                          id="secondaryColor"
+                          type="color"
+                          value={formData.secondaryColor}
+                          onChange={(e) => setFormData(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                          className="w-16 h-10 p-1 border rounded"
+                        />
+                        <Input
+                          value={formData.secondaryColor}
+                          onChange={(e) => setFormData(prev => ({ ...prev, secondaryColor: e.target.value }))}
+                          placeholder="#F8FAFC"
+                          className="flex-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="accentColor">Accent Color</Label>
+                      <div className="flex space-x-2">
+                        <Input
+                          id="accentColor"
+                          type="color"
+                          value={formData.accentColor}
+                          onChange={(e) => setFormData(prev => ({ ...prev, accentColor: e.target.value }))}
+                          className="w-16 h-10 p-1 border rounded"
+                        />
+                        <Input
+                          value={formData.accentColor}
+                          onChange={(e) => setFormData(prev => ({ ...prev, accentColor: e.target.value }))}
+                          placeholder="#3B82F6"
+                          className="flex-1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Homepage Settings */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium mb-4">Homepage Layout</h3>
+                  <p className="text-sm text-gray-600 mb-4">Control which sections appear on your blog homepage</p>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="heroStyle">Hero Style</Label>
+                      <Select value={formData.heroStyle} onValueChange={(value: 'minimal' | 'full' | 'banner') => setFormData(prev => ({ ...prev, heroStyle: value }))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="minimal">Minimal</SelectItem>
+                          <SelectItem value="full">Full Hero</SelectItem>
+                          <SelectItem value="banner">Banner Style</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label htmlFor="showFeaturedPosts">Featured Posts</Label>
+                          <p className="text-sm text-gray-500">Show featured posts section</p>
+                        </div>
+                        <Switch
+                          id="showFeaturedPosts"
+                          checked={formData.showFeaturedPosts}
+                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showFeaturedPosts: checked }))}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label htmlFor="showRecentPosts">Recent Posts</Label>
+                          <p className="text-sm text-gray-500">Show recent posts section</p>
+                        </div>
+                        <Switch
+                          id="showRecentPosts"
+                          checked={formData.showRecentPosts}
+                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showRecentPosts: checked }))}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label htmlFor="showCategories">Categories</Label>
+                          <p className="text-sm text-gray-500">Show categories section</p>
+                        </div>
+                        <Switch
+                          id="showCategories"
+                          checked={formData.showCategories}
+                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showCategories: checked }))}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label htmlFor="showTrending">Trending Posts</Label>
+                          <p className="text-sm text-gray-500">Show trending/popular posts</p>
+                        </div>
+                        <Switch
+                          id="showTrending"
+                          checked={formData.showTrending}
+                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showTrending: checked }))}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label htmlFor="showNewsletter">Newsletter Signup</Label>
+                          <p className="text-sm text-gray-500">Show newsletter subscription form</p>
+                        </div>
+                        <Switch
+                          id="showNewsletter"
+                          checked={formData.showNewsletter}
+                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showNewsletter: checked }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>

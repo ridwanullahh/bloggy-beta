@@ -23,10 +23,13 @@ export const ThemeRenderer: React.FC<ThemeRendererProps> = ({
   onPostClick,
   customColors
 }) => {
-  const featuredPosts = posts.slice(0, 3);
-  const recentPosts = posts.slice(0, 10);
-  const mostViewedPosts = posts.slice(0, 5);
-  const categories = []; // Will be populated from actual categories
+  // Filter posts based on homepage settings
+  const homepageSettings = blog.customization?.homepageSettings;
+  
+  const featuredPosts = homepageSettings?.showFeaturedPosts !== false ? posts.slice(0, 3) : [];
+  const recentPosts = homepageSettings?.showRecentPosts !== false ? posts.slice(0, 10) : [];
+  const mostViewedPosts = homepageSettings?.showTrending !== false ? posts.slice(0, 5) : [];
+  const categories = homepageSettings?.showCategories !== false ? [] : []; // Will be populated from actual categories
 
   const themeProps = {
     blog,

@@ -1,18 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { useToast } from '../hooks/use-toast';
-import { Blog, Post, BlogSubscriber } from '../types/blog';
+import { Blog, Post, BlogSubscriber, Category } from '../types/blog';
 import { getThemeById } from '../constants/themes';
 import sdk from '../lib/sdk-instance';
 import { Calendar, User, Tag, Mail, Lock, Menu, X, Home, FileText, Phone, Search, Moon, Sun } from 'lucide-react';
-import MDEditor from '@uiw/react-md-editor';
 import { SearchModal } from '../components/blog/SearchModal';
 import { MobileNavigation } from '../components/blog/MobileNavigation';
+import { ThemeRenderer } from '../components/themes/ThemeRenderer';
 
 const BlogView: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -21,10 +19,10 @@ const BlogView: React.FC = () => {
   
   const [blog, setBlog] = useState<Blog | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [subscriberEmail, setSubscriberEmail] = useState('');
   const [subscribing, setSubscribing] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -44,12 +42,23 @@ const BlogView: React.FC = () => {
 
         setBlog(foundBlog);
 
+        // Fetch posts
         const allPosts = await sdk.get<Post>('posts');
         const blogPosts = allPosts
           .filter(p => p.blogId === foundBlog.id && p.status === 'published')
           .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime());
         
         setPosts(blogPosts);
+
+        // Fetch categories
+        try {
+          const allCategories = await sdk.get<Category>('categories');
+          const blogCategories = allCategories.filter(c => c.blogId === foundBlog.id);
+          setCategories(blogCategories);
+        } catch (error) {
+          console.log('Categories not found, setting empty array');
+          setCategories([]);
+        }
       } catch (error) {
         console.error('Error fetching blog data:', error);
         setBlog(null);
@@ -100,21 +109,6 @@ const BlogView: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const truncateContent = (content: string, maxLength: number = 200) => {
-    const textContent = content.replace(/<[^>]*>/g, '').replace(/[#*`]/g, '');
-    return textContent.length > maxLength 
-      ? textContent.substring(0, maxLength) + '...' 
-      : textContent;
-  };
-
   const handlePostClick = (post: Post) => {
     navigate(`/${slug}/${post.slug}`);
   };
@@ -142,15 +136,13 @@ const BlogView: React.FC = () => {
   }
 
   const theme = getThemeById(blog.theme);
+  const customColors = blog.customization?.brandColors;
 
   return (
-    <div className="min-h-screen" style={{ 
-      backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-      fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-    }}>
+    <div className="min-h-screen">
       {/* Navigation */}
       <nav className="bg-white border-b sticky top-0 z-50" style={{ 
-        backgroundColor: theme?.styles.primaryColor || '#1F2937',
+        backgroundColor: customColors?.primary || theme?.styles.primaryColor || '#1F2937',
       }}>
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
@@ -228,120 +220,43 @@ const BlogView: React.FC = () => {
         blogSlug={slug || ''}
       />
 
-      {/* Blog Header */}
-      <div className="bg-white border-b" style={{ backgroundColor: theme?.styles.primaryColor || '#1F2937' }}>
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold text-white mb-2">{blog.title}</h1>
-          {blog.description && (
-            <p className="text-xl text-white/90 mb-4">{blog.description}</p>
-          )}
-          
-          {/* Subscribe Section */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-            <div className="flex-1 max-w-md">
-              <div className="flex space-x-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email to subscribe"
-                  value={subscriberEmail}
-                  onChange={(e) => setSubscriberEmail(e.target.value)}
-                  className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/70"
-                />
-                <Button 
-                  onClick={handleSubscribe}
-                  disabled={subscribing || !subscriberEmail}
-                  className="bg-white text-gray-900 hover:bg-gray-100"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  {subscribing ? 'Subscribing...' : 'Subscribe'}
-                </Button>
-              </div>
+      {/* Newsletter Subscription Section */}
+      {blog.customization?.homepageSettings?.showNewsletter !== false && (
+        <div className="border-b" style={{ backgroundColor: customColors?.primary || theme?.styles.primaryColor || '#1F2937' }}>
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-white mb-2">Stay Updated</h2>
+              <p className="text-white/90">Get the latest posts delivered right to your inbox</p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center max-w-md mx-auto">
+              <Input
+                type="email"
+                placeholder="Enter your email to subscribe"
+                value={subscriberEmail}
+                onChange={(e) => setSubscriberEmail(e.target.value)}
+                className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/70"
+              />
+              <Button 
+                onClick={handleSubscribe}
+                disabled={subscribing || !subscriberEmail}
+                className="bg-white text-gray-900 hover:bg-gray-100"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                {subscribing ? 'Subscribing...' : 'Subscribe'}
+              </Button>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Posts */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {posts.length === 0 ? (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">No posts yet</h2>
-            <p className="text-gray-600">Check back later for new content!</p>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {posts.map((post) => (
-              <Card 
-                key={post.id} 
-                className="hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => handlePostClick(post)}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-2xl hover:text-blue-600">
-                      {post.title}
-                    </CardTitle>
-                    {post.monetization?.isPaid && (
-                      <Badge variant="secondary" className="flex items-center">
-                        <Lock className="w-4 h-4 mr-1" />
-                        Paid
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      {formatDate(post.publishedAt || post.createdAt)}
-                    </div>
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="flex items-center space-x-1">
-                        <Tag className="w-4 h-4" />
-                        <div className="flex space-x-1">
-                          {post.tags.slice(0, 3).map((tag, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {post.excerpt ? (
-                    <p className="text-gray-700 mb-4">{post.excerpt}</p>
-                  ) : (
-                    <p className="text-gray-700 mb-4">
-                      {truncateContent(post.content)}
-                    </p>
-                  )}
-                  
-                  {post.monetization?.isPaid && (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium text-yellow-800">Premium Content</h4>
-                          <p className="text-sm text-yellow-600">
-                            This post requires payment to access
-                          </p>
-                        </div>
-                        <Badge variant="outline" className="text-yellow-700 border-yellow-300">
-                          ₦{post.monetization.price}
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <Button variant="outline" className="w-full sm:w-auto">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Read More
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Theme Renderer */}
+      <ThemeRenderer
+        blog={blog}
+        posts={posts}
+        onPostClick={handlePostClick}
+        customColors={customColors}
+      />
     </div>
   );
 };
