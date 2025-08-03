@@ -30,6 +30,8 @@ const PostEditor: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isNewPost, setIsNewPost] = useState(true);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -230,6 +232,89 @@ const PostEditor: React.FC = () => {
       setSaving(false);
     }
   };
+
+  // Improved autosave with debouncing
+  const triggerAutoSave = () => {
+    if (autoSaveTimeout) {
+      clearTimeout(autoSaveTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      if (formData.title && formData.content) {
+        handleAutoSave();
+      }
+    }, 60000); // 1 minute of inactivity
+
+    setAutoSaveTimeout(timeout);
+  };
+
+  const handleAutoSave = async () => {
+    if (!blog || !user || !formData.title || !formData.content) return;
+
+    try {
+      // Fix scheduledFor validation - ensure it's a proper ISO string or undefined
+      let scheduledForValue: string | undefined = undefined;
+      if (formData.status === 'scheduled' && formData.scheduledFor) {
+        try {
+          scheduledForValue = new Date(formData.scheduledFor).toISOString();
+        } catch (error) {
+          console.error('Invalid scheduled date for autosave:', formData.scheduledFor);
+          scheduledForValue = undefined;
+        }
+      }
+
+      const postData: Partial<Post> = {
+        title: formData.title,
+        slug: formData.slug,
+        content: formData.content,
+        excerpt: formData.excerpt,
+        blogId: blog.id,
+        authorId: user.id!,
+        status: 'draft', // Always save as draft for autosave
+        categories: formData.selectedCategories,
+        tags: formData.selectedTags,
+        scheduledFor: scheduledForValue,
+        seo: {
+          metaTitle: formData.seoTitle,
+          metaDescription: formData.seoDescription,
+          keywords: formData.seoKeywords.split(',').map(k => k.trim()).filter(k => k)
+        },
+        monetization: {
+          isPaid: formData.isPaid,
+          price: formData.price,
+          currency: formData.currency
+        }
+      };
+
+      if (isNewPost) {
+        const savedPost = await sdk.insert<Post>('posts', postData);
+        setPost(savedPost);
+        setIsNewPost(false);
+        navigate(`/blog/${blogSlug}/post/${savedPost.slug || savedPost.id}/edit`, { replace: true });
+      } else if (post) {
+        const savedPost = await sdk.update<Post>('posts', post.id, postData);
+        setPost(savedPost);
+      }
+
+      setLastSaved(new Date());
+      console.log('Auto-saved successfully');
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+    }
+  };
+
+  // Trigger autosave on content changes
+  React.useEffect(() => {
+    if (formData.title || formData.content) {
+      triggerAutoSave();
+    }
+
+    return () => {
+      if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+      }
+    };
+  }, [formData.title, formData.content]);
 
   const handleTagToggle = (tagName: string) => {
     setFormData(prev => ({

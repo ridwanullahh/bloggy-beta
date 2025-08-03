@@ -134,22 +134,31 @@ class EnhancedSDK {
     };
   }
 
-  // Start polling for changes with exponential backoff
+  // Start aggressive polling for real-time updates
   private startPolling(collection: string) {
-    let pollInterval = 5000; // Start with 5 seconds
+    let pollInterval = 1000; // Start with 1 second for real-time feel
     let consecutiveErrors = 0;
+    let lastDataHash = '';
 
     const poll = async () => {
       try {
         const data = await this.get(collection);
-        this.notifySubscribers(collection, { type: 'refresh', data });
+        const dataHash = JSON.stringify(data);
+
+        // Only notify if data actually changed
+        if (dataHash !== lastDataHash) {
+          this.notifySubscribers(collection, { type: 'refresh', data });
+          lastDataHash = dataHash;
+          console.log(`Real-time update detected for ${collection}`);
+        }
+
         consecutiveErrors = 0;
-        pollInterval = 5000; // Reset to normal interval
+        pollInterval = 1000; // Keep aggressive polling for real-time updates
       } catch (error) {
         console.error(`Polling error for ${collection}:`, error);
         consecutiveErrors++;
         // Exponential backoff: increase interval on consecutive errors
-        pollInterval = Math.min(pollInterval * Math.pow(2, consecutiveErrors), 60000); // Max 1 minute
+        pollInterval = Math.min(pollInterval * Math.pow(2, consecutiveErrors), 10000); // Max 10 seconds
       }
 
       const timeout = setTimeout(poll, pollInterval);

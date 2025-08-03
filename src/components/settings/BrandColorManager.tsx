@@ -16,50 +16,92 @@ interface BrandColorManagerProps {
 export const BrandColorManager: React.FC<BrandColorManagerProps> = ({ blog, onColorsUpdate }) => {
   const { toast } = useToast();
   const [colors, setColors] = useState({
-    primary: blog.brandColors?.primary || '#3B82F6',
-    secondary: blog.brandColors?.secondary || '#8B5CF6',
-    accent: blog.brandColors?.accent || '#06B6D4'
+    primary: blog.brandColors?.primary || '#05B34D',
+    secondary: blog.brandColors?.secondary || '#F2B91C',
+    accent: blog.brandColors?.accent || '#181F25',
+    headerBg: blog.brandColors?.headerBg || '#FFFFFF',
+    headerText: blog.brandColors?.headerText || '#181F25',
+    footerBg: blog.brandColors?.footerBg || '#181F25',
+    footerText: blog.brandColors?.footerText || '#FFFFFF',
+    siteBg: blog.brandColors?.siteBg || '#E9FBF1',
+    siteText: blog.brandColors?.siteText || '#181F25'
   });
   const [saving, setSaving] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
 
-  // Predefined color palettes
+  // Predefined color palettes with comprehensive colors
   const colorPalettes = [
+    {
+      name: 'Brand Default',
+      primary: '#05B34D',
+      secondary: '#F2B91C',
+      accent: '#181F25',
+      headerBg: '#FFFFFF',
+      headerText: '#181F25',
+      footerBg: '#181F25',
+      footerText: '#FFFFFF',
+      siteBg: '#E9FBF1',
+      siteText: '#181F25'
+    },
     {
       name: 'Ocean Blue',
       primary: '#0EA5E9',
       secondary: '#3B82F6',
-      accent: '#06B6D4'
+      accent: '#06B6D4',
+      headerBg: '#FFFFFF',
+      headerText: '#1E293B',
+      footerBg: '#1E293B',
+      footerText: '#FFFFFF',
+      siteBg: '#F0F9FF',
+      siteText: '#1E293B'
     },
     {
       name: 'Sunset Orange',
       primary: '#F97316',
       secondary: '#FB923C',
-      accent: '#FDBA74'
+      accent: '#FDBA74',
+      headerBg: '#FFFFFF',
+      headerText: '#9A3412',
+      footerBg: '#9A3412',
+      footerText: '#FFFFFF',
+      siteBg: '#FFF7ED',
+      siteText: '#9A3412'
     },
     {
       name: 'Forest Green',
       primary: '#059669',
       secondary: '#10B981',
-      accent: '#34D399'
+      accent: '#34D399',
+      headerBg: '#FFFFFF',
+      headerText: '#064E3B',
+      footerBg: '#064E3B',
+      footerText: '#FFFFFF',
+      siteBg: '#ECFDF5',
+      siteText: '#064E3B'
     },
     {
       name: 'Royal Purple',
       primary: '#7C3AED',
       secondary: '#8B5CF6',
-      accent: '#A78BFA'
+      accent: '#A78BFA',
+      headerBg: '#FFFFFF',
+      headerText: '#581C87',
+      footerBg: '#581C87',
+      footerText: '#FFFFFF',
+      siteBg: '#FAF5FF',
+      siteText: '#581C87'
     },
     {
-      name: 'Rose Pink',
-      primary: '#E11D48',
-      secondary: '#F43F5E',
-      accent: '#FB7185'
-    },
-    {
-      name: 'Emerald Mint',
-      primary: '#10B981',
-      secondary: '#34D399',
-      accent: '#6EE7B7'
+      name: 'Monochrome',
+      primary: '#000000',
+      secondary: '#6B7280',
+      accent: '#F3F4F6',
+      headerBg: '#FFFFFF',
+      headerText: '#000000',
+      footerBg: '#000000',
+      footerText: '#FFFFFF',
+      siteBg: '#F9FAFB',
+      siteText: '#000000'
     }
   ];
 
