@@ -13,7 +13,7 @@ import { Badge } from '../components/ui/badge';
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import sdk from '../lib/sdk-instance';
-import { Save, Eye, Calendar, Tags, Folder, Settings, DollarSign, Share2, Twitter, Facebook, Linkedin } from 'lucide-react';
+import { Save, Eye, Calendar, Tags, Folder, Settings, DollarSign, Share2, Twitter, Facebook, Linkedin, Edit } from 'lucide-react';
 import { ModernRichTextEditor } from '../components/editor/ModernRichTextEditor';
 import { SocialMediaService } from '../services/socialMediaService';
 
