@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { BlogSubscriberAuthProvider } from "./contexts/BlogSubscriberAuthContext";
 import Index from "./pages/Index";
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import CreateBlog from "./pages/CreateBlog";
@@ -72,6 +74,16 @@ const AppRoutes = () => {
       <Route path="/" element={
         <PublicRoute>
           <Index />
+        </PublicRoute>
+      } />
+      <Route path="/features" element={
+        <PublicRoute>
+          <Features />
+        </PublicRoute>
+      } />
+      <Route path="/pricing" element={
+        <PublicRoute>
+          <Pricing />
         </PublicRoute>
       } />
       <Route path="/auth" element={

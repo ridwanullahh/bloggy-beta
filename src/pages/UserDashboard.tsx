@@ -158,44 +158,83 @@ const UserDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage your bookmarks, notes, and preferences</p>
-        </div>
+        {/* Modern Header */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Settings className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
+                  <p className="text-gray-600">Manage your content and preferences</p>
+                </div>
+              </div>
 
-        <div className="mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search bookmarks and notes..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center space-x-2 bg-blue-50 rounded-full px-3 py-1">
+                  <BookmarkIcon className="h-4 w-4 text-blue-600" />
+                  <span className="text-blue-800">{bookmarks.length} Bookmarks</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-purple-50 rounded-full px-3 py-1">
+                  <StickyNote className="h-4 w-4 text-purple-600" />
+                  <span className="text-purple-800">{notes.length} Notes</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full lg:w-auto">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  placeholder="Search bookmarks and notes..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-12 w-full lg:w-80 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <Tabs defaultValue="bookmarks" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="bookmarks" className="flex items-center">
-              <BookmarkIcon className="w-4 h-4 mr-2" />
-              Bookmarks ({bookmarks.length})
-            </TabsTrigger>
-            <TabsTrigger value="notes" className="flex items-center">
-              <StickyNote className="w-4 h-4 mr-2" />
-              Notes ({notes.length})
-            </TabsTrigger>
-            <TabsTrigger value="wallet" className="flex items-center">
-              <Wallet className="w-4 h-4 mr-2" />
-              Wallet
-            </TabsTrigger>
-            <TabsTrigger value="preferences" className="flex items-center">
-              <Settings className="w-4 h-4 mr-2" />
-              Preferences
-            </TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue="bookmarks" className="space-y-8">
+          <div className="bg-white rounded-2xl shadow-lg p-2 border border-gray-100">
+            <TabsList className="grid w-full grid-cols-4 bg-gray-50 rounded-xl p-1">
+              <TabsTrigger
+                value="bookmarks"
+                className="flex items-center justify-center py-3 px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+              >
+                <BookmarkIcon className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Bookmarks</span>
+                <Badge className="ml-2 bg-blue-100 text-blue-800 text-xs">{bookmarks.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger
+                value="notes"
+                className="flex items-center justify-center py-3 px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+              >
+                <StickyNote className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Notes</span>
+                <Badge className="ml-2 bg-purple-100 text-purple-800 text-xs">{notes.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger
+                value="wallet"
+                className="flex items-center justify-center py-3 px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+              >
+                <Wallet className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Wallet</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="preferences"
+                className="flex items-center justify-center py-3 px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Settings</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="bookmarks" className="space-y-6">
             {filteredBookmarks.length === 0 ? (

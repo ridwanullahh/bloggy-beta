@@ -157,32 +157,54 @@ const BlogManagement: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{blog.title}</h1>
-            <p className="text-gray-600 mt-1">/{blog.slug}</p>
-            <div className="flex items-center mt-2 space-x-2">
-              <Badge className={blog.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                {blog.status}
-              </Badge>
-              <Badge variant="outline">{blog.theme}</Badge>
+      <div className="space-y-8">
+        {/* Modern Header */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Globe className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">{blog.title}</h1>
+                  <p className="text-gray-600 text-lg">/{blog.slug}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Badge className={`px-3 py-1 ${blog.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                  {blog.status === 'active' ? '🟢 Active' : '⚪ Inactive'}
+                </Badge>
+                <Badge variant="outline" className="px-3 py-1">
+                  🎨 {blog.theme}
+                </Badge>
+                <Badge variant="outline" className="px-3 py-1">
+                  📊 {stats.totalViews.toLocaleString()} views
+                </Badge>
+              </div>
             </div>
-          </div>
-          <div className="flex space-x-2 mt-4 sm:mt-0">
-            <Button variant="outline" asChild>
-              <Link to={`/blog/${blog.slug}`}>
-                <Eye className="w-4 h-4 mr-2" />
-                View Blog
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link to={`/blog/${blog.slug}/post/new`}>
-                <Plus className="w-4 h-4 mr-2" />
-                New Post
-              </Link>
-            </Button>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button variant="outline" asChild className="px-6 py-3">
+                <Link to={`/blog/${blog.slug}`}>
+                  <Eye className="w-5 h-5 mr-2" />
+                  View Blog
+                </Link>
+              </Button>
+              <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6 py-3">
+                <Link to={`/blog/${blog.slug}/post/new`}>
+                  <Plus className="w-5 h-5 mr-2" />
+                  New Post
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="px-6 py-3">
+                <Link to={`/blog/${blog.slug}/settings`}>
+                  <Settings className="w-5 h-5 mr-2" />
+                  Settings
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
 

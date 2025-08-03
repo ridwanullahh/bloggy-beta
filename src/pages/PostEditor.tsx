@@ -262,31 +262,54 @@ const PostEditor: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              {isNewPost ? 'Create New Post' : 'Edit Post'}
-            </h1>
-            <p className="text-gray-600">Blog: {blog.title}</p>
-          </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => handleSave(false)}
-              disabled={saving}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {saving ? 'Saving...' : 'Save Draft'}
-            </Button>
-            <Button
-              onClick={() => handleSave(true)}
-              disabled={saving || !formData.title || !formData.content}
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              {saving ? 'Publishing...' : 'Publish'}
-            </Button>
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Modern Header */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl flex items-center justify-center">
+                  <Edit className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    {isNewPost ? 'Create New Post' : 'Edit Post'}
+                  </h1>
+                  <p className="text-gray-600 text-lg">Blog: {blog.title}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Badge className="px-3 py-1 bg-blue-100 text-blue-800">
+                  📝 {formData.status}
+                </Badge>
+                {formData.title && (
+                  <Badge variant="outline" className="px-3 py-1">
+                    📄 {formData.title.length} characters
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                onClick={() => handleSave(false)}
+                disabled={saving}
+                className="px-6 py-3"
+              >
+                <Save className="w-5 h-5 mr-2" />
+                {saving ? 'Saving...' : 'Save Draft'}
+              </Button>
+              <Button
+                onClick={() => handleSave(true)}
+                disabled={saving || !formData.title || !formData.content}
+                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-6 py-3"
+              >
+                <Eye className="w-5 h-5 mr-2" />
+                {saving ? 'Publishing...' : 'Publish'}
+              </Button>
+            </div>
           </div>
         </div>
 

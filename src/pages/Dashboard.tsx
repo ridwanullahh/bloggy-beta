@@ -5,7 +5,33 @@ import { MainLayout } from '../components/layout/MainLayout';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { Plus, Globe, Edit, BarChart3, Users, FileText, TrendingUp, Calendar, DollarSign } from 'lucide-react';
+import {
+  Plus,
+  Globe,
+  Edit,
+  BarChart3,
+  Users,
+  FileText,
+  TrendingUp,
+  Calendar,
+  DollarSign,
+  Sparkles,
+  Eye,
+  Heart,
+  MessageSquare,
+  Share2,
+  Clock,
+  Target,
+  Zap,
+  Award,
+  ArrowUpRight,
+  ArrowDownRight,
+  MoreHorizontal,
+  Filter,
+  Search,
+  Bell,
+  Settings
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import sdk from '../lib/sdk-instance';
 import { Blog, Post } from '../types/blog';
@@ -117,28 +143,56 @@ const Dashboard: React.FC = () => {
   return (
     <MainLayout>
       <div className="space-y-8">
-        {/* Welcome Section with Gradient Background */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-8 text-white">
+        {/* Enhanced Welcome Section */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-8 text-white">
+          {/* Background Elements */}
           <div className="absolute inset-0 bg-black/10"></div>
-          <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">
-                Welcome back, {user?.firstName || 'Creator'}! 🚀
-              </h1>
-              <p className="text-white/90 text-lg">
-                Ready to create amazing content? Your audience awaits your next masterpiece.
-              </p>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl"></div>
+
+          <div className="relative z-10">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+              <div>
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <Sparkles className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold">Welcome back, {user?.firstName || 'Creator'}!</h1>
+                    <p className="text-blue-100 text-lg">Ready to create amazing content today?</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1">
+                    <Globe className="h-4 w-4" />
+                    <span>{stats.totalBlogs} Active Blogs</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1">
+                    <FileText className="h-4 w-4" />
+                    <span>{stats.totalPosts} Total Posts</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1">
+                    <Eye className="h-4 w-4" />
+                    <span>{stats.totalViews.toLocaleString()} Views</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link to="/create-blog">
+                  <Button className="bg-white text-blue-600 hover:bg-gray-100 shadow-lg px-6 py-3 font-semibold">
+                    <Plus className="h-5 w-5 mr-2" />
+                    Create New Blog
+                  </Button>
+                </Link>
+                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-6 py-3">
+                  <Bell className="h-5 w-5 mr-2" />
+                  Notifications
+                </Button>
+              </div>
             </div>
-            <Link to="/create-blog" className="mt-6 sm:mt-0">
-              <Button size="lg" className="bg-white text-purple-600 hover:bg-white/90 font-semibold shadow-lg">
-                <Plus className="w-5 h-5 mr-2" />
-                Create New Blog
-              </Button>
-            </Link>
           </div>
-          {/* Decorative Elements */}
-          <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full"></div>
-          <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full"></div>
         </div>
 
         {/* Enhanced Stats Grid */}

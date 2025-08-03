@@ -42,13 +42,29 @@ const sdkConfig = {
         theme: 'string',
         status: 'string',
         customDomain: 'string',
+        customization: 'object',
         monetization: 'object',
         marketing: 'object',
         settings: 'object'
       },
       defaults: {
-        theme: 'modern',
+        theme: 'hashnode-modern',
         status: 'active',
+        customization: {
+          brandColors: {
+            primary: '#2563eb',
+            secondary: '#f8fafc',
+            accent: '#3b82f6'
+          },
+          homepageSettings: {
+            showFeaturedPosts: true,
+            showRecentPosts: true,
+            showCategories: true,
+            showNewsletter: true,
+            showTrending: true,
+            heroStyle: 'minimal'
+          }
+        },
         monetization: {
           enabled: false,
           allowFreeContent: true,
