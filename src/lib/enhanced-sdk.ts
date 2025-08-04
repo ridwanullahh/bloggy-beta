@@ -134,38 +134,47 @@ class EnhancedSDK {
     };
   }
 
-  // Start aggressive polling for real-time updates
+  // Ultra-aggressive real-time polling for instant updates
   private startPolling(collection: string) {
-    let pollInterval = 1000; // Start with 1 second for real-time feel
+    let pollInterval = 500; // 500ms for true real-time feel
     let consecutiveErrors = 0;
     let lastDataHash = '';
 
     const poll = async () => {
       try {
         const data = await this.get(collection);
-        const dataHash = JSON.stringify(data);
+        const dataHash = this.generateDataHash(data);
 
         // Only notify if data actually changed
         if (dataHash !== lastDataHash) {
-          this.notifySubscribers(collection, { type: 'refresh', data });
+          this.notifySubscribers(collection, { type: 'refresh', data, timestamp: Date.now() });
           lastDataHash = dataHash;
-          console.log(`Real-time update detected for ${collection}`);
+          console.log(`🔄 Real-time update: ${collection} changed`);
+
+          // Trigger immediate re-render for UI components
+          window.dispatchEvent(new CustomEvent(`${collection}-updated`, { detail: data }));
         }
 
         consecutiveErrors = 0;
-        pollInterval = 1000; // Keep aggressive polling for real-time updates
+        pollInterval = 500; // Keep ultra-aggressive polling
       } catch (error) {
         console.error(`Polling error for ${collection}:`, error);
         consecutiveErrors++;
-        // Exponential backoff: increase interval on consecutive errors
-        pollInterval = Math.min(pollInterval * Math.pow(2, consecutiveErrors), 10000); // Max 10 seconds
+        // Minimal backoff to maintain real-time feel
+        pollInterval = Math.min(500 * (consecutiveErrors + 1), 2000); // Max 2 seconds
       }
 
       const timeout = setTimeout(poll, pollInterval);
       this.pollingIntervals.set(collection, timeout);
     };
 
+    // Start immediately
     poll();
+  }
+
+  // Generate consistent hash for change detection
+  private generateDataHash(data: any): string {
+    return btoa(JSON.stringify(data, Object.keys(data).sort()));
   }
 
   // Stop polling

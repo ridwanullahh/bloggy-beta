@@ -252,14 +252,17 @@ const PostEditor: React.FC = () => {
     if (!blog || !user || !formData.title || !formData.content) return;
 
     try {
-      // Fix scheduledFor validation - ensure it's a proper ISO string or undefined
-      let scheduledForValue: string | undefined = undefined;
+      // Fix scheduledFor validation - ensure it's a proper ISO string or null
+      let scheduledForValue: string | null = null;
       if (formData.status === 'scheduled' && formData.scheduledFor) {
         try {
-          scheduledForValue = new Date(formData.scheduledFor).toISOString();
+          const date = new Date(formData.scheduledFor);
+          if (!isNaN(date.getTime())) {
+            scheduledForValue = date.toISOString();
+          }
         } catch (error) {
           console.error('Invalid scheduled date for autosave:', formData.scheduledFor);
-          scheduledForValue = undefined;
+          scheduledForValue = null;
         }
       }
 
@@ -303,10 +306,20 @@ const PostEditor: React.FC = () => {
     }
   };
 
-  // Trigger autosave on content changes
+  // Proper autosave with 1-minute inactivity delay
   React.useEffect(() => {
-    if (formData.title || formData.content) {
-      triggerAutoSave();
+    // Clear existing timeout
+    if (autoSaveTimeout) {
+      clearTimeout(autoSaveTimeout);
+    }
+
+    // Only trigger autosave if there's meaningful content
+    if (formData.title?.trim() || formData.content?.trim()) {
+      const timeout = setTimeout(() => {
+        handleAutoSave();
+      }, 60000); // 1 minute of inactivity
+
+      setAutoSaveTimeout(timeout);
     }
 
     return () => {
@@ -314,7 +327,7 @@ const PostEditor: React.FC = () => {
         clearTimeout(autoSaveTimeout);
       }
     };
-  }, [formData.title, formData.content]);
+  }, [formData.title, formData.content, formData.excerpt]);
 
   const handleTagToggle = (tagName: string) => {
     setFormData(prev => ({

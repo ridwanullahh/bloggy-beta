@@ -28,6 +28,7 @@ export const BrandColorManager: React.FC<BrandColorManagerProps> = ({ blog, onCo
   });
   const [saving, setSaving] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [showFloatingSave, setShowFloatingSave] = useState(false);
 
   // Predefined color palettes with comprehensive colors
   const colorPalettes = [
@@ -105,14 +106,26 @@ export const BrandColorManager: React.FC<BrandColorManagerProps> = ({ blog, onCo
     }
   ];
 
-  const handleColorChange = (colorType: 'primary' | 'secondary' | 'accent', value: string) => {
+  const handleColorChange = (colorType: keyof typeof colors, value: string) => {
     const newColors = { ...colors, [colorType]: value };
     setColors(newColors);
-    
+    setShowFloatingSave(true);
+
     if (previewMode) {
       onColorsUpdate(newColors);
     }
   };
+
+  // Scroll detection for floating save button
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 100;
+      setShowFloatingSave(scrolled && JSON.stringify(colors) !== JSON.stringify(blog.brandColors || {}));
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [colors, blog.brandColors]);
 
   const applyPalette = (palette: typeof colorPalettes[0]) => {
     const newColors = {
@@ -179,20 +192,21 @@ export const BrandColorManager: React.FC<BrandColorManagerProps> = ({ blog, onCo
   };
 
   return (
-    <Card className="border-0 shadow-xl bg-white">
-      <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-xl">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-            <Palette className="h-5 w-5" />
+    <>
+      <Card className="border-0 shadow-xl bg-white">
+        <CardHeader style={{ background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-accent))' }} className="text-white rounded-t-xl">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+              <Palette className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">Brand Color Palette</CardTitle>
+              <CardDescription className="text-white/80">
+                Customize your blog's brand colors to match your identity
+              </CardDescription>
+            </div>
           </div>
-          <div>
-            <CardTitle className="text-xl">Brand Color Palette</CardTitle>
-            <CardDescription className="text-purple-100">
-              Customize your blog's brand colors to match your identity
-            </CardDescription>
-          </div>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
       <CardContent className="p-6 space-y-6">
         {/* Color Inputs */}
@@ -350,6 +364,22 @@ export const BrandColorManager: React.FC<BrandColorManagerProps> = ({ blog, onCo
         </div>
       </CardContent>
     </Card>
+
+    {/* Floating Save Button */}
+    {showFloatingSave && (
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button
+          onClick={saveColors}
+          disabled={saving}
+          className="btn-primary-modern shadow-2xl px-8 py-4 text-lg"
+          style={{ background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-accent))' }}
+        >
+          <Save className="w-5 h-5 mr-2" />
+          {saving ? 'Saving...' : 'Save Changes'}
+        </Button>
+      </div>
+    )}
+  </>
   );
 };
 

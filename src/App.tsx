@@ -9,7 +9,7 @@ import Index from "./pages/Index";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
+import UltraModernDashboard from "./pages/UltraModernDashboard";
 import CreateBlog from "./pages/CreateBlog";
 import BlogManagement from "./pages/BlogManagement";
 import PostEditor from "./pages/PostEditor";
@@ -95,7 +95,7 @@ const AppRoutes = () => {
       {/* Protected routes */}
       <Route path="/dashboard" element={
         <ProtectedRoute>
-          <Dashboard />
+          <UltraModernDashboard />
         </ProtectedRoute>
       } />
       
