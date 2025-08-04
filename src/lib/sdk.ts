@@ -286,14 +286,22 @@ class UniversalSDK {
     Object.entries(item).forEach(([k, v]) => {
       const t = schema.types?.[k];
       if (t) {
+        // Handle nullable types (e.g., "string|null")
+        const types = t.split('|');
+        const isNullable = types.includes('null');
+        const baseType = types[0];
+
+        // If value is null and type is nullable, it's valid
+        if (v === null && isNullable) return;
+
         const ok =
-          (t === "string" && typeof v === "string") ||
-          (t === "number" && typeof v === "number") ||
-          (t === "boolean" && typeof v === "boolean") ||
-          (t === "object" && typeof v === "object") ||
-          (t === "array" && Array.isArray(v)) ||
-          (t === "date" && !isNaN(Date.parse(v as string))) ||
-          (t === "uuid" && typeof v === "string");
+          (baseType === "string" && typeof v === "string") ||
+          (baseType === "number" && typeof v === "number") ||
+          (baseType === "boolean" && typeof v === "boolean") ||
+          (baseType === "object" && typeof v === "object") ||
+          (baseType === "array" && Array.isArray(v)) ||
+          (baseType === "date" && !isNaN(Date.parse(v as string))) ||
+          (baseType === "uuid" && typeof v === "string");
         if (!ok) throw new Error(`Field ${k} should be ${t}`);
       }
     });

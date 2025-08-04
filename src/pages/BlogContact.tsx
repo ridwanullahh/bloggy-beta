@@ -8,6 +8,7 @@ import { Textarea } from '../components/ui/textarea';
 import { useToast } from '../hooks/use-toast';
 import { Blog } from '../types/blog';
 import { getThemeById } from '../constants/themes';
+import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
 import sdk from '../lib/sdk-instance';
 import { ArrowLeft, Mail, MessageCircle, User } from 'lucide-react';
 
@@ -108,10 +109,11 @@ const BlogContact: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ 
-      backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-      fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-    }}>
+    <UniversalPageThemeWrapper blogSlug={blogSlug!} pageType="contact">
+      <div className="min-h-screen bg-gray-50" style={{
+        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
+        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
+      }}>
       {/* Header */}
       <div className="bg-white border-b" style={{ 
         backgroundColor: theme?.styles.primaryColor || '#1F2937',
@@ -224,7 +226,8 @@ const BlogContact: React.FC = () => {
           </Card>
         </div>
       </div>
-    </div>
+      </div>
+    </UniversalPageThemeWrapper>
   );
 };
 

@@ -14,6 +14,12 @@ export interface Blog {
       primary: string;
       secondary: string;
       accent: string;
+      headerBg?: string;
+      headerText?: string;
+      footerBg?: string;
+      footerText?: string;
+      siteBg?: string;
+      siteText?: string;
     };
     homepageSettings?: {
       showFeaturedPosts: boolean;
@@ -22,6 +28,27 @@ export interface Blog {
       showNewsletter: boolean;
       showTrending: boolean;
       heroStyle: 'minimal' | 'full' | 'banner';
+    };
+    socialMedia?: {
+      twitter?: string;
+      facebook?: string;
+      instagram?: string;
+      linkedin?: string;
+      github?: string;
+      youtube?: string;
+      email?: string;
+      enableTwitter?: boolean;
+      enableFacebook?: boolean;
+      enableInstagram?: boolean;
+      enableLinkedin?: boolean;
+      enableGithub?: boolean;
+      enableYoutube?: boolean;
+    };
+    branding?: {
+      useGravatar?: boolean;
+      gravatarEmail?: string;
+      logoUrl?: string;
+      faviconUrl?: string;
     };
   };
   monetization?: {

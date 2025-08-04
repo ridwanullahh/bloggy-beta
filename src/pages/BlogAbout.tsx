@@ -5,6 +5,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Blog } from '../types/blog';
 import { getThemeById } from '../constants/themes';
+import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
 import sdk from '../lib/sdk-instance';
 import { ArrowLeft, User, Mail, Globe } from 'lucide-react';
 
@@ -55,10 +56,11 @@ const BlogAbout: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ 
-      backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-      fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-    }}>
+    <UniversalPageThemeWrapper blogSlug={blogSlug!} pageType="about">
+      <div className="min-h-screen bg-gray-50" style={{
+        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
+        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
+      }}>
       {/* Header */}
       <div className="bg-white border-b" style={{ 
         backgroundColor: theme?.styles.primaryColor || '#1F2937',
@@ -134,7 +136,8 @@ const BlogAbout: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+    </UniversalPageThemeWrapper>
   );
 };
 

@@ -1,23 +1,64 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Blog, BlogTheme } from '../../types/blog';
-import { Menu, X, Search, User, Home, Archive, Mail, Info } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Blog, BlogTheme } from '../../types/blog';
+import {
+  Search,
+  Menu,
+  X,
+  Home,
+  FileText,
+  Phone,
+  User,
+  Archive,
+  Moon,
+  Sun,
+  Mail,
+  Info
+} from 'lucide-react';
 
 interface ThemeHeaderProps {
   blog: Blog;
   theme: BlogTheme;
+  pageType: 'home' | 'post' | 'archive' | 'about' | 'contact' | 'category' | 'tag' | 'search';
+  onSearch?: (query: string) => void;
+  onThemeToggle?: () => void;
+  isDarkMode?: boolean;
+  className?: string;
   currentPage?: string;
 }
 
-export const ThemeHeader: React.FC<ThemeHeaderProps> = ({ blog, theme, currentPage }) => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+export const ThemeHeader: React.FC<ThemeHeaderProps> = ({
+  blog,
+  theme,
+  pageType,
+  onSearch,
+  onThemeToggle,
+  isDarkMode = false,
+  className = '',
+  currentPage
+}) => {
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const brandColors = blog.customization?.brandColors;
+  const headerBg = brandColors?.headerBg || theme.styles.primaryColor;
+  const headerText = brandColors?.headerText || '#FFFFFF';
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim() && onSearch) {
+      onSearch(searchQuery.trim());
+    }
+  };
 
   const navigationItems = [
-    { label: 'Home', href: `/blog/${blog.slug}`, icon: <Home className="h-4 w-4" /> },
-    { label: 'Archive', href: `/blog/${blog.slug}/archive`, icon: <Archive className="h-4 w-4" /> },
-    { label: 'About', href: `/blog/${blog.slug}/about`, icon: <Info className="h-4 w-4" /> },
-    { label: 'Contact', href: `/blog/${blog.slug}/contact`, icon: <Mail className="h-4 w-4" /> }
+    { label: 'Home', href: `/${blog.slug}`, icon: Home, active: pageType === 'home' },
+    { label: 'Archive', href: `/${blog.slug}/archive`, icon: Archive, active: pageType === 'archive' },
+    { label: 'About', href: `/${blog.slug}/about`, icon: Info, active: pageType === 'about' },
+    { label: 'Contact', href: `/${blog.slug}/contact`, icon: Phone, active: pageType === 'contact' },
   ];
 
   const renderModernHeader = () => (

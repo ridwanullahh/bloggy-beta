@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import { getThemeById } from '../constants/themes';
+import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
 import sdk from '../lib/sdk-instance';
 import { 
   Calendar, 
@@ -161,10 +162,11 @@ const BlogArchive: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <div className="min-h-screen" style={{ 
-      backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-      fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-    }}>
+    <UniversalPageThemeWrapper blogSlug={blogSlug!} pageType="archive">
+      <div className="min-h-screen" style={{
+        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
+        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
+      }}>
       {/* Header */}
       <div className="bg-white border-b" style={{ 
         backgroundColor: theme?.styles.primaryColor || '#1F2937',
@@ -372,6 +374,7 @@ const BlogArchive: React.FC = () => {
         )}
       </div>
     </div>
+    </UniversalPageThemeWrapper>
   );
 };
 

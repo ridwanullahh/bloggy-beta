@@ -134,14 +134,37 @@ class EnhancedSDK {
     };
   }
 
-  // Ultra-aggressive real-time polling for instant updates
+  // Optimized real-time polling with smart intervals
   private startPolling(collection: string) {
-    let pollInterval = 500; // 500ms for true real-time feel
+    let pollInterval = 1000; // Start with 1 second for better performance
     let consecutiveErrors = 0;
     let lastDataHash = '';
+    let lastActivity = Date.now();
+    let isUserActive = true;
+
+    // Track user activity for adaptive polling
+    const updateActivity = () => {
+      lastActivity = Date.now();
+      isUserActive = true;
+    };
+
+    // Listen for user activity
+    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+      document.addEventListener(event, updateActivity, { passive: true });
+    });
 
     const poll = async () => {
       try {
+        // Adaptive polling based on user activity
+        const timeSinceActivity = Date.now() - lastActivity;
+        if (timeSinceActivity > 30000) { // 30 seconds of inactivity
+          isUserActive = false;
+          pollInterval = 5000; // Slow down to 5 seconds when inactive
+        } else {
+          isUserActive = true;
+          pollInterval = 1000; // Active polling at 1 second
+        }
+
         const data = await this.get(collection);
         const dataHash = this.generateDataHash(data);
 
@@ -149,19 +172,26 @@ class EnhancedSDK {
         if (dataHash !== lastDataHash) {
           this.notifySubscribers(collection, { type: 'refresh', data, timestamp: Date.now() });
           lastDataHash = dataHash;
-          console.log(`🔄 Real-time update: ${collection} changed`);
+          console.log(`🔄 Real-time update: ${collection} changed (${isUserActive ? 'active' : 'inactive'} user)`);
 
           // Trigger immediate re-render for UI components
           window.dispatchEvent(new CustomEvent(`${collection}-updated`, { detail: data }));
+
+          // If user is inactive but data changed, briefly increase polling frequency
+          if (!isUserActive) {
+            pollInterval = 1000;
+            setTimeout(() => {
+              if (!isUserActive) pollInterval = 5000;
+            }, 10000); // Return to slow polling after 10 seconds
+          }
         }
 
         consecutiveErrors = 0;
-        pollInterval = 500; // Keep ultra-aggressive polling
       } catch (error) {
         console.error(`Polling error for ${collection}:`, error);
         consecutiveErrors++;
-        // Minimal backoff to maintain real-time feel
-        pollInterval = Math.min(500 * (consecutiveErrors + 1), 2000); // Max 2 seconds
+        // Progressive backoff with max limit
+        pollInterval = Math.min(1000 * Math.pow(2, consecutiveErrors), 30000); // Max 30 seconds
       }
 
       const timeout = setTimeout(poll, pollInterval);
@@ -170,6 +200,16 @@ class EnhancedSDK {
 
     // Start immediately
     poll();
+
+    // Cleanup function for event listeners
+    const cleanup = () => {
+      ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+        document.removeEventListener(event, updateActivity);
+      });
+    };
+
+    // Store cleanup function for later use
+    this.pollingIntervals.set(`${collection}-cleanup`, cleanup as any);
   }
 
   // Generate consistent hash for change detection
@@ -183,6 +223,13 @@ class EnhancedSDK {
     if (interval) {
       clearTimeout(interval);
       this.pollingIntervals.delete(collection);
+    }
+
+    // Clean up event listeners
+    const cleanup = this.pollingIntervals.get(`${collection}-cleanup`);
+    if (cleanup && typeof cleanup === 'function') {
+      cleanup();
+      this.pollingIntervals.delete(`${collection}-cleanup`);
     }
   }
 
@@ -308,7 +355,15 @@ class EnhancedSDK {
 
   // Cleanup method
   cleanup() {
-    this.pollingIntervals.forEach(interval => clearTimeout(interval));
+    this.pollingIntervals.forEach((interval, key) => {
+      if (typeof interval === 'function') {
+        // This is a cleanup function
+        interval();
+      } else {
+        // This is a timeout
+        clearTimeout(interval);
+      }
+    });
     this.pollingIntervals.clear();
     this.subscribers.clear();
     this.writeQueue.length = 0;

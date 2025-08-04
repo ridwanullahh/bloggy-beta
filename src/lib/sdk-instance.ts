@@ -98,8 +98,8 @@ const sdkConfig = {
         tags: 'array',
         categories: 'array',
         seo: 'object',
-        scheduledFor: 'string',
-        publishedAt: 'string',
+        scheduledFor: 'string|null',
+        publishedAt: 'string|null',
         monetization: 'object'
       },
       defaults: {

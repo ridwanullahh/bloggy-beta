@@ -16,6 +16,7 @@ import { SearchModal } from '../components/blog/SearchModal';
 import { MobileNavigation } from '../components/blog/MobileNavigation';
 import { Separator } from '../components/ui/separator';
 import { ScrollArea } from '../components/ui/scroll-area';
+import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
 
 const PostView: React.FC = () => {
   const { blogSlug, postSlug } = useParams<{ blogSlug: string; postSlug: string }>();
@@ -219,10 +220,11 @@ const PostView: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ 
-      backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-      fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-    }}>
+    <UniversalPageThemeWrapper blogSlug={blogSlug!} pageType="post">
+      <div className="min-h-screen bg-gray-50" style={{
+        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
+        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
+      }}>
       {/* Enhanced Navigation Header */}
       <nav className="bg-white border-b sticky top-0 z-50" style={{ 
         backgroundColor: theme?.styles.primaryColor || '#1F2937',
@@ -504,6 +506,7 @@ const PostView: React.FC = () => {
         )}
       </div>
     </div>
+    </UniversalPageThemeWrapper>
   );
 };
 

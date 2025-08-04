@@ -170,6 +170,19 @@ const PostEditor: React.FC = () => {
         }));
       }
 
+      // Properly handle scheduledFor field
+      let scheduledForValue: string | null = null;
+      if (formData.status === 'scheduled' && formData.scheduledFor) {
+        try {
+          const date = new Date(formData.scheduledFor);
+          if (!isNaN(date.getTime())) {
+            scheduledForValue = date.toISOString();
+          }
+        } catch (error) {
+          console.error('Invalid scheduled date:', formData.scheduledFor);
+        }
+      }
+
       const postData: Partial<Post> = {
         title: formData.title,
         slug: formData.slug,
@@ -180,8 +193,8 @@ const PostEditor: React.FC = () => {
         status: publishNow ? 'published' : formData.status,
         categories: formData.selectedCategories,
         tags: [...formData.selectedTags, ...tagsToCreate],
-        scheduledFor: formData.scheduledFor || undefined,
-        publishedAt: publishNow ? new Date().toISOString() : undefined,
+        scheduledFor: scheduledForValue,
+        publishedAt: publishNow ? new Date().toISOString() : null,
         seo: {
           metaTitle: formData.seoTitle,
           metaDescription: formData.seoDescription,

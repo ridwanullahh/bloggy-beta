@@ -17,9 +17,24 @@ import {
 interface ThemeFooterProps {
   blog: Blog;
   theme: BlogTheme;
+  socialLinks?: {
+    twitter?: string;
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+    github?: string;
+    youtube?: string;
+    email?: string;
+  };
+  className?: string;
 }
 
-export const ThemeFooter: React.FC<ThemeFooterProps> = ({ blog, theme }) => {
+export const ThemeFooter: React.FC<ThemeFooterProps> = ({
+  blog,
+  theme,
+  socialLinks = {},
+  className = ''
+}) => {
   const currentYear = new Date().getFullYear();
   
   const socialLinks = [

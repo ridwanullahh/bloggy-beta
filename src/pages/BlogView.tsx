@@ -11,6 +11,7 @@ import { Calendar, User, Tag, Mail, Lock, Menu, X, Home, FileText, Phone, Search
 import { SearchModal } from '../components/blog/SearchModal';
 import { MobileNavigation } from '../components/blog/MobileNavigation';
 import { ThemeRenderer } from '../components/themes/ThemeRenderer';
+import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
 
 const BlogView: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -139,7 +140,8 @@ const BlogView: React.FC = () => {
   const customColors = blog.customization?.brandColors;
 
   return (
-    <div className="min-h-screen">
+    <UniversalPageThemeWrapper blogSlug={slug!} pageType="home">
+      <div className="min-h-screen">
       {/* Navigation */}
       <nav className="bg-white border-b sticky top-0 z-50" style={{ 
         backgroundColor: customColors?.primary || theme?.styles.primaryColor || '#1F2937',
@@ -257,7 +259,8 @@ const BlogView: React.FC = () => {
         onPostClick={handlePostClick}
         customColors={customColors}
       />
-    </div>
+      </div>
+    </UniversalPageThemeWrapper>
   );
 };
 
