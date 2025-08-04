@@ -3,7 +3,7 @@ import { Blog, Post } from '../../types/blog';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Calendar, User, Tag, Heart, MessageCircle, Share2, BookOpen, TrendingUp, Clock } from 'lucide-react';
+import { Calendar, User, Tag, Heart, MessageCircle, Share2, BookOpen, TrendingUp, Clock, ArrowRight } from 'lucide-react';
 
 interface HashNodeModernThemeProps {
   blog: Blog;
