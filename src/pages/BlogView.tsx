@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -6,12 +5,12 @@ import { Input } from '../components/ui/input';
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, BlogSubscriber, Category } from '../types/blog';
 import { getThemeById } from '../constants/themes';
-import sdk from '../lib/sdk-instance';
+import enhancedSDK from '../lib/enhanced-sdk';
 import { Calendar, User, Tag, Mail, Lock, Menu, X, Home, FileText, Phone, Search, Moon, Sun } from 'lucide-react';
 import { SearchModal } from '../components/blog/SearchModal';
 import { MobileNavigation } from '../components/blog/MobileNavigation';
 import { ThemeRenderer } from '../components/themes/ThemeRenderer';
-import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
 
 const BlogView: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -32,7 +31,7 @@ const BlogView: React.FC = () => {
       if (!slug) return;
 
       try {
-        const allBlogs = await sdk.get<Blog>('blogs');
+        const allBlogs = await enhancedSDK.get<Blog>('blogs');
         const foundBlog = allBlogs.find(b => b.slug === slug && b.status === 'active');
         
         if (!foundBlog) {
@@ -44,16 +43,14 @@ const BlogView: React.FC = () => {
         setBlog(foundBlog);
 
         // Fetch posts
-        const allPosts = await sdk.get<Post>('posts');
-        const blogPosts = allPosts
-          .filter(p => p.blogId === foundBlog.id && p.status === 'published')
-          .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime());
+        const blogPosts = await enhancedSDK.filter<Post>('posts', p => p.blogId === foundBlog.id && p.status === 'published');
+        blogPosts.sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime());
         
         setPosts(blogPosts);
 
         // Fetch categories
         try {
-          const allCategories = await sdk.get<Category>('categories');
+          const allCategories = await enhancedSDK.get<Category>('categories');
           const blogCategories = allCategories.filter(c => c.blogId === foundBlog.id);
           setCategories(blogCategories);
         } catch (error) {
@@ -69,6 +66,21 @@ const BlogView: React.FC = () => {
     };
 
     fetchBlogData();
+    const unsubscribe = enhancedSDK.subscribe('blogs', (data) => {
+      if (data.type === 'update' || data.type === 'refresh') {
+        const updatedBlog = Array.isArray(data.data) 
+          ? data.data.find((b: Blog) => b.slug === slug)
+          : data.data.slug === slug ? data.data : null;
+        
+        if (updatedBlog) {
+          setBlog(updatedBlog);
+        }
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [slug]);
 
   const handleSubscribe = async () => {
@@ -85,7 +97,7 @@ const BlogView: React.FC = () => {
 
     setSubscribing(true);
     try {
-      await sdk.insert<BlogSubscriber>('subscribers', {
+      await enhancedSDK.insert<BlogSubscriber>('subscribers', {
         email: subscriberEmail,
         blogId: blog.id,
         status: 'active',
@@ -140,7 +152,7 @@ const BlogView: React.FC = () => {
   const customColors = blog.customization?.brandColors;
 
   return (
-    <UniversalPageThemeWrapper blogSlug={slug!} pageType="home">
+    <UniversalThemeWrapper blog={blog} theme={theme!} pageType="home" isDarkMode={isDarkMode}>
       <div className="min-h-screen">
       {/* Navigation */}
       <nav className="bg-white border-b sticky top-0 z-50" style={{ 
@@ -260,7 +272,7 @@ const BlogView: React.FC = () => {
         customColors={customColors}
       />
       </div>
-    </UniversalPageThemeWrapper>
+    </UniversalThemeWrapper>
   );
 };
 

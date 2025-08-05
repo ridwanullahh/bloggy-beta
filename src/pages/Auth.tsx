@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LoginForm } from '../components/auth/LoginForm';
@@ -6,6 +5,7 @@ import { RegisterForm } from '../components/auth/RegisterForm';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Sparkles, ArrowLeft, Shield, Zap, Users, Star } from 'lucide-react';
+import '../styles/modern.css';
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -38,17 +38,17 @@ const Auth: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--light-background)' }}>
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--primary-green)'}}>
                 <Sparkles className="text-white h-5 w-5" />
               </div>
               <div>
-                <span className="font-bold text-xl text-gray-900">Bloggy</span>
+                <span className="font-bold text-xl" style={{ color: 'var(--brand-dark)'}}>Bloggy</span>
                 <span className="text-xs text-gray-500 block -mt-1">AI-Powered Blogging</span>
               </div>
             </Link>
@@ -65,7 +65,7 @@ const Auth: React.FC = () => {
 
       <div className="flex min-h-screen">
         {/* Left Side - Benefits */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ backgroundColor: 'var(--primary-green)'}}>
           {/* Background Elements */}
           <div className="absolute inset-0">
             <div className="absolute top-20 left-20 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>

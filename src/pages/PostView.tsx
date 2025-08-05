@@ -16,7 +16,7 @@ import { SearchModal } from '../components/blog/SearchModal';
 import { MobileNavigation } from '../components/blog/MobileNavigation';
 import { Separator } from '../components/ui/separator';
 import { ScrollArea } from '../components/ui/scroll-area';
-import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
 
 const PostView: React.FC = () => {
   const { blogSlug, postSlug } = useParams<{ blogSlug: string; postSlug: string }>();
@@ -220,7 +220,7 @@ const PostView: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <UniversalPageThemeWrapper blogSlug={blogSlug!} pageType="post">
+    <UniversalThemeWrapper blog={blog} theme={theme!} pageType="post" isDarkMode={isDarkMode}>
       <div className="min-h-screen bg-gray-50" style={{
         backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
         fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
@@ -506,7 +506,7 @@ const PostView: React.FC = () => {
         )}
       </div>
     </div>
-    </UniversalPageThemeWrapper>
+    </UniversalThemeWrapper>
   );
 };
 

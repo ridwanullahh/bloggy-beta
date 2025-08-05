@@ -43,6 +43,7 @@ export interface Blog {
       enableLinkedin?: boolean;
       enableGithub?: boolean;
       enableYoutube?: boolean;
+      enableEmail?: boolean;
     };
     branding?: {
       useGravatar?: boolean;
@@ -70,6 +71,7 @@ export interface Blog {
   };
   createdAt: string;
   updatedAt: string;
+  subscriberCount?: number;
 }
 
 export interface Post {
@@ -98,6 +100,7 @@ export interface Post {
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
+  views?: number;
 }
 
 export interface BlogTheme {
@@ -110,6 +113,7 @@ export interface BlogTheme {
     secondaryColor: string;
     accentColor: string;
     textColor: string;
+    backgroundColor: string;
     fontFamily: string;
     headingFont: string;
     layout: 'grid' | 'list' | 'magazine' | 'minimal';

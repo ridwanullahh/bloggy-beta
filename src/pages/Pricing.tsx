@@ -4,29 +4,39 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { 
-  DollarSign,
-  CheckCircle,
-  ArrowRight,
+  Brain, 
+  Palette, 
+  Rocket, 
+  DollarSign, 
+  BarChart3, 
+  Globe,
   Sparkles,
-  Shield,
-  Clock,
-  Award,
   Zap,
+  Shield,
+  TrendingUp,
+  Target,
+  Award,
+  Clock,
+  Heart,
+  MessageSquare,
+  Share2,
+  ArrowRight,
+  CheckCircle,
+  Layers,
+  Eye,
   Users,
   Mail,
-  BarChart3,
-  Globe,
-  Palette,
-  Brain,
-  Lock,
-  CreditCard,
   Settings,
+  Lock,
+  Smartphone,
+  Search,
   Code,
-  Rocket,
-  Star,
-  X,
-  HelpCircle
+  Paintbrush,
+  CreditCard,
+  HelpCircle,
+  X
 } from 'lucide-react';
+import '../styles/modern.css';
 
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
@@ -34,10 +44,9 @@ const Pricing: React.FC = () => {
   const pricingPlans = [
     {
       name: "Creator",
-      monthlyPrice: 12,
-      yearlyPrice: 10,
-      originalMonthlyPrice: 19,
-      originalYearlyPrice: 16,
+      price: "$12",
+      period: "/month",
+      originalPrice: "$19",
       description: "Perfect for individual content creators",
       features: [
         "1 Professional Blog",
@@ -47,19 +56,15 @@ const Pricing: React.FC = () => {
         "Basic Analytics & Insights",
         "Email Marketing (1,000 subscribers)",
         "Social Media Integration",
-        "24/7 Email Support",
-        "SEO Optimization Tools",
-        "Content Scheduling"
+        "24/7 Email Support"
       ],
-      highlight: "Most Popular for Beginners",
-      popular: false
+      highlight: "Most Popular for Beginners"
     },
     {
       name: "Professional",
-      monthlyPrice: 39,
-      yearlyPrice: 32,
-      originalMonthlyPrice: 59,
-      originalYearlyPrice: 49,
+      price: "$39",
+      period: "/month",
+      originalPrice: "$59",
       description: "For serious bloggers and businesses",
       features: [
         "5 Professional Blogs",
@@ -71,19 +76,16 @@ const Pricing: React.FC = () => {
         "Monetization Tools (Subscriptions, Paywalls)",
         "Priority Support & Live Chat",
         "SEO Optimization Tools",
-        "Content Scheduling",
-        "Custom Integrations",
-        "White-label Options"
+        "Content Scheduling"
       ],
-      highlight: "Best Value for Growth",
-      popular: true
+      popular: true,
+      highlight: "Best Value for Growth"
     },
     {
       name: "Enterprise",
-      monthlyPrice: 129,
-      yearlyPrice: 99,
-      originalMonthlyPrice: 199,
-      originalYearlyPrice: 159,
+      price: "$129",
+      period: "/month",
+      originalPrice: "$199",
       description: "For agencies, teams, and large creators",
       features: [
         "Unlimited Professional Blogs",
@@ -96,11 +98,9 @@ const Pricing: React.FC = () => {
         "Dedicated Account Manager",
         "Custom Analytics Dashboard",
         "Priority Feature Requests",
-        "99.99% SLA Guarantee",
-        "Custom Onboarding & Training"
+        "99.99% SLA Guarantee"
       ],
-      highlight: "Maximum Power & Control",
-      popular: false
+      highlight: "Maximum Power & Control"
     }
   ];
 
@@ -159,17 +159,17 @@ const Pricing: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--light-background)' }}>
       {/* Header */}
       <header className="fixed top-0 w-full bg-white/95 backdrop-blur-lg border-b border-gray-100 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--primary-green)'}}>
                 <Sparkles className="text-white h-5 w-5" />
               </div>
               <div>
-                <span className="font-bold text-xl text-gray-900">Bloggy</span>
+                <span className="font-bold text-xl" style={{ color: 'var(--brand-dark)'}}>Bloggy</span>
                 <span className="text-xs text-gray-500 block -mt-1">AI-Powered Blogging</span>
               </div>
             </Link>
@@ -179,7 +179,7 @@ const Pricing: React.FC = () => {
                 <Button variant="ghost">Back to Home</Button>
               </Link>
               <Link to="/auth">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
+                <Button style={{ backgroundColor: 'var(--primary-green)', color: 'var(--utility-white)'}}>
                   Start Free Trial
                 </Button>
               </Link>
@@ -189,16 +189,16 @@ const Pricing: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-blue-50">
+      <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--light-background)'}}>
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="mb-6 bg-green-100 text-green-800 border-green-200">
+          <Badge className="mb-6" style={{ backgroundColor: 'var(--utility-white)', color: 'var(--primary-green)'}}>
             <DollarSign className="h-4 w-4 mr-1" />
             Special Launch Pricing - Save up to 50%
           </Badge>
           
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8">
+          <h1 className="text-5xl md:text-6xl font-bold mb-8" style={{ color: 'var(--brand-dark)'}}>
             Choose Your
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">
+            <span className="block" style={{ color: 'var(--primary-green)'}}>
               Perfect Plan
             </span>
           </h1>
@@ -241,45 +241,45 @@ const Pricing: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {pricingPlans.map((plan, index) => (
-              <Card key={index} className={`relative overflow-hidden ${
+              <div key={index} className={`modern-card relative overflow-hidden ${
                 plan.popular 
-                  ? 'border-2 border-blue-500 shadow-2xl scale-105 bg-white' 
-                  : 'border border-gray-200 shadow-lg bg-white hover:shadow-xl transition-shadow'
+                  ? 'border-2 border-blue-500 shadow-2xl scale-105' 
+                  : 'border border-gray-200 shadow-lg hover:shadow-xl transition-shadow'
               }`}>
                 {plan.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-center py-2 text-sm font-medium">
+                  <div className="absolute top-0 left-0 right-0 text-white text-center py-2 text-sm font-medium" style={{ backgroundColor: 'var(--primary-green)'}}>
                     🔥 Most Popular Choice
                   </div>
                 )}
                 
-                <CardHeader className={`text-center ${plan.popular ? 'pt-12' : 'pt-8'}`}>
+                <div className={`text-center ${plan.popular ? 'pt-12' : 'pt-8'}`}>
                   <div className="mb-4">
                     <Badge variant="outline" className="text-xs">
                       {plan.highlight}
                     </Badge>
                   </div>
-                  <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
-                  <CardDescription className="text-gray-600 mb-6">{plan.description}</CardDescription>
+                  <h3 className="text-2xl font-bold" style={{ color: 'var(--brand-dark)'}}>{plan.name}</h3>
+                  <p className="text-gray-600 mb-6">{plan.description}</p>
                   
                   <div className="space-y-2">
                     <div className="flex items-baseline justify-center">
-                      <span className="text-5xl font-bold text-gray-900">${getPrice(plan)}</span>
+                      <span className="text-5xl font-bold" style={{ color: 'var(--brand-dark)'}}>${getPrice(plan)}</span>
                       <span className="text-gray-500 ml-1">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
                     </div>
                     <div className="flex items-center justify-center space-x-2">
                       <span className="text-lg text-gray-400 line-through">${getOriginalPrice(plan)}/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
-                      <Badge className="bg-green-100 text-green-800 text-xs">
+                      <Badge className="text-xs" style={{ backgroundColor: 'var(--light-background)', color: 'var(--primary-green)'}}>
                         Save {getSavings(plan)}%
                       </Badge>
                     </div>
                   </div>
-                </CardHeader>
+                </div>
                 
-                <CardContent className="px-6 pb-8">
+                <div className="px-6 pb-8">
                   <ul className="space-y-4 mb-8">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                        <CheckCircle className="h-5 w-5 mr-3 mt-0.5 flex-shrink-0" style={{ color: 'var(--primary-green)'}}/>
                         <span className="text-gray-700 text-sm">{feature}</span>
                       </li>
                     ))}
@@ -289,9 +289,10 @@ const Pricing: React.FC = () => {
                     <Button 
                       className={`w-full py-3 text-base font-semibold ${
                         plan.popular 
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg' 
-                          : 'bg-gray-900 hover:bg-gray-800 text-white'
+                          ? 'text-white shadow-lg' 
+                          : 'text-white'
                       }`}
+                      style={{ backgroundColor: plan.popular ? 'var(--primary-green)' : 'var(--brand-dark)'}}
                     >
                       {plan.popular ? 'Start Free Trial' : 'Get Started'}
                       <ArrowRight className="ml-2 h-4 w-4" />
@@ -301,38 +302,38 @@ const Pricing: React.FC = () => {
                   <p className="text-xs text-gray-500 text-center mt-3">
                     30-day money-back guarantee
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Feature Comparison */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--light-background)'}}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Compare Plans</h2>
+            <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--brand-dark)'}}>Compare Plans</h2>
             <p className="text-xl text-gray-600">See what's included in each plan</p>
           </div>
           
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-2xl shadow-xl overflow-hidden">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+              <thead style={{ backgroundColor: 'var(--light-background)'}}>
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Feature</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold" style={{ color: 'var(--brand-dark)'}}>Feature</th>
                   <th className="px-6 py-4 text-center text-sm font-semibold text-gray-600">Creator</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-blue-600">Professional</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold" style={{ color: 'var(--primary-green)'}}>Professional</th>
                   <th className="px-6 py-4 text-center text-sm font-semibold text-gray-600">Enterprise</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {comparisonFeatures.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.feature}</td>
+                    <td className="px-6 py-4 text-sm font-medium" style={{ color: 'var(--brand-dark)'}}>{item.feature}</td>
                     <td className="px-6 py-4 text-center">
                       {item.creator === true ? (
-                        <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                        <CheckCircle className="h-5 w-5 mx-auto" style={{ color: 'var(--primary-green)'}}/>
                       ) : item.creator === false ? (
                         <X className="h-5 w-5 text-red-400 mx-auto" />
                       ) : (
@@ -341,16 +342,16 @@ const Pricing: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 text-center">
                       {item.professional === true ? (
-                        <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                        <CheckCircle className="h-5 w-5 mx-auto" style={{ color: 'var(--primary-green)'}}/>
                       ) : item.professional === false ? (
                         <X className="h-5 w-5 text-red-400 mx-auto" />
                       ) : (
-                        <span className="text-sm text-blue-600 font-medium">{item.professional}</span>
+                        <span className="text-sm font-medium" style={{ color: 'var(--primary-green)'}}>{item.professional}</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-center">
                       {item.enterprise === true ? (
-                        <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                        <CheckCircle className="h-5 w-5 mx-auto" style={{ color: 'var(--primary-green)'}}/>
                       ) : item.enterprise === false ? (
                         <X className="h-5 w-5 text-red-400 mx-auto" />
                       ) : (
@@ -369,34 +370,30 @@ const Pricing: React.FC = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--brand-dark)'}}>Frequently Asked Questions</h2>
             <p className="text-xl text-gray-600">Everything you need to know about our pricing</p>
           </div>
           
           <div className="space-y-6">
             {faqItems.map((item, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <HelpCircle className="h-5 w-5 mr-3 text-blue-600" />
-                    {item.question}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 leading-relaxed">{item.answer}</p>
-                </CardContent>
-              </Card>
+              <div key={index} className="modern-card">
+                <h3 className="text-lg flex items-center font-semibold">
+                  <HelpCircle className="h-5 w-5 mr-3" style={{ color: 'var(--primary-green)'}}/>
+                  {item.question}
+                </h3>
+                <p className="text-gray-600 leading-relaxed mt-2">{item.answer}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
+      <section className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--primary-green)'}}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
             Ready to Start Your
-            <span className="block text-yellow-300">Blogging Journey?</span>
+            <span className="block" style={{ color: 'var(--accent-gold)'}}>Blogging Journey?</span>
           </h2>
           
           <p className="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
@@ -405,7 +402,7 @@ const Pricing: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link to="/auth">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-xl">
+              <Button size="lg" className="px-8 py-4 text-lg font-semibold shadow-xl" style={{ backgroundColor: 'var(--utility-white)', color: 'var(--primary-green)'}}>
                 <Rocket className="mr-2 h-5 w-5" />
                 Start Free Trial
               </Button>

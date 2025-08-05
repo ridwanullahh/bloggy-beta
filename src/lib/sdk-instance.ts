@@ -45,7 +45,8 @@ const sdkConfig = {
         customization: 'object',
         monetization: 'object',
         marketing: 'object',
-        settings: 'object'
+        settings: 'object',
+        subscriberCount: 'number'
       },
       defaults: {
         theme: 'hashnode-modern',
@@ -100,7 +101,8 @@ const sdkConfig = {
         seo: 'object',
         scheduledFor: 'string|null',
         publishedAt: 'string|null',
-        monetization: 'object'
+        monetization: 'object',
+        views: 'number'
       },
       defaults: {
         status: 'draft',

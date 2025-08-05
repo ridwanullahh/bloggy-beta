@@ -1,0 +1,33 @@
+:root {
+  --primary-green: #05B34D;
+  --accent-gold: #F2B91C;
+  --brand-dark: #181F25;
+  --light-background: #E9FBF1;
+  --utility-white: #FFFFFF;
+}
+
+body {
+  background-color: var(--light-background);
+  color: var(--brand-dark);
+}
+
+.modern-dashboard {
+  padding: 2rem;
+}
+
+.modern-card {
+  background-color: var(--utility-white);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .modern-dashboard {
+    padding: 1rem;
+  }
+
+  .modern-card {
+    padding: 1rem;
+  }
+}

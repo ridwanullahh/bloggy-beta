@@ -14,6 +14,7 @@ import { useToast } from '../hooks/use-toast';
 import { Blog } from '../types/blog';
 import { BLOG_THEMES } from '../constants/themes';
 import { ThemeShowcase } from '../components/themes/ThemeShowcase';
+import { SocialMediaManager } from '../components/settings/SocialMediaManager';
 import sdk from '../lib/sdk-instance';
 import { 
   Settings, 
@@ -51,6 +52,8 @@ const BlogSettings: React.FC = () => {
     showNewsletter: true,
     showTrending: true,
     heroStyle: 'minimal' as 'minimal' | 'full' | 'banner',
+    // Social Media
+    socialMedia: {},
     // Other settings
     allowComments: true,
     moderateComments: false,
@@ -100,6 +103,8 @@ const BlogSettings: React.FC = () => {
           showNewsletter: foundBlog.customization?.homepageSettings?.showNewsletter !== false,
           showTrending: foundBlog.customization?.homepageSettings?.showTrending !== false,
           heroStyle: foundBlog.customization?.homepageSettings?.heroStyle || 'minimal',
+          // Social Media
+          socialMedia: foundBlog.customization?.socialMedia || {},
           // Other settings
           allowComments: foundBlog.settings?.allowComments || true,
           moderateComments: foundBlog.settings?.moderateComments || false,
@@ -128,6 +133,14 @@ const BlogSettings: React.FC = () => {
     fetchBlog();
   }, [slug, user, navigate, toast]);
 
+  const handleUpdate = (updatedBlog: Blog) => {
+    setBlog(updatedBlog);
+    setFormData({
+      ...formData,
+      socialMedia: updatedBlog.customization?.socialMedia || {},
+    });
+  };
+
   const handleSave = async () => {
     if (!blog) return;
 
@@ -152,7 +165,8 @@ const BlogSettings: React.FC = () => {
             showNewsletter: formData.showNewsletter,
             showTrending: formData.showTrending,
             heroStyle: formData.heroStyle
-          }
+          },
+          socialMedia: formData.socialMedia
         },
         settings: {
           allowComments: formData.allowComments,
@@ -240,9 +254,11 @@ const BlogSettings: React.FC = () => {
 
         {/* Settings Tabs */}
         <Tabs defaultValue="general" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
+            <TabsTrigger value="branding">Branding</TabsTrigger>
+            <TabsTrigger value="social">Social</TabsTrigger>
             <TabsTrigger value="domain">Domain</TabsTrigger>
             <TabsTrigger value="monetization">Monetization</TabsTrigger>
             <TabsTrigger value="marketing">Marketing</TabsTrigger>
@@ -314,26 +330,16 @@ const BlogSettings: React.FC = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="appearance" className="space-y-4">
+          <TabsContent value="branding" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Palette className="w-5 h-5 mr-2" />
-                  Appearance Settings
+                  Branding
                 </CardTitle>
-                <CardDescription>Customize how your blog looks</CardDescription>
+                <CardDescription>Customize your blog's branding</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <ThemeShowcase
-                  selectedTheme={formData.theme}
-                  onThemeSelect={(themeId) => setFormData(prev => ({ ...prev, theme: themeId }))}
-                  customColors={{
-                    primary: formData.primaryColor || '#2563eb',
-                    secondary: formData.secondaryColor || '#f8fafc',
-                    accent: formData.accentColor || '#3b82f6'
-                  }}
-                />
-
                 {/* Brand Color Customization */}
                 <div className="border-t pt-6">
                   <h3 className="text-lg font-medium mb-4">Brand Colors</h3>
@@ -395,6 +401,30 @@ const BlogSettings: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="appearance" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Palette className="w-5 h-5 mr-2" />
+                  Appearance Settings
+                </CardTitle>
+                <CardDescription>Customize how your blog looks</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <ThemeShowcase
+                  selectedTheme={formData.theme}
+                  onThemeSelect={(themeId) => setFormData(prev => ({ ...prev, theme: themeId }))}
+                  customColors={{
+                    primary: formData.primaryColor || '#2563eb',
+                    secondary: formData.secondaryColor || '#f8fafc',
+                    accent: formData.accentColor || '#3b82f6'
+                  }}
+                />
+
 
                 {/* Homepage Settings */}
                 <div className="border-t pt-6">
@@ -481,6 +511,10 @@ const BlogSettings: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="social" className="space-y-4">
+            <SocialMediaManager blog={blog} onUpdate={handleUpdate} />
           </TabsContent>
 
           <TabsContent value="domain" className="space-y-4">
@@ -658,6 +692,12 @@ const BlogSettings: React.FC = () => {
             </Card>
           </TabsContent>
         </Tabs>
+      </div>
+      <div className="fixed bottom-4 right-4">
+        <Button onClick={handleSave} disabled={saving} size="lg">
+          <Save className="w-5 h-5 mr-2" />
+          {saving ? 'Saving...' : 'Save Changes'}
+        </Button>
       </div>
     </MainLayout>
   );

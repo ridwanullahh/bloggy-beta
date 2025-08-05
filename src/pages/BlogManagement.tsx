@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -23,6 +22,7 @@ import {
   Mail,
   Globe
 } from 'lucide-react';
+import '../styles/modern.css';
 
 const BlogManagement: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -80,7 +80,7 @@ const BlogManagement: React.FC = () => {
           draftPosts: blogPosts.filter(p => p.status === 'draft').length,
           totalSubscribers: blogSubscribers.length,
           monthlyRevenue: Math.floor(Math.random() * 50000), // Mock data
-          totalViews: Math.floor(Math.random() * 100000) // Mock data
+          totalViews: blogPosts.reduce((acc, post) => acc + (post.views || 0), 0)
         });
       } catch (error) {
         console.error('Error fetching blog data:', error);
@@ -157,9 +157,9 @@ const BlogManagement: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-8">
+      <div className="space-y-8 modern-dashboard">
         {/* Modern Header */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        <div className="modern-card">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div>
               <div className="flex items-center space-x-3 mb-4">
@@ -167,7 +167,7 @@ const BlogManagement: React.FC = () => {
                   <Globe className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{blog.title}</h1>
+                  <h1 className="text-3xl font-bold" style={{ color: 'var(--brand-dark)' }}>{blog.title}</h1>
                   <p className="text-gray-600 text-lg">/{blog.slug}</p>
                 </div>
               </div>
@@ -192,7 +192,7 @@ const BlogManagement: React.FC = () => {
                   View Blog
                 </Link>
               </Button>
-              <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6 py-3">
+              <Button asChild style={{ backgroundColor: 'var(--primary-green)', color: 'var(--utility-white)'}} className="px-6 py-3">
                 <Link to={`/blog/${blog.slug}/post/new`}>
                   <Plus className="w-5 h-5 mr-2" />
                   New Post
@@ -210,57 +210,57 @@ const BlogManagement: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
+          <div className="modern-card">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="text-sm font-medium">Total Posts</h3>
               <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
               <div className="text-2xl font-bold">{stats.totalPosts}</div>
               <p className="text-xs text-muted-foreground">
                 {stats.publishedPosts} published, {stats.draftPosts} drafts
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Subscribers</CardTitle>
+          <div className="modern-card">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="text-sm font-medium">Subscribers</h3>
               <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
               <div className="text-2xl font-bold">{stats.totalSubscribers}</div>
               <p className="text-xs text-muted-foreground">
                 +12% from last month
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+          <div className="modern-card">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="text-sm font-medium">Monthly Revenue</h3>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
               <div className="text-2xl font-bold">₦{stats.monthlyRevenue.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">
                 {blog.monetization?.enabled ? 'Monetization active' : 'Not monetized'}
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+          <div className="modern-card">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="text-sm font-medium">Total Views</h3>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
               <div className="text-2xl font-bold">{stats.totalViews.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">
                 This month
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Main Content Tabs */}
@@ -273,7 +273,7 @@ const BlogManagement: React.FC = () => {
           </TabsList>
 
           <TabsContent value="posts" className="space-y-4">
-            <Card>
+            <div className="modern-card">
               <CardHeader>
                 <CardTitle>Blog Posts</CardTitle>
                 <CardDescription>Manage your blog content</CardDescription>
@@ -341,11 +341,11 @@ const BlogManagement: React.FC = () => {
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="subscribers" className="space-y-4">
-            <Card>
+            <div className="modern-card">
               <CardHeader>
                 <CardTitle>Subscribers</CardTitle>
                 <CardDescription>Manage your blog subscribers</CardDescription>
@@ -382,11 +382,11 @@ const BlogManagement: React.FC = () => {
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
-            <Card>
+            <div className="modern-card">
               <CardHeader>
                 <CardTitle>Analytics</CardTitle>
                 <CardDescription>Track your blog's performance</CardDescription>
@@ -400,11 +400,11 @@ const BlogManagement: React.FC = () => {
                   </p>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4">
-            <Card>
+            <div className="modern-card">
               <CardHeader>
                 <CardTitle>Blog Settings</CardTitle>
                 <CardDescription>Configure your blog preferences</CardDescription>
@@ -444,7 +444,7 @@ const BlogManagement: React.FC = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

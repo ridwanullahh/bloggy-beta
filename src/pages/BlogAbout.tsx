@@ -5,34 +5,13 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Blog } from '../types/blog';
 import { getThemeById } from '../constants/themes';
-import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
-import sdk from '../lib/sdk-instance';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
+import { useBlogData } from '../hooks/use-blog-data';
 import { ArrowLeft, User, Mail, Globe } from 'lucide-react';
 
 const BlogAbout: React.FC = () => {
-  const { blogSlug } = useParams<{ blogSlug: string }>();
   const navigate = useNavigate();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchBlog = async () => {
-      if (!blogSlug) return;
-
-      try {
-        const allBlogs = await sdk.get<Blog>('blogs');
-        const foundBlog = allBlogs.find(b => b.slug === blogSlug && b.status === 'active');
-        setBlog(foundBlog || null);
-      } catch (error) {
-        console.error('Error fetching blog:', error);
-        setBlog(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlog();
-  }, [blogSlug]);
+  const { blog, loading, blogSlug } = useBlogData();
 
   if (loading) {
     return (
@@ -56,7 +35,7 @@ const BlogAbout: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <UniversalPageThemeWrapper blogSlug={blogSlug!} pageType="about">
+    <UniversalThemeWrapper blog={blog} theme={theme!} pageType="about">
       <div className="min-h-screen bg-gray-50" style={{
         backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
         fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
@@ -137,7 +116,7 @@ const BlogAbout: React.FC = () => {
         </Card>
       </div>
       </div>
-    </UniversalPageThemeWrapper>
+    </UniversalThemeWrapper>
   );
 };
 

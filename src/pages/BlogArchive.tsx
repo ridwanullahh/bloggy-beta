@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import { getThemeById } from '../constants/themes';
-import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
-import sdk from '../lib/sdk-instance';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
+import { useBlogData } from '../hooks/use-blog-data';
 import { 
   Calendar, 
   User, 
@@ -23,62 +23,13 @@ import {
 } from 'lucide-react';
 
 const BlogArchive: React.FC = () => {
-  const { blogSlug } = useParams<{ blogSlug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { blog, posts, categories, tags, loading, blogSlug } = useBlogData();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTag, setSelectedTag] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('newest');
-
-  useEffect(() => {
-    const fetchArchiveData = async () => {
-      if (!blogSlug) return;
-
-      try {
-        const [allBlogs, allPosts, allCategories, allTags] = await Promise.all([
-          sdk.get<Blog>('blogs'),
-          sdk.get<Post>('posts'),
-          sdk.get<Category>('categories'),
-          sdk.get<Tag>('tags')
-        ]);
-
-        const foundBlog = allBlogs.find(b => b.slug === blogSlug && b.status === 'active');
-        
-        if (!foundBlog) {
-          setBlog(null);
-          setLoading(false);
-          return;
-        }
-
-        setBlog(foundBlog);
-
-        const blogPosts = allPosts
-          .filter(p => p.blogId === foundBlog.id && p.status === 'published')
-          .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime());
-        
-        const blogCategories = allCategories.filter(c => c.blogId === foundBlog.id);
-        const blogTags = allTags.filter(t => t.blogId === foundBlog.id);
-
-        setPosts(blogPosts);
-        setCategories(blogCategories);
-        setTags(blogTags);
-      } catch (error) {
-        console.error('Error fetching archive data:', error);
-        setBlog(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArchiveData();
-  }, [blogSlug]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -162,7 +113,7 @@ const BlogArchive: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <UniversalPageThemeWrapper blogSlug={blogSlug!} pageType="archive">
+    <UniversalThemeWrapper blog={blog} theme={theme!} pageType="archive">
       <div className="min-h-screen" style={{
         backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
         fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
@@ -374,7 +325,7 @@ const BlogArchive: React.FC = () => {
         )}
       </div>
     </div>
-    </UniversalPageThemeWrapper>
+    </UniversalThemeWrapper>
   );
 };
 

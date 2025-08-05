@@ -1,23 +1,20 @@
-
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { useToast } from '../hooks/use-toast';
-import { Blog } from '../types/blog';
 import { getThemeById } from '../constants/themes';
-import { UniversalPageThemeWrapper } from '../components/themes/UniversalPageThemeWrapper';
-import sdk from '../lib/sdk-instance';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
+import { useBlogData } from '../hooks/use-blog-data';
+import enhancedSDK from '../lib/enhanced-sdk';
 import { ArrowLeft, Mail, MessageCircle, User } from 'lucide-react';
 
 const BlogContact: React.FC = () => {
-  const { blogSlug } = useParams<{ blogSlug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { blog, loading, blogSlug } = useBlogData();
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: '',
@@ -25,25 +22,6 @@ const BlogContact: React.FC = () => {
     subject: '',
     message: ''
   });
-
-  useEffect(() => {
-    const fetchBlog = async () => {
-      if (!blogSlug) return;
-
-      try {
-        const allBlogs = await sdk.get<Blog>('blogs');
-        const foundBlog = allBlogs.find(b => b.slug === blogSlug && b.status === 'active');
-        setBlog(foundBlog || null);
-      } catch (error) {
-        console.error('Error fetching blog:', error);
-        setBlog(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlog();
-  }, [blogSlug]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +39,7 @@ const BlogContact: React.FC = () => {
     setSubmitting(true);
     try {
       // Store contact form submission for blog owner to review
-      await sdk.insert('contactSubmissions', {
+      await enhancedSDK.insert('contactSubmissions', {
         blogId: blog.id,
         name: form.name,
         email: form.email,
@@ -109,10 +87,10 @@ const BlogContact: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <UniversalPageThemeWrapper blogSlug={blogSlug!} pageType="contact">
+    <UniversalThemeWrapper blog={blog} theme={theme!} pageType="contact">
       <div className="min-h-screen bg-gray-50" style={{
         backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
+        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif',
       }}>
       {/* Header */}
       <div className="bg-white border-b" style={{ 
@@ -227,7 +205,7 @@ const BlogContact: React.FC = () => {
         </div>
       </div>
       </div>
-    </UniversalPageThemeWrapper>
+    </UniversalThemeWrapper>
   );
 };
 

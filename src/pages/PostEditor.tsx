@@ -171,15 +171,14 @@ const PostEditor: React.FC = () => {
       }
 
       // Properly handle scheduledFor field
-      let scheduledForValue: string | null = null;
-      if (formData.status === 'scheduled' && formData.scheduledFor) {
+      let scheduledForValue: string | null = formData.scheduledFor || null;
+      if (formData.status === 'scheduled' && scheduledForValue) {
+        // Ensure it's a valid ISO string before saving
         try {
-          const date = new Date(formData.scheduledFor);
-          if (!isNaN(date.getTime())) {
-            scheduledForValue = date.toISOString();
-          }
-        } catch (error) {
-          console.error('Invalid scheduled date:', formData.scheduledFor);
+          new Date(scheduledForValue).toISOString();
+        } catch (e) {
+          toast({ title: 'Invalid date format for scheduling.', variant: 'destructive' });
+          scheduledForValue = null;
         }
       }
 
@@ -247,19 +246,6 @@ const PostEditor: React.FC = () => {
   };
 
   // Improved autosave with debouncing
-  const triggerAutoSave = () => {
-    if (autoSaveTimeout) {
-      clearTimeout(autoSaveTimeout);
-    }
-
-    const timeout = setTimeout(() => {
-      if (formData.title && formData.content) {
-        handleAutoSave();
-      }
-    }, 60000); // 1 minute of inactivity
-
-    setAutoSaveTimeout(timeout);
-  };
 
   const handleAutoSave = async () => {
     if (!blog || !user || !formData.title || !formData.content) return;
@@ -320,26 +306,14 @@ const PostEditor: React.FC = () => {
   };
 
   // Proper autosave with 1-minute inactivity delay
-  React.useEffect(() => {
-    // Clear existing timeout
-    if (autoSaveTimeout) {
-      clearTimeout(autoSaveTimeout);
-    }
-
-    // Only trigger autosave if there's meaningful content
-    if (formData.title?.trim() || formData.content?.trim()) {
-      const timeout = setTimeout(() => {
+  useEffect(() => {
+    const autoSave = setTimeout(() => {
+      if (formData.title.trim() !== '' || formData.content.trim() !== '') {
         handleAutoSave();
-      }, 60000); // 1 minute of inactivity
-
-      setAutoSaveTimeout(timeout);
-    }
-
-    return () => {
-      if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout);
       }
-    };
+    }, 60000); // 1 minute
+
+    return () => clearTimeout(autoSave);
   }, [formData.title, formData.content, formData.excerpt]);
 
   const handleTagToggle = (tagName: string) => {

@@ -31,8 +31,10 @@ import {
   Smartphone,
   Search,
   Code,
-  Paintbrush
+  Paintbrush,
+  CreditCard
 } from 'lucide-react';
+import '../styles/modern.css';
 
 const Features: React.FC = () => {
   const featureCategories = [
@@ -179,17 +181,17 @@ const Features: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--light-background)' }}>
       {/* Header */}
       <header className="fixed top-0 w-full bg-white/95 backdrop-blur-lg border-b border-gray-100 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--primary-green)'}}>
                 <Sparkles className="text-white h-5 w-5" />
               </div>
               <div>
-                <span className="font-bold text-xl text-gray-900">Bloggy</span>
+                <span className="font-bold text-xl" style={{ color: 'var(--brand-dark)'}}>Bloggy</span>
                 <span className="text-xs text-gray-500 block -mt-1">AI-Powered Blogging</span>
               </div>
             </Link>
@@ -199,7 +201,7 @@ const Features: React.FC = () => {
                 <Button variant="ghost">Back to Home</Button>
               </Link>
               <Link to="/auth">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
+                <Button style={{ backgroundColor: 'var(--primary-green)', color: 'var(--utility-white)'}}>
                   Start Free Trial
                 </Button>
               </Link>
@@ -209,16 +211,16 @@ const Features: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-purple-50">
+      <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--light-background)'}}>
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="mb-6 bg-blue-100 text-blue-800 border-blue-200">
+          <Badge className="mb-6" style={{ backgroundColor: 'var(--utility-white)', color: 'var(--primary-green)'}}>
             <Zap className="h-4 w-4 mr-1" />
             Complete Feature Overview
           </Badge>
           
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8">
+          <h1 className="text-5xl md:text-6xl font-bold mb-8" style={{ color: 'var(--brand-dark)'}}>
             Everything You Need to
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            <span className="block" style={{ color: 'var(--primary-green)'}}>
               Build & Grow
             </span>
           </h1>
@@ -230,7 +232,7 @@ const Features: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/auth">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg shadow-xl">
+              <Button size="lg" className="px-8 py-4 text-lg shadow-xl" style={{ backgroundColor: 'var(--primary-green)', color: 'var(--utility-white)'}}>
                 <Rocket className="mr-2 h-5 w-5" />
                 Start Free Trial
               </Button>
@@ -251,28 +253,28 @@ const Features: React.FC = () => {
           {featureCategories.map((category, categoryIndex) => (
             <div key={categoryIndex} className="mb-24 last:mb-0">
               <div className="text-center mb-16">
-                <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${category.color} text-white mb-6`}>
+                <div className={`inline-flex p-4 rounded-2xl text-white mb-6`} style={{ backgroundColor: 'var(--primary-green)'}}>
                   {category.icon}
                 </div>
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">{category.title}</h2>
+                <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--brand-dark)'}}>{category.title}</h2>
                 <p className="text-xl text-gray-600 max-w-2xl mx-auto">{category.description}</p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {category.features.map((feature, featureIndex) => (
-                  <Card key={featureIndex} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
-                    <CardHeader>
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${category.color} flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform`}>
+                  <div key={featureIndex} className="modern-card group">
+                    <div className="flex items-start space-x-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform`} style={{ backgroundColor: 'var(--primary-green)'}}>
                         {feature.icon}
                       </div>
-                      <CardTitle className="text-xl">{feature.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CardDescription className="text-gray-600 text-base leading-relaxed">
-                        {feature.description}
-                      </CardDescription>
-                    </CardContent>
-                  </Card>
+                      <div>
+                        <h3 className="text-xl font-semibold">{feature.title}</h3>
+                        <p className="text-gray-600 text-base leading-relaxed">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -281,11 +283,11 @@ const Features: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
+      <section className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--primary-green)'}}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
             Ready to Experience
-            <span className="block text-yellow-300">All These Features?</span>
+            <span className="block" style={{ color: 'var(--accent-gold)'}}>All These Features?</span>
           </h2>
           
           <p className="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
@@ -294,7 +296,7 @@ const Features: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link to="/auth">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-xl">
+              <Button size="lg" className="px-8 py-4 text-lg font-semibold shadow-xl" style={{ backgroundColor: 'var(--utility-white)', color: 'var(--primary-green)'}}>
                 <Rocket className="mr-2 h-5 w-5" />
                 Start Free Trial
               </Button>
