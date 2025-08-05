@@ -6,7 +6,7 @@ import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { useToast } from '../hooks/use-toast';
 import { getThemeById } from '../constants/themes';
-import { ComprehensiveThemeSystem } from '../components/themes/ComprehensiveThemeSystem';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
 import { useBlogData } from '../hooks/use-blog-data';
 import enhancedSDK from '../lib/enhanced-sdk';
 import { ArrowLeft, Mail, MessageCircle, User } from 'lucide-react';
@@ -87,30 +87,7 @@ const BlogContact: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <ComprehensiveThemeSystem blogSlug={blogSlug!} pageType="contact">
-      <div className="min-h-screen bg-gray-50" style={{
-        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif',
-      }}>
-      {/* Header */}
-      <div className="bg-white border-b" style={{ 
-        backgroundColor: theme?.styles.primaryColor || '#1F2937',
-        color: 'white'
-      }}>
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(`/${blogSlug}`)}
-            className="text-white hover:bg-white/10 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to {blog.title}
-          </Button>
-          <h1 className="text-4xl font-bold">Contact Us</h1>
-          <p className="text-xl opacity-90 mt-2">Get in touch with the {blog.title} team</p>
-        </div>
-      </div>
-
+    <UniversalThemeWrapper blogSlug={blogSlug!} pageType="contact">
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -204,8 +181,7 @@ const BlogContact: React.FC = () => {
           </Card>
         </div>
       </div>
-      </div>
-    </ComprehensiveThemeSystem>
+    </UniversalThemeWrapper>
   );
 };
 

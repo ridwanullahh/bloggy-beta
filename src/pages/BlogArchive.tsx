@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import { getThemeById } from '../constants/themes';
-import { ComprehensiveThemeSystem } from '../components/themes/ComprehensiveThemeSystem';
-import { useBlogData } from '../hooks/use-blog-data';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
+import enhancedSDK from '../lib/enhanced-sdk';
 import { 
   Calendar, 
   User, 
@@ -23,13 +23,70 @@ import {
 } from 'lucide-react';
 
 const BlogArchive: React.FC = () => {
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { blog, posts, categories, tags, loading, blogSlug } = useBlogData();
+  
+  const [blog, setBlog] = useState<Blog | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTag, setSelectedTag] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('newest');
+
+  useEffect(() => {
+    const fetchBlogData = async () => {
+      if (!slug) return;
+
+      try {
+        const allBlogs = await enhancedSDK.get<Blog>('blogs');
+        const foundBlog = allBlogs.find(b => b.slug === slug && b.status === 'active');
+        
+        if (!foundBlog) {
+          setBlog(null);
+          setLoading(false);
+          return;
+        }
+
+        setBlog(foundBlog);
+
+        // Fetch posts
+        const blogPosts = await enhancedSDK.filter<Post>('posts', p => p.blogId === foundBlog.id && p.status === 'published');
+        blogPosts.sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime());
+        setPosts(blogPosts);
+
+        // Fetch categories
+        try {
+          const allCategories = await enhancedSDK.get<Category>('categories');
+          const blogCategories = allCategories.filter(c => c.blogId === foundBlog.id);
+          setCategories(blogCategories);
+        } catch (error) {
+          console.log('Categories not found, setting empty array');
+          setCategories([]);
+        }
+
+        // Fetch tags
+        try {
+          const allTags = await enhancedSDK.get<Tag>('tags');
+          const blogTags = allTags.filter(t => t.blogId === foundBlog.id);
+          setTags(blogTags);
+        } catch (error) {
+          console.log('Tags not found, setting empty array');
+          setTags([]);
+        }
+      } catch (error) {
+        console.error('Error fetching blog data:', error);
+        setBlog(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogData();
+  }, [slug]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -47,7 +104,7 @@ const BlogArchive: React.FC = () => {
   };
 
   const handlePostClick = (post: Post) => {
-    navigate(`/${blogSlug}/${post.slug}`);
+    navigate(`/${slug}/${post.slug}`);
   };
 
   // Filter and sort posts
@@ -113,33 +170,7 @@ const BlogArchive: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <ComprehensiveThemeSystem blogSlug={blogSlug!} pageType="archive">
-      <div className="min-h-screen" style={{
-        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-      }}>
-      {/* Header */}
-      <div className="bg-white border-b" style={{ 
-        backgroundColor: theme?.styles.primaryColor || '#1F2937',
-        color: 'white'
-      }}>
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(`/${blogSlug}`)}
-            className="text-white hover:bg-white/10 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to {blog.title}
-          </Button>
-          <div className="flex items-center space-x-3 mb-4">
-            <Archive className="w-8 h-8" />
-            <h1 className="text-4xl font-bold">Archive</h1>
-          </div>
-          <p className="text-white/90 text-lg">Browse all posts from {blog.title}</p>
-        </div>
-      </div>
-
+    <UniversalThemeWrapper blogSlug={slug!} pageType="archive">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Filters */}
         <Card className="mb-8">
@@ -324,8 +355,7 @@ const BlogArchive: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
-    </ComprehensiveThemeSystem>
+    </UniversalThemeWrapper>
   );
 };
 

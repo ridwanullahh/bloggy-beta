@@ -10,7 +10,7 @@ import { Calendar, User, Tag, Mail, Lock, Menu, X, Home, FileText, Phone, Search
 import { SearchModal } from '../components/blog/SearchModal';
 import { MobileNavigation } from '../components/blog/MobileNavigation';
 import { ThemeRenderer } from '../components/themes/ThemeRenderer';
-import { ComprehensiveThemeSystem } from '../components/themes/ComprehensiveThemeSystem';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
 
 const BlogView: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -152,80 +152,13 @@ const BlogView: React.FC = () => {
   const customColors = blog.customization?.brandColors;
 
   return (
-    <ComprehensiveThemeSystem blogSlug={slug!} pageType="home">
-      <div className="min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-white border-b sticky top-0 z-50" style={{ 
-        backgroundColor: customColors?.primary || theme?.styles.primaryColor || '#1F2937',
-      }}>
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 
-                className="text-xl font-bold cursor-pointer text-white"
-                onClick={() => navigate(`/${slug}`)}
-              >
-                {blog.title}
-              </h1>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6">
-              <button 
-                onClick={() => navigate(`/${slug}`)}
-                className="text-white hover:text-gray-200 flex items-center"
-              >
-                <Home className="w-4 h-4 mr-1" />
-                Home
-              </button>
-              <button 
-                onClick={() => navigate(`/${slug}/archive`)}
-                className="text-white hover:text-gray-200 flex items-center"
-              >
-                <FileText className="w-4 h-4 mr-1" />
-                Archive
-              </button>
-              <button 
-                onClick={() => navigate(`/${slug}/about`)}
-                className="text-white hover:text-gray-200 flex items-center"
-              >
-                <User className="w-4 h-4 mr-1" />
-                About
-              </button>
-              <button 
-                onClick={() => navigate(`/${slug}/contact`)}
-                className="text-white hover:text-gray-200 flex items-center"
-              >
-                <Phone className="w-4 h-4 mr-1" />
-                Contact
-              </button>
-              <button 
-                onClick={() => setSearchModalOpen(true)}
-                className="text-white hover:text-gray-200 flex items-center"
-              >
-                <Search className="w-4 h-4 mr-1" />
-                Search
-              </button>
-              <button 
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="text-white hover:text-gray-200 flex items-center"
-              >
-                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </button>
-            </div>
-
-            {/* Mobile Navigation Component */}
-            <MobileNavigation
-              blog={blog}
-              blogSlug={slug}
-              onSearch={() => setSearchModalOpen(true)}
-              onThemeToggle={() => setIsDarkMode(!isDarkMode)}
-              isDarkMode={isDarkMode}
-            />
-          </div>
-        </div>
-      </nav>
-
+    <UniversalThemeWrapper 
+      blogSlug={slug!} 
+      pageType="home"
+      onSearch={() => setSearchModalOpen(true)}
+      onThemeToggle={() => setIsDarkMode(!isDarkMode)}
+      isDarkMode={isDarkMode}
+    >
       {/* Search Modal */}
       <SearchModal
         isOpen={searchModalOpen}
@@ -271,8 +204,7 @@ const BlogView: React.FC = () => {
         onPostClick={handlePostClick}
         customColors={customColors}
       />
-      </div>
-    </ComprehensiveThemeSystem>
+    </UniversalThemeWrapper>
   );
 };
 

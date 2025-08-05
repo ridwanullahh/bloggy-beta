@@ -15,6 +15,7 @@ import { Blog, Post, Category, Tag } from '../types/blog';
 import sdk from '../lib/sdk-instance';
 import { Save, Eye, Calendar, Tags, Folder, Settings, DollarSign, Share2, Twitter, Facebook, Linkedin, Edit } from 'lucide-react';
 import { ModernRichTextEditor } from '../components/editor/ModernRichTextEditor';
+import { FloatingSaveButton } from '../components/ui/floating-save-button';
 import { SocialMediaService } from '../services/socialMediaService';
 
 const PostEditor: React.FC = () => {
@@ -305,16 +306,28 @@ const PostEditor: React.FC = () => {
     }
   };
 
-  // Optimized autosave - only for content changes with 1.5 minute inactivity delay
+  // Enhanced autosave - only for content changes with 1.5 minute inactivity delay
   useEffect(() => {
-    const autoSave = setTimeout(() => {
-      if (formData.content.trim() !== '' && formData.title.trim() !== '') {
-        handleAutoSave();
-      }
-    }, 90000); // 1.5 minutes (90 seconds)
+    // Clear existing timeout
+    if (autoSaveTimeout) {
+      clearTimeout(autoSaveTimeout);
+    }
 
-    return () => clearTimeout(autoSave);
-  }, [formData.content]); // Only trigger on content changes
+    // Only autosave if there's meaningful content and user is inactive
+    if (formData.content.trim() !== '' && formData.title.trim() !== '') {
+      const timeout = setTimeout(() => {
+        handleAutoSave();
+      }, 90000); // 1.5 minutes (90 seconds) of inactivity
+
+      setAutoSaveTimeout(timeout);
+    }
+
+    return () => {
+      if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+      }
+    };
+  }, [formData.content]); // Only trigger on content changes, not other form fields
 
   const handleTagToggle = (tagName: string) => {
     setFormData(prev => ({
@@ -785,6 +798,16 @@ const PostEditor: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Save Button for better accessibility */}
+      <FloatingSaveButton
+        onSave={() => handleSave(false)}
+        hasChanges={formData.title.trim() !== '' || formData.content.trim() !== ''}
+        disabled={saving}
+        saveText="Save Draft"
+        savingText="Saving..."
+        savedText="Saved!"
+      />
     </MainLayout>
   );
 };

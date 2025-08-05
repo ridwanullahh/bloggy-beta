@@ -280,22 +280,22 @@ const UltraModernDashboard: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Blogs Section - Ultra Modern */}
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          {/* Blogs Section - Ultra Modern with Enhanced Mobile Responsiveness */}
+          <div className="xl:col-span-2">
             <div className="dashboard-card">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Your Blogs</h2>
-                  <p className="text-sm sm:text-base text-gray-600">Manage and monitor your blog performance</p>
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2">Your Blogs</h2>
+                  <p className="text-sm text-gray-600">Manage and monitor your blog performance</p>
                 </div>
-                <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
-                  <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+                <div className="flex items-center space-x-2 w-full sm:w-auto">
+                  <Button variant="outline" size="sm" className="flex-1 sm:flex-none text-xs sm:text-sm">
                     <Filter className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Filter</span>
                   </Button>
                   <Link to="/create-blog" className="flex-1 sm:flex-none">
-                    <Button className="btn-primary-modern w-full">
+                    <Button className="btn-primary-modern w-full text-xs sm:text-sm">
                       <Plus className="h-4 w-4 sm:mr-2" />
                       <span className="hidden sm:inline">New Blog</span>
                     </Button>
@@ -322,43 +322,43 @@ const UltraModernDashboard: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   {blogs.map((blog) => (
-                    <div key={blog.id} className="group p-6 bg-gradient-to-r from-white to-gray-50 rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div 
-                            className="w-16 h-16 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg"
+                    <div key={blog.id} className="group p-4 sm:p-6 bg-gradient-to-r from-white to-gray-50 rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
+                        <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+                          <div
+                            className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg flex-shrink-0"
                             style={{ background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-accent))' }}
                           >
                             {blog.title.charAt(0).toUpperCase()}
                           </div>
-                          <div>
-                            <h4 className="text-xl font-bold text-gray-900 mb-1">{blog.title}</h4>
-                            <p className="text-gray-600 mb-2">/{blog.slug}</p>
-                            <div className="flex items-center space-x-4">
-                              <Badge className="badge-success">
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 truncate">{blog.title}</h4>
+                            <p className="text-gray-600 mb-2 text-sm sm:text-base truncate">/{blog.slug}</p>
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                              <Badge className="badge-success text-xs">
                                 {blog.status}
                               </Badge>
-                              <span className="text-sm text-gray-500">
+                              <span className="text-xs sm:text-sm text-gray-500 truncate">
                                 {blog.theme} theme
                               </span>
-                              <span className="text-sm text-gray-500">
+                              <span className="text-xs sm:text-sm text-gray-500">
                                 {blog.subscriberCount || 0} subscribers
                               </span>
                             </div>
                           </div>
                         </div>
                         
-                        <div className="flex items-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center space-x-2 sm:space-x-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-shrink-0">
                           <Link to={`/blog/${blog.slug}`}>
-                            <Button variant="outline" size="sm">
-                              <Eye className="h-4 w-4 mr-2" />
-                              View
+                            <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                              <Eye className="h-4 w-4 sm:mr-2" />
+                              <span className="hidden sm:inline">View</span>
                             </Button>
                           </Link>
                           <Link to={`/blog/${blog.slug}/manage`}>
-                            <Button className="btn-primary-modern">
-                              <Settings className="h-4 w-4 mr-2" />
-                              Manage
+                            <Button className="btn-primary-modern text-xs sm:text-sm">
+                              <Settings className="h-4 w-4 sm:mr-2" />
+                              <span className="hidden sm:inline">Manage</span>
                             </Button>
                           </Link>
                         </div>
@@ -370,12 +370,12 @@ const UltraModernDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Sidebar Content */}
-          <div className="space-y-6">
+          {/* Sidebar Content - Enhanced Mobile Responsiveness */}
+          <div className="space-y-4 sm:space-y-6">
             {/* Recent Activity */}
             <div className="dashboard-card">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Recent Posts</h3>
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900">Recent Posts</h3>
                 <Button variant="ghost" size="sm">
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>

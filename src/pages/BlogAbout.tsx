@@ -5,7 +5,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Blog } from '../types/blog';
 import { getThemeById } from '../constants/themes';
-import { ComprehensiveThemeSystem } from '../components/themes/ComprehensiveThemeSystem';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
 import { useBlogData } from '../hooks/use-blog-data';
 import { ArrowLeft, User, Mail, Globe } from 'lucide-react';
 
@@ -35,29 +35,7 @@ const BlogAbout: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <ComprehensiveThemeSystem blogSlug={blogSlug!} pageType="about">
-      <div className="min-h-screen bg-gray-50" style={{
-        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-      }}>
-      {/* Header */}
-      <div className="bg-white border-b" style={{ 
-        backgroundColor: theme?.styles.primaryColor || '#1F2937',
-        color: 'white'
-      }}>
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(`/${blogSlug}`)}
-            className="text-white hover:bg-white/10 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to {blog.title}
-          </Button>
-          <h1 className="text-4xl font-bold">About {blog.title}</h1>
-        </div>
-      </div>
-
+    <UniversalThemeWrapper blogSlug={blogSlug!} pageType="about">
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Card>
@@ -115,8 +93,7 @@ const BlogAbout: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      </div>
-    </ComprehensiveThemeSystem>
+    </UniversalThemeWrapper>
   );
 };
 

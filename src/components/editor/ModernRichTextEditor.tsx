@@ -71,14 +71,8 @@ export const ModernRichTextEditor: React.FC<ModernRichTextEditorProps> = ({
     setReadingTime(reading);
   }, [value]);
 
-  useEffect(() => {
-    if (autosave && onSave) {
-      const timer = setTimeout(() => {
-        onSave();
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [value, autosave, onSave]);
+  // Remove aggressive autosave - let parent component handle autosave timing
+  // This was causing saves every 2 seconds which is too frequent
 
   const handleEditorChange = (newValue: string | undefined) => {
     onChange(newValue || '');

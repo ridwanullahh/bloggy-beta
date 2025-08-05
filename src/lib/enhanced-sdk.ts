@@ -134,9 +134,9 @@ class EnhancedSDK {
     };
   }
 
-  // Optimized real-time polling with smart intervals
+  // Ultra-responsive real-time polling with smart intervals
   private startPolling(collection: string) {
-    let pollInterval = 1000; // Start with 1 second for better performance
+    let pollInterval = 300; // Start with 300ms for ultra-responsive updates
     let consecutiveErrors = 0;
     let lastDataHash = '';
     let lastActivity = Date.now();
@@ -149,20 +149,20 @@ class EnhancedSDK {
     };
 
     // Listen for user activity
-    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'focus', 'visibilitychange'].forEach(event => {
       document.addEventListener(event, updateActivity, { passive: true });
     });
 
     const poll = async () => {
       try {
-        // More aggressive adaptive polling for real-time feel
+        // Ultra-aggressive adaptive polling for real-time feel
         const timeSinceActivity = Date.now() - lastActivity;
-        if (timeSinceActivity > 30000) { // 30 seconds of inactivity
+        if (timeSinceActivity > 15000) { // 15 seconds of inactivity
           isUserActive = false;
-          pollInterval = 2000; // Faster inactive polling: 2 seconds
+          pollInterval = 1000; // Moderate inactive polling: 1 second
         } else {
           isUserActive = true;
-          pollInterval = 500; // Very fast active polling: 500ms
+          pollInterval = 200; // Ultra-fast active polling: 200ms for immediate updates
         }
 
         const data = await this.get(collection);

@@ -158,17 +158,17 @@ const BlogManagement: React.FC = () => {
   return (
     <MainLayout>
       <div className="space-y-8 modern-dashboard">
-        {/* Modern Header */}
+        {/* Ultra Modern Header with Enhanced Mobile Responsiveness */}
         <div className="modern-card">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-            <div>
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 sm:gap-6">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                  <Globe className="h-6 w-6 text-white" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Globe className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-3xl font-bold" style={{ color: 'var(--brand-dark)' }}>{blog.title}</h1>
-                  <p className="text-gray-600 text-lg">/{blog.slug}</p>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold truncate" style={{ color: 'var(--brand-dark)' }}>{blog.title}</h1>
+                  <p className="text-gray-600 text-sm sm:text-base lg:text-lg truncate">/{blog.slug}</p>
                 </div>
               </div>
 
@@ -185,31 +185,31 @@ const BlogManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button variant="outline" asChild className="px-6 py-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto">
+              <Button variant="outline" asChild className="px-4 sm:px-6 py-3 flex-1 sm:flex-none">
                 <Link to={`/blog/${blog.slug}`}>
-                  <Eye className="w-5 h-5 mr-2" />
-                  View Blog
+                  <Eye className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
+                  <span className="hidden sm:inline">View Blog</span>
                 </Link>
               </Button>
-              <Button asChild style={{ backgroundColor: 'var(--primary-green)', color: 'var(--utility-white)'}} className="px-6 py-3">
+              <Button asChild style={{ backgroundColor: 'var(--primary-green)', color: 'var(--utility-white)'}} className="px-4 sm:px-6 py-3 flex-1 sm:flex-none">
                 <Link to={`/blog/${blog.slug}/post/new`}>
-                  <Plus className="w-5 h-5 mr-2" />
-                  New Post
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
+                  <span className="hidden sm:inline">New Post</span>
                 </Link>
               </Button>
-              <Button variant="outline" asChild className="px-6 py-3">
+              <Button variant="outline" asChild className="px-4 sm:px-6 py-3 flex-1 sm:flex-none">
                 <Link to={`/blog/${blog.slug}/settings`}>
-                  <Settings className="w-5 h-5 mr-2" />
-                  Settings
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" />
+                  <span className="hidden sm:inline">Settings</span>
                 </Link>
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Enhanced Stats Cards with Better Mobile Layout */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           <div className="modern-card">
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
               <h3 className="text-sm font-medium">Total Posts</h3>

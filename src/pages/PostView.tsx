@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -16,7 +15,7 @@ import { SearchModal } from '../components/blog/SearchModal';
 import { MobileNavigation } from '../components/blog/MobileNavigation';
 import { Separator } from '../components/ui/separator';
 import { ScrollArea } from '../components/ui/scroll-area';
-import { ComprehensiveThemeSystem } from '../components/themes/ComprehensiveThemeSystem';
+import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
 
 const PostView: React.FC = () => {
   const { blogSlug, postSlug } = useParams<{ blogSlug: string; postSlug: string }>();
@@ -220,82 +219,17 @@ const PostView: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <ComprehensiveThemeSystem blogSlug={blogSlug!} pageType="post">
-      <div className="min-h-screen bg-gray-50" style={{
-        backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
-        fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
-      }}>
-      {/* Enhanced Navigation Header */}
-      <nav className="bg-white border-b sticky top-0 z-50" style={{ 
-        backgroundColor: theme?.styles.primaryColor || '#1F2937',
-      }}>
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate(`/${blogSlug}`)}
-                className="text-white hover:bg-white/10"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to {blog.title}
-              </Button>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Button 
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowToc(!showToc)}
-                className="text-white hover:bg-white/10"
-              >
-                <List className="w-4 h-4 mr-1" />
-                ToC
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                onClick={() => setSearchModalOpen(true)}
-                className="text-white hover:bg-white/10"
-              >
-                <Search className="w-4 h-4 mr-1" />
-                Search
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                onClick={handleBookmark}
-                className="text-white hover:bg-white/10"
-              >
-                {isBookmarked ? <Bookmark className="w-4 h-4" /> : <BookmarkPlus className="w-4 h-4" />}
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="text-white hover:bg-white/10"
-              >
-                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </Button>
-            </div>
-
-            {/* Mobile Navigation Component */}
-            <MobileNavigation
-              blog={blog}
-              blogSlug={blogSlug}
-              onSearch={() => setSearchModalOpen(true)}
-              onThemeToggle={() => setIsDarkMode(!isDarkMode)}
-              isDarkMode={isDarkMode}
-            />
-          </div>
-        </div>
-      </nav>
-
+    <UniversalThemeWrapper
+      blogSlug={blogSlug!}
+      pageType="post"
+      onSearch={() => setSearchModalOpen(true)}
+      onThemeToggle={() => setIsDarkMode(!isDarkMode)}
+      isDarkMode={isDarkMode}
+    >
       {/* Post Header */}
-      <div className="bg-white border-b" style={{ 
-        backgroundColor: theme?.styles.primaryColor || '#1F2937',
-        color: 'white'
+      <div className="bg-white border-b py-8" style={{
+        backgroundColor: 'var(--theme-site-bg)',
+        color: 'var(--theme-site-text)'
       }}>
         <div className="max-w-4xl mx-auto px-4 py-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>
@@ -505,8 +439,7 @@ const PostView: React.FC = () => {
           </Card>
         )}
       </div>
-    </div>
-    </ComprehensiveThemeSystem>
+    </UniversalThemeWrapper>
   );
 };
 

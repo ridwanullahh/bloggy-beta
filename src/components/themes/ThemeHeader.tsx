@@ -1,256 +1,238 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { useNavigate } from 'react-router-dom';
 import { Blog, BlogTheme } from '../../types/blog';
-import {
-  Search,
-  Menu,
-  X,
-  Home,
-  FileText,
-  Phone,
-  User,
-  Archive,
-  Moon,
-  Sun,
-  Mail,
-  Info
-} from 'lucide-react';
+import { Menu, X, Home, FileText, User, Phone, Search, Moon, Sun } from 'lucide-react';
 
 interface ThemeHeaderProps {
   blog: Blog;
   theme: BlogTheme;
-  pageType: 'home' | 'post' | 'archive' | 'about' | 'contact' | 'category' | 'tag' | 'search';
-  onSearch?: (query: string) => void;
+  pageType: 'home' | 'post' | 'archive' | 'about' | 'contact' | 'category' | 'tag';
+  className?: string;
+  onSearch?: () => void;
   onThemeToggle?: () => void;
   isDarkMode?: boolean;
-  className?: string;
-  currentPage?: string;
 }
 
 export const ThemeHeader: React.FC<ThemeHeaderProps> = ({
   blog,
   theme,
   pageType,
+  className = '',
   onSearch,
   onThemeToggle,
-  isDarkMode = false,
-  className = '',
-  currentPage
+  isDarkMode = false
 }) => {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  const brandColors = blog.customization?.brandColors || {
+    primary: theme.styles.primaryColor,
+    secondary: theme.styles.secondaryColor,
+    accent: theme.styles.accentColor,
+    headerBg: theme.styles.primaryColor,
+    headerText: '#FFFFFF',
+    footerBg: theme.styles.primaryColor,
+    footerText: '#FFFFFF',
+    siteBg: theme.styles.backgroundColor,
+    siteText: theme.styles.textColor
+  };
+  const branding = blog.customization?.branding || {
+    showBlogNameOnHomepage: true,
+    useGravatarInHeader: false,
+    customLogo: undefined,
+    favicon: undefined,
+    customCSS: undefined
+  };
 
-  const brandColors = blog.customization?.brandColors;
-  const headerBg = brandColors?.headerBg || theme.styles.primaryColor;
-  const headerText = brandColors?.headerText || '#FFFFFF';
+  const headerStyle = {
+    backgroundColor: brandColors.headerBg || theme.styles.primaryColor,
+    color: brandColors.headerText || '#FFFFFF'
+  };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim() && onSearch) {
-      onSearch(searchQuery.trim());
-    }
+  const getGravatarUrl = (email: string, size: number = 40) => {
+    // Create a simple hash from email for demo - in production use proper MD5
+    const hash = btoa(email.toLowerCase().trim()).substring(0, 32);
+    return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=identicon&r=g`;
   };
 
   const navigationItems = [
-    { label: 'Home', href: `/${blog.slug}`, icon: Home, active: pageType === 'home' },
-    { label: 'Archive', href: `/${blog.slug}/archive`, icon: Archive, active: pageType === 'archive' },
-    { label: 'About', href: `/${blog.slug}/about`, icon: Info, active: pageType === 'about' },
-    { label: 'Contact', href: `/${blog.slug}/contact`, icon: Phone, active: pageType === 'contact' },
+    { 
+      label: 'Home', 
+      icon: Home, 
+      path: `/${blog.slug}`,
+      active: pageType === 'home'
+    },
+    { 
+      label: 'Archive', 
+      icon: FileText, 
+      path: `/${blog.slug}/archive`,
+      active: pageType === 'archive'
+    },
+    { 
+      label: 'About', 
+      icon: User, 
+      path: `/${blog.slug}/about`,
+      active: pageType === 'about'
+    },
+    { 
+      label: 'Contact', 
+      icon: Phone, 
+      path: `/${blog.slug}/contact`,
+      active: pageType === 'contact'
+    }
   ];
 
-  const renderModernHeader = () => (
-    <header className="bg-white/95 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+  return (
+    <header className={`${className} border-b`} style={headerStyle}>
+      <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link to={`/blog/${blog.slug}`} className="flex items-center space-x-3">
-            <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold"
-              style={{ backgroundColor: 'var(--theme-primary)' }}
-            >
-              {blog.title.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-gray-900">{blog.title}</h1>
-              {blog.description && (
-                <p className="text-xs text-gray-600 -mt-1">{blog.description}</p>
-              )}
-            </div>
-          </Link>
+          {/* Logo/Brand Section */}
+          <div className="flex items-center space-x-3 min-w-0 flex-1 md:flex-none">
+            {branding.useGravatarInHeader ? (
+              <img
+                src={getGravatarUrl(blog.ownerId)}
+                alt={blog.title}
+                className="w-10 h-10 rounded-full border-2 border-white/20 flex-shrink-0"
+              />
+            ) : branding.customLogo ? (
+              <img
+                src={branding.customLogo}
+                alt={blog.title}
+                className="h-10 w-auto max-w-[120px] flex-shrink-0"
+              />
+            ) : null}
 
+            <button
+              onClick={() => navigate(`/${blog.slug}`)}
+              className="font-bold hover:opacity-80 transition-opacity truncate min-w-0"
+              style={{ color: brandColors.headerText || '#FFFFFF' }}
+              title={blog.title}
+            >
+              <span className="text-lg md:text-xl truncate block">
+                {branding.useGravatarInHeader && blog.title.length > 20
+                  ? `${blog.title.substring(0, 20)}...`
+                  : blog.title
+                }
+              </span>
+            </button>
+          </div>
+          
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            {navigationItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors ${
-                  currentPage === item.label.toLowerCase()
-                    ? 'text-white'
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-                style={currentPage === item.label.toLowerCase() ? { backgroundColor: 'var(--theme-primary)' } : {}}
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-all duration-200 ${
+                    item.active 
+                      ? 'bg-white/20 font-medium' 
+                      : 'hover:bg-white/10'
+                  }`}
+                  style={{ color: brandColors.headerText || '#FFFFFF' }}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+            
+            {/* Search Button */}
+            {onSearch && (
+              <button
+                onClick={onSearch}
+                className="flex items-center space-x-1 px-3 py-2 rounded-md hover:bg-white/10 transition-all duration-200"
+                style={{ color: brandColors.headerText || '#FFFFFF' }}
               >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ))}
+                <Search className="w-4 h-4" />
+                <span>Search</span>
+              </button>
+            )}
+            
+            {/* Dark Mode Toggle */}
+            {onThemeToggle && blog.customization?.darkMode?.enabled && (
+              <button
+                onClick={onThemeToggle}
+                className="flex items-center p-2 rounded-md hover:bg-white/10 transition-all duration-200"
+                style={{ color: brandColors.headerText || '#FFFFFF' }}
+              >
+                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-md hover:bg-white/10 transition-all duration-200"
+            style={{ color: brandColors.headerText || '#FFFFFF' }}
           >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <nav className="space-y-2">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
-                    currentPage === item.label.toLowerCase()
-                      ? 'text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                  style={currentPage === item.label.toLowerCase() ? { backgroundColor: 'var(--theme-primary)' } : {}}
-                  onClick={() => setIsMenuOpen(false)}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-white/20">
+            <nav className="flex flex-col space-y-2">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => {
+                      navigate(item.path);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center space-x-3 px-3 py-2 rounded-md text-left transition-all duration-200 ${
+                      item.active 
+                        ? 'bg-white/20 font-medium' 
+                        : 'hover:bg-white/10'
+                    }`}
+                    style={{ color: brandColors.headerText || '#FFFFFF' }}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+              
+              {/* Mobile Search */}
+              {onSearch && (
+                <button
+                  onClick={() => {
+                    onSearch();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-3 px-3 py-2 rounded-md text-left hover:bg-white/10 transition-all duration-200"
+                  style={{ color: brandColors.headerText || '#FFFFFF' }}
                 >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-            </nav>
-          </div>
-        )}
-      </div>
-    </header>
-  );
-
-  const renderMinimalHeader = () => (
-    <header className="bg-white border-b border-gray-100">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center py-8 text-center">
-          <Link to={`/blog/${blog.slug}`}>
-            <h1 
-              className="text-3xl md:text-4xl font-bold mb-2"
-              style={{ color: 'var(--theme-primary)' }}
-            >
-              {blog.title}
-            </h1>
-          </Link>
-          {blog.description && (
-            <p className="text-gray-600 text-lg mb-6">{blog.description}</p>
-          )}
-          
-          <nav className="flex flex-wrap justify-center gap-6">
-            {navigationItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`text-gray-700 hover:text-gray-900 transition-colors ${
-                  currentPage === item.label.toLowerCase() ? 'font-semibold' : ''
-                }`}
-                style={currentPage === item.label.toLowerCase() ? { color: 'var(--theme-primary)' } : {}}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
-    </header>
-  );
-
-  const renderMagazineHeader = () => (
-    <header className="bg-gradient-to-r from-gray-900 to-gray-800 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          <Link to={`/blog/${blog.slug}`} className="flex items-center space-x-4">
-            <div 
-              className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-xl"
-              style={{ backgroundColor: 'var(--theme-accent)' }}
-            >
-              {blog.title.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">{blog.title}</h1>
-              {blog.description && (
-                <p className="text-gray-300 text-sm">{blog.description}</p>
+                  <Search className="w-4 h-4" />
+                  <span>Search</span>
+                </button>
               )}
-            </div>
-          </Link>
-
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navigationItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                  currentPage === item.label.toLowerCase()
-                    ? 'bg-white/20 text-white'
-                    : 'text-gray-300 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </nav>
-
-          <button
-            className="lg:hidden p-2 rounded-lg hover:bg-white/10"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-700">
-            <nav className="space-y-2">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                    currentPage === item.label.toLowerCase()
-                      ? 'bg-white/20 text-white'
-                      : 'text-gray-300 hover:bg-white/10'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
+              
+              {/* Mobile Dark Mode Toggle */}
+              {onThemeToggle && blog.customization?.darkMode?.enabled && (
+                <button
+                  onClick={() => {
+                    onThemeToggle();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-3 px-3 py-2 rounded-md text-left hover:bg-white/10 transition-all duration-200"
+                  style={{ color: brandColors.headerText || '#FFFFFF' }}
                 >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+                  {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+                </button>
+              )}
             </nav>
           </div>
         )}
       </div>
     </header>
   );
-
-  // Determine header style based on theme
-  const getHeaderStyle = () => {
-    if (theme.id.includes('minimal') || theme.id.includes('clean')) {
-      return renderMinimalHeader();
-    } else if (theme.id.includes('magazine') || theme.id.includes('news')) {
-      return renderMagazineHeader();
-    } else {
-      return renderModernHeader();
-    }
-  };
-
-  return getHeaderStyle();
 };
 
 export default ThemeHeader;
