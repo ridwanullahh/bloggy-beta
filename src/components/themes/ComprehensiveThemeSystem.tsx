@@ -19,8 +19,8 @@ export const ComprehensiveThemeSystem: React.FC<ComprehensiveThemeSystemProps> =
 
   useEffect(() => {
     loadBlogAndTheme();
-    
-    // Real-time theme updates
+
+    // Enhanced real-time theme updates
     const unsubscribeBlog = enhancedSDK.subscribe('blogs', (data) => {
       if (data.type === 'refresh' || data.type === 'update') {
         const blogs = Array.isArray(data.data) ? data.data : [data.data];
@@ -43,21 +43,43 @@ export const ComprehensiveThemeSystem: React.FC<ComprehensiveThemeSystemProps> =
       }
     });
 
+    // Listen for global data updates
+    const handleGlobalUpdate = (event: CustomEvent) => {
+      const { collection, data } = event.detail;
+      if (collection === 'blogs') {
+        const blogs = Array.isArray(data) ? data : [data];
+        const updatedBlog = blogs.find((b: Blog) => b.slug === blogSlug);
+        if (updatedBlog) {
+          setBlog(updatedBlog);
+          loadTheme(updatedBlog.theme);
+        }
+      } else if (collection === 'themes') {
+        const themes = Array.isArray(data) ? data : [data];
+        const updatedTheme = themes.find((t: BlogTheme) => t.id === blog?.theme);
+        if (updatedTheme) {
+          setTheme(updatedTheme);
+          applyThemeStyles(updatedTheme, blog);
+        }
+      }
+    };
+
     // Listen for custom theme update events
     const handleThemeUpdate = () => {
       loadBlogAndTheme();
     };
 
+    window.addEventListener('global-data-update', handleGlobalUpdate as EventListener);
     window.addEventListener('theme-updated', handleThemeUpdate);
     window.addEventListener('blogs-updated', handleThemeUpdate);
 
     return () => {
       unsubscribeBlog();
       unsubscribeThemes();
+      window.removeEventListener('global-data-update', handleGlobalUpdate as EventListener);
       window.removeEventListener('theme-updated', handleThemeUpdate);
       window.removeEventListener('blogs-updated', handleThemeUpdate);
     };
-  }, [blogSlug]);
+  }, [blogSlug, blog?.theme]);
 
   const loadBlogAndTheme = async () => {
     try {
@@ -93,7 +115,11 @@ export const ComprehensiveThemeSystem: React.FC<ComprehensiveThemeSystemProps> =
     if (!themeData || !blogData) return;
 
     const root = document.documentElement;
-    const brandColors = blogData.brandColors || {};
+    const brandColors = blogData.customization?.brandColors || {};
+    const fonts = blogData.customization?.fonts || {};
+    const darkMode = blogData.customization?.darkMode || {};
+    const socialMedia = blogData.customization?.socialMedia || {};
+    const branding = blogData.customization?.branding || {};
     
     // Apply comprehensive theme variables
     const themeVars = {
@@ -110,11 +136,19 @@ export const ComprehensiveThemeSystem: React.FC<ComprehensiveThemeSystemProps> =
       '--theme-site-bg': brandColors.siteBg || themeData.styles.backgroundColor,
       '--theme-site-text': brandColors.siteText || themeData.styles.textColor,
       
-      // Typography
-      '--theme-font-family': themeData.styles.fontFamily,
-      '--theme-heading-font': themeData.styles.headingFont,
+      // Typography with font customization
+      '--theme-font-family': fonts.primaryFont || themeData.styles.fontFamily,
+      '--theme-heading-font': fonts.headingFont || themeData.styles.headingFont,
+      '--theme-code-font': fonts.codeFont || 'JetBrains Mono, monospace',
       '--theme-text-color': themeData.styles.textColor,
       '--theme-bg-color': themeData.styles.backgroundColor,
+
+      // Dark mode colors
+      '--theme-dark-primary': darkMode.customDarkColors?.primary || brandColors.primary || themeData.styles.primaryColor,
+      '--theme-dark-secondary': darkMode.customDarkColors?.secondary || '#1a1a1a',
+      '--theme-dark-accent': darkMode.customDarkColors?.accent || brandColors.accent || themeData.styles.accentColor,
+      '--theme-dark-bg': darkMode.customDarkColors?.background || '#0f0f0f',
+      '--theme-dark-text': darkMode.customDarkColors?.text || '#ffffff',
       
       // Layout
       '--theme-border-radius': themeData.styles.borderRadius,
@@ -137,13 +171,30 @@ export const ComprehensiveThemeSystem: React.FC<ComprehensiveThemeSystemProps> =
       root.style.setProperty(key, value);
     });
 
+    // Load Google Fonts if specified
+    if (fonts.fontSource === 'google' && (fonts.primaryFont || fonts.headingFont)) {
+      loadGoogleFonts(fonts);
+    }
+
+    // Apply dark mode class if enabled
+    if (darkMode.enabled) {
+      const isDark = darkMode.defaultMode === 'dark' ||
+                    (darkMode.defaultMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+
     // Apply theme-specific body classes
     document.body.className = document.body.className.replace(/theme-\w+|page-\w+/g, '');
     document.body.classList.add(`theme-${themeData.id}`, `page-${pageType}`);
 
     // Inject theme-specific CSS
     injectThemeCSS(themeData, pageType);
-    
+
     console.log(`🎨 Theme applied: ${themeData.name} for ${pageType} page`);
   };
 
@@ -314,6 +365,30 @@ export const ComprehensiveThemeSystem: React.FC<ComprehensiveThemeSystemProps> =
     return "#" + (0x1000000 + (R > 255 ? 255 : R < 0 ? 0 : R) * 0x10000 +
       (G > 255 ? 255 : G < 0 ? 0 : G) * 0x100 +
       (B > 255 ? 255 : B < 0 ? 0 : B)).toString(16).slice(1);
+  };
+
+  const loadGoogleFonts = (fonts: any) => {
+    const fontsToLoad = [];
+    if (fonts.primaryFont && fonts.primaryFont !== 'Inter') fontsToLoad.push(fonts.primaryFont);
+    if (fonts.headingFont && fonts.headingFont !== fonts.primaryFont) fontsToLoad.push(fonts.headingFont);
+    if (fonts.codeFont && fonts.codeFont !== 'JetBrains Mono') fontsToLoad.push(fonts.codeFont);
+
+    if (fontsToLoad.length > 0) {
+      const fontLink = document.getElementById('google-fonts') as HTMLLinkElement;
+      const fontUrl = `https://fonts.googleapis.com/css2?${fontsToLoad.map(font =>
+        `family=${font.replace(/\s+/g, '+')}:wght@300;400;500;600;700`
+      ).join('&')}&display=swap`;
+
+      if (fontLink) {
+        fontLink.href = fontUrl;
+      } else {
+        const link = document.createElement('link');
+        link.id = 'google-fonts';
+        link.rel = 'stylesheet';
+        link.href = fontUrl;
+        document.head.appendChild(link);
+      }
+    }
   };
 
   if (loading) {

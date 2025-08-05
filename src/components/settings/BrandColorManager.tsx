@@ -142,12 +142,12 @@ export const BrandColorManager: React.FC<BrandColorManagerProps> = ({ blog, onCo
 
   const resetToDefault = () => {
     const defaultColors = {
-      primary: '#3B82F6',
-      secondary: '#8B5CF6',
-      accent: '#06B6D4'
+      primary: '#05B34D',
+      secondary: '#F2B91C',
+      accent: '#181F25'
     };
     setColors(defaultColors);
-    
+
     if (previewMode) {
       onColorsUpdate(defaultColors);
     }

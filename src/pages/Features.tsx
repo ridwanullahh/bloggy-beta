@@ -39,10 +39,10 @@ import '../styles/modern.css';
 const Features: React.FC = () => {
   const featureCategories = [
     {
-      title: "AI-Powered Content Creation",
-      description: "Revolutionary AI tools that understand your brand and audience",
+      title: "Modern Content Creation",
+      description: "Intuitive tools that make professional blogging effortless",
       icon: <Brain className="h-8 w-8" />,
-      color: "from-blue-500 to-purple-500",
+      color: "from-green-500 to-emerald-500",
       features: [
         {
           icon: <Sparkles className="h-5 w-5" />,
@@ -67,20 +67,20 @@ const Features: React.FC = () => {
       ]
     },
     {
-      title: "50 Modern Blog Themes",
-      description: "Stunning, responsive themes with cutting-edge visual effects",
+      title: "Beautiful Design System",
+      description: "Comprehensive design tools for creating stunning blogs",
       icon: <Palette className="h-8 w-8" />,
-      color: "from-purple-500 to-pink-500",
+      color: "from-green-500 to-yellow-500",
       features: [
         {
           icon: <Layers className="h-5 w-5" />,
-          title: "50 Unique Designs",
-          description: "From minimalist to futuristic, each theme is crafted for different content types and audiences with distinct layouts."
+          title: "Flexible Layouts",
+          description: "Multiple layout options and design patterns that adapt to your content style and brand identity."
         },
         {
           icon: <Sparkles className="h-5 w-5" />,
-          title: "Advanced Visual Effects",
-          description: "Glassmorphism, neumorphism, neon glows, and holographic effects that make your blog unforgettable."
+          title: "Modern Visual Effects",
+          description: "Contemporary design elements and animations that create engaging user experiences."
         },
         {
           icon: <Paintbrush className="h-5 w-5" />,

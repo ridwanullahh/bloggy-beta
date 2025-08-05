@@ -10,7 +10,7 @@ import { Calendar, User, Tag, Mail, Lock, Menu, X, Home, FileText, Phone, Search
 import { SearchModal } from '../components/blog/SearchModal';
 import { MobileNavigation } from '../components/blog/MobileNavigation';
 import { ThemeRenderer } from '../components/themes/ThemeRenderer';
-import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
+import { ComprehensiveThemeSystem } from '../components/themes/ComprehensiveThemeSystem';
 
 const BlogView: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -152,7 +152,7 @@ const BlogView: React.FC = () => {
   const customColors = blog.customization?.brandColors;
 
   return (
-    <UniversalThemeWrapper blog={blog} theme={theme!} pageType="home" isDarkMode={isDarkMode}>
+    <ComprehensiveThemeSystem blogSlug={slug!} pageType="home">
       <div className="min-h-screen">
       {/* Navigation */}
       <nav className="bg-white border-b sticky top-0 z-50" style={{ 
@@ -272,7 +272,7 @@ const BlogView: React.FC = () => {
         customColors={customColors}
       />
       </div>
-    </UniversalThemeWrapper>
+    </ComprehensiveThemeSystem>
   );
 };
 

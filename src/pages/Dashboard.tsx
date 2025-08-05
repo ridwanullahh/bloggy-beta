@@ -111,23 +111,23 @@ const Dashboard: React.FC = () => {
 
   const getThemeGradient = (theme: string) => {
     const gradients = {
-      modern: 'from-blue-500 to-cyan-500',
+      modern: 'from-green-500 to-emerald-500',
       'dark-mode': 'from-gray-700 to-gray-900',
       magazine: 'from-red-500 to-pink-500',
-      'creative-portfolio': 'from-purple-500 to-indigo-500',
-      business: 'from-blue-600 to-blue-800',
+      'creative-portfolio': 'from-green-500 to-yellow-500',
+      business: 'from-green-600 to-green-800',
       lifestyle: 'from-pink-400 to-rose-400',
-      tech: 'from-cyan-500 to-teal-500',
+      tech: 'from-green-500 to-teal-500',
       nature: 'from-green-500 to-emerald-500',
       food: 'from-orange-500 to-red-500',
-      travel: 'from-sky-500 to-blue-500',
+      travel: 'from-green-500 to-yellow-500',
       fitness: 'from-red-500 to-orange-500',
       education: 'from-amber-600 to-orange-600',
-      gaming: 'from-purple-600 to-pink-600',
+      gaming: 'from-green-600 to-yellow-600',
       personal: 'from-yellow-600 to-amber-600',
       news: 'from-gray-800 to-black'
     };
-    return gradients[theme as keyof typeof gradients] || 'from-blue-500 to-purple-500';
+    return gradients[theme as keyof typeof gradients] || 'from-green-500 to-yellow-500';
   };
 
   if (loading) {

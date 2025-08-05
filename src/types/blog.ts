@@ -30,26 +30,42 @@ export interface Blog {
       heroStyle: 'minimal' | 'full' | 'banner';
     };
     socialMedia?: {
-      twitter?: string;
-      facebook?: string;
-      instagram?: string;
-      linkedin?: string;
-      github?: string;
-      youtube?: string;
-      email?: string;
-      enableTwitter?: boolean;
-      enableFacebook?: boolean;
-      enableInstagram?: boolean;
-      enableLinkedin?: boolean;
-      enableGithub?: boolean;
-      enableYoutube?: boolean;
-      enableEmail?: boolean;
+      enabled: boolean;
+      platforms: {
+        twitter: { enabled: boolean; handle: string; url: string; };
+        facebook: { enabled: boolean; handle: string; url: string; };
+        instagram: { enabled: boolean; handle: string; url: string; };
+        linkedin: { enabled: boolean; handle: string; url: string; };
+        youtube: { enabled: boolean; handle: string; url: string; };
+        github: { enabled: boolean; handle: string; url: string; };
+        discord: { enabled: boolean; handle: string; url: string; };
+        telegram: { enabled: boolean; handle: string; url: string; };
+      };
     };
     branding?: {
-      useGravatar?: boolean;
-      gravatarEmail?: string;
-      logoUrl?: string;
-      faviconUrl?: string;
+      showBlogNameOnHomepage: boolean;
+      useGravatarInHeader: boolean;
+      customLogo?: string;
+      favicon?: string;
+      customCSS?: string;
+    };
+    fonts?: {
+      primaryFont: string;
+      headingFont: string;
+      codeFont: string;
+      fontSource: 'google' | 'system' | 'custom';
+      customFontUrl?: string;
+    };
+    darkMode?: {
+      enabled: boolean;
+      defaultMode: 'light' | 'dark' | 'system';
+      customDarkColors?: {
+        primary: string;
+        secondary: string;
+        accent: string;
+        background: string;
+        text: string;
+      };
     };
   };
   monetization?: {
@@ -68,6 +84,14 @@ export interface Blog {
     allowComments: boolean;
     moderateComments: boolean;
     seoOptimized: boolean;
+    allowSubscriptions: boolean;
+    requireEmailVerification: boolean;
+    enableNotifications: boolean;
+    autosave: {
+      enabled: boolean;
+      interval: number;
+      onlyContentChanges: boolean;
+    };
   };
   createdAt: string;
   updatedAt: string;

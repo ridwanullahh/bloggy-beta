@@ -53,9 +53,15 @@ const sdkConfig = {
         status: 'active',
         customization: {
           brandColors: {
-            primary: '#2563eb',
-            secondary: '#f8fafc',
-            accent: '#3b82f6'
+            primary: '#05B34D',
+            secondary: '#FFFFFF',
+            accent: '#F2B91C',
+            headerBg: '#181F25',
+            headerText: '#FFFFFF',
+            footerBg: '#181F25',
+            footerText: '#FFFFFF',
+            siteBg: '#E9FBF1',
+            siteText: '#181F25'
           },
           homepageSettings: {
             showFeaturedPosts: true,
@@ -64,6 +70,44 @@ const sdkConfig = {
             showNewsletter: true,
             showTrending: true,
             heroStyle: 'minimal'
+          },
+          socialMedia: {
+            enabled: true,
+            platforms: {
+              twitter: { enabled: false, handle: '', url: '' },
+              facebook: { enabled: false, handle: '', url: '' },
+              instagram: { enabled: false, handle: '', url: '' },
+              linkedin: { enabled: false, handle: '', url: '' },
+              youtube: { enabled: false, handle: '', url: '' },
+              github: { enabled: false, handle: '', url: '' },
+              discord: { enabled: false, handle: '', url: '' },
+              telegram: { enabled: false, handle: '', url: '' }
+            }
+          },
+          branding: {
+            showBlogNameOnHomepage: false,
+            useGravatarInHeader: true,
+            customLogo: '',
+            favicon: '',
+            customCSS: ''
+          },
+          fonts: {
+            primaryFont: 'Inter',
+            headingFont: 'Inter',
+            codeFont: 'JetBrains Mono',
+            fontSource: 'google',
+            customFontUrl: ''
+          },
+          darkMode: {
+            enabled: true,
+            defaultMode: 'light',
+            customDarkColors: {
+              primary: '#05B34D',
+              secondary: '#1a1a1a',
+              accent: '#F2B91C',
+              background: '#0f0f0f',
+              text: '#ffffff'
+            }
           }
         },
         monetization: {
@@ -81,7 +125,15 @@ const sdkConfig = {
         settings: {
           allowComments: true,
           moderateComments: false,
-          seoOptimized: true
+          seoOptimized: true,
+          allowSubscriptions: true,
+          requireEmailVerification: false,
+          enableNotifications: true,
+          autosave: {
+            enabled: true,
+            interval: 90000,
+            onlyContentChanges: true
+          }
         },
         createdAt: new Date().toISOString()
       }

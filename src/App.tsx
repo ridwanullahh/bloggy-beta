@@ -8,6 +8,8 @@ import { BlogSubscriberAuthProvider } from "./contexts/BlogSubscriberAuthContext
 import Index from "./pages/Index";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import UltraModernDashboard from "./pages/UltraModernDashboard";
 import CreateBlog from "./pages/CreateBlog";
@@ -84,6 +86,16 @@ const AppRoutes = () => {
       <Route path="/pricing" element={
         <PublicRoute>
           <Pricing />
+        </PublicRoute>
+      } />
+      <Route path="/about" element={
+        <PublicRoute>
+          <About />
+        </PublicRoute>
+      } />
+      <Route path="/contact" element={
+        <PublicRoute>
+          <Contact />
         </PublicRoute>
       } />
       <Route path="/auth" element={

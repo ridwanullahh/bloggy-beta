@@ -4,13 +4,10 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import {
-  Edit,
   Globe,
   Zap,
   Users,
   BarChart3,
-  Mail,
-  CreditCard,
   Palette,
   ArrowRight,
   CheckCircle,
@@ -19,7 +16,6 @@ import {
   Rocket,
   Shield,
   TrendingUp,
-  Brain,
   Layers,
   Target,
   Award,
@@ -32,7 +28,12 @@ import {
   Play,
   ChevronRight,
   Menu,
-  X
+  X,
+  PenTool,
+  Smartphone,
+  Lock,
+  Headphones,
+  Coffee
 } from 'lucide-react';
 import '../styles/modern.css';
 
@@ -42,16 +43,16 @@ const Index: React.FC = () => {
 
   const features = [
     {
-      icon: <Brain className="h-6 w-6" />,
-      title: "Advanced AI Content Generation",
-      description: "Create compelling blog posts, headlines, and SEO-optimized content with our state-of-the-art AI that understands your brand voice and audience.",
-      highlight: "10x faster content creation"
+      icon: <PenTool className="h-6 w-6" />,
+      title: "Intuitive Content Creation",
+      description: "Write and publish beautiful blog posts with our modern editor. Rich formatting, media embedding, and real-time collaboration make content creation effortless.",
+      highlight: "Professional publishing made simple"
     },
     {
       icon: <Palette className="h-6 w-6" />,
-      title: "50 Modern Blog Themes",
-      description: "Choose from 50 stunning, responsive themes with advanced visual effects like glassmorphism, neumorphism, and neon designs that make your blog stand out.",
-      highlight: "WordPress-beating variety"
+      title: "Beautiful Design System",
+      description: "Customize your blog with our comprehensive design system. Choose colors, fonts, layouts, and create a unique brand identity that stands out.",
+      highlight: "Complete design freedom"
     },
     {
       icon: <Rocket className="h-6 w-6" />,
@@ -80,22 +81,22 @@ const Index: React.FC = () => {
   ];
 
   const platformStats = [
-    { number: "50+", label: "Modern Themes", icon: <Layers className="h-5 w-5" /> },
+    { number: "10K+", label: "Active Bloggers", icon: <Users className="h-5 w-5" /> },
     { number: "99.9%", label: "Uptime", icon: <Shield className="h-5 w-5" /> },
-    { number: "10x", label: "Faster Setup", icon: <Zap className="h-5 w-5" /> },
-    { number: "24/7", label: "Support", icon: <Heart className="h-5 w-5" /> }
+    { number: "5min", label: "Setup Time", icon: <Zap className="h-5 w-5" /> },
+    { number: "24/7", label: "Support", icon: <Headphones className="h-5 w-5" /> }
   ];
 
   const comparisonFeatures = [
     {
-      feature: "AI Content Generation",
+      feature: "Modern Design System",
       us: true,
       wordpress: false,
       medium: false,
       hashnode: false
     },
     {
-      feature: "50+ Modern Themes",
+      feature: "Real-time Collaboration",
       us: true,
       wordpress: "Limited",
       medium: false,
@@ -124,54 +125,27 @@ const Index: React.FC = () => {
     }
   ];
 
-  const themes = [
+  const successStories = [
     {
-      name: "HashNode Modern",
-      color: "bg-gradient-to-br from-blue-500 to-blue-600",
-      category: "Developer",
-      effect: "Clean & Professional"
+      name: "Sarah Chen",
+      role: "Tech Blogger",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=64&h=64&fit=crop&crop=face",
+      quote: "Bloggy transformed my content creation process. The modern design system and real-time collaboration features helped me grow my audience by 300% in just 6 months.",
+      metrics: "300% growth in 6 months"
     },
     {
-      name: "Glassmorphism",
-      color: "bg-gradient-to-br from-purple-400 to-pink-400",
-      category: "Modern",
-      effect: "Frosted Glass"
+      name: "Marcus Rodriguez",
+      role: "Business Coach",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face",
+      quote: "The monetization features are incredible. I went from zero to $5K monthly recurring revenue with the built-in subscription system and premium content features.",
+      metrics: "$5K MRR achieved"
     },
     {
-      name: "Cyberpunk Neon",
-      color: "bg-gradient-to-br from-gray-900 to-black",
-      category: "Futuristic",
-      effect: "Neon Glow"
-    },
-    {
-      name: "Neumorphism",
-      color: "bg-gradient-to-br from-gray-200 to-gray-300",
-      category: "Soft UI",
-      effect: "Tactile Design"
-    },
-    {
-      name: "Aurora Borealis",
-      color: "bg-gradient-to-br from-green-400 to-blue-500",
-      category: "Nature",
-      effect: "Ethereal Gradients"
-    },
-    {
-      name: "Luxury Gold",
-      color: "bg-gradient-to-br from-yellow-400 to-yellow-600",
-      category: "Premium",
-      effect: "Sophisticated"
-    },
-    {
-      name: "Ocean Depths",
-      color: "bg-gradient-to-br from-blue-600 to-teal-600",
-      category: "Nature",
-      effect: "Aquatic Blues"
-    },
-    {
-      name: "Cosmic Space",
-      color: "bg-gradient-to-br from-purple-900 to-indigo-900",
-      category: "Space",
-      effect: "Stellar Effects"
+      name: "Emily Watson",
+      role: "Lifestyle Influencer",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face",
+      quote: "The design flexibility is unmatched. I can create a unique brand experience that perfectly represents my style, and the mobile experience is flawless.",
+      metrics: "50K+ monthly readers"
     }
   ];
 
@@ -185,7 +159,7 @@ const Index: React.FC = () => {
       features: [
         "1 Professional Blog",
         "Unlimited AI Content Generation",
-        "All 50 Premium Themes",
+        "Modern Design System",
         "Custom Domain & SSL",
         "Basic Analytics & Insights",
         "Email Marketing (1,000 subscribers)",
@@ -263,10 +237,10 @@ const Index: React.FC = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-              <a href="#themes" className="text-gray-600 hover:text-gray-900 transition-colors">Themes</a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
-              <a href="#comparison" className="text-gray-600 hover:text-gray-900 transition-colors">Compare</a>
+              <Link to="/features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</Link>
+              <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</Link>
+              <Link to="/about" className="text-gray-600 hover:text-gray-900 transition-colors">About</Link>
+              <Link to="/contact" className="text-gray-600 hover:text-gray-900 transition-colors">Contact</Link>
             </nav>
 
             <div className="flex items-center space-x-3">
@@ -293,10 +267,10 @@ const Index: React.FC = () => {
           {isMenuOpen && (
             <div className="md:hidden border-t border-gray-100 py-4">
               <nav className="flex flex-col space-y-4">
-                <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-                <a href="#themes" className="text-gray-600 hover:text-gray-900 transition-colors">Themes</a>
-                <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
-                <a href="#comparison" className="text-gray-600 hover:text-gray-900 transition-colors">Compare</a>
+                <Link to="/features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</Link>
+                <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</Link>
+                <Link to="/about" className="text-gray-600 hover:text-gray-900 transition-colors">About</Link>
+                <Link to="/contact" className="text-gray-600 hover:text-gray-900 transition-colors">Contact</Link>
                 <Link to="/auth" className="text-gray-600 hover:text-gray-900 transition-colors">Sign In</Link>
               </nav>
             </div>
@@ -308,16 +282,16 @@ const Index: React.FC = () => {
       <section className="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0" style={{ backgroundColor: 'var(--light-background)'}}></div>
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse delay-1000"></div>
-        <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse delay-500"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ backgroundColor: 'var(--primary-green)'}}></div>
+        <div className="absolute top-40 right-10 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000" style={{ backgroundColor: 'var(--accent-gold)'}}></div>
+        <div className="absolute bottom-20 left-1/2 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-pulse delay-500" style={{ backgroundColor: 'var(--primary-green)'}}></div>
 
         <div className="relative max-w-7xl mx-auto">
           <div className="text-center">
             {/* Announcement Badge */}
             <div className="inline-flex items-center px-4 py-2 rounded-full mb-8 border" style={{ backgroundColor: 'var(--utility-white)', borderColor: 'var(--primary-green)'}}>
               <Sparkles className="h-4 w-4 mr-2" style={{ color: 'var(--primary-green)'}}/>
-              <span className="text-sm font-medium" style={{ color: 'var(--brand-dark)'}}>Introducing 50 Modern Blog Themes with AI</span>
+              <span className="text-sm font-medium" style={{ color: 'var(--brand-dark)'}}>The Future of Professional Blogging</span>
               <ChevronRight className="h-4 w-4 ml-2" style={{ color: 'var(--primary-green)'}}/>
             </div>
 
@@ -332,9 +306,9 @@ const Index: React.FC = () => {
 
             {/* Subheadline */}
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
-              The most advanced blogging platform with <strong>AI content generation</strong>,
-              <strong> 50 stunning themes</strong>, built-in marketing tools, and powerful monetization.
-              Everything you need to create, grow, and monetize your blog.
+              The most advanced blogging platform with <strong>modern design system</strong>,
+              <strong> real-time collaboration</strong>, built-in marketing tools, and powerful monetization.
+              Everything you need to create, grow, and monetize your professional blog.
             </p>
 
             {/* CTA Buttons */}
@@ -465,87 +439,75 @@ const Index: React.FC = () => {
         </div>
       </section>
 
-      {/* Modern Themes Showcase */}
-      <section id="themes" className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--light-background)'}}>
+      {/* Success Stories Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--light-background)'}}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <Badge className="mb-4" style={{ backgroundColor: 'var(--utility-white)', color: 'var(--primary-green)'}}>
-              <Palette className="h-4 w-4 mr-1" />
-              50 Modern Themes
+              <Star className="h-4 w-4 mr-1" />
+              Success Stories
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: 'var(--brand-dark)'}}>
-              Themes That Make You
+              Real Results from
               <span className="block" style={{ color: 'var(--primary-green)'}}>
-                Stand Out
+                Real Creators
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From glassmorphism to cyberpunk, our themes feature cutting-edge design trends and advanced visual effects that make your blog unforgettable.
+              Join thousands of successful bloggers who've transformed their content creation and grown their audience with Bloggy.
             </p>
           </div>
 
-          {/* Theme Categories */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {themes.map((theme, index) => (
-              <div key={index} className="modern-card group hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden">
-                <div className="relative">
-                  <div className={`${theme.color} h-32 relative overflow-hidden`}>
-                    {/* Theme preview elements */}
-                    <div className="absolute inset-0 p-3">
-                      <div className="bg-white/20 backdrop-blur-sm rounded-lg h-full p-2">
-                        <div className="bg-white/30 rounded h-2 w-3/4 mb-2"></div>
-                        <div className="bg-white/20 rounded h-1 w-full mb-1"></div>
-                        <div className="bg-white/20 rounded h-1 w-2/3 mb-2"></div>
-                        <div className="bg-white/40 rounded h-4 w-16 mt-auto"></div>
-                      </div>
-                    </div>
-
-                    {/* Category badge */}
-                    <div className="absolute top-2 right-2">
-                      <Badge className="text-xs bg-white/20 backdrop-blur-sm text-white border-white/30">
-                        {theme.category}
-                      </Badge>
-                    </div>
+          {/* Success Stories Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {successStories.map((story, index) => (
+              <div key={index} className="modern-card p-8 text-center">
+                <img
+                  src={story.avatar}
+                  alt={story.name}
+                  className="w-16 h-16 rounded-full mx-auto mb-4 object-cover"
+                />
+                <div className="mb-4">
+                  <div className="text-2xl font-bold" style={{ color: 'var(--primary-green)'}}>
+                    {story.metrics}
                   </div>
-
-                  <div className="p-4">
-                    <h3 className="font-semibold mb-1" style={{ color: 'var(--brand-dark)'}}>{theme.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{theme.effect}</p>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Eye className="h-3 w-3 mr-1" />
-                      <span>Preview</span>
-                    </div>
-                  </div>
+                </div>
+                <blockquote className="text-gray-700 mb-6 italic">
+                  "{story.quote}"
+                </blockquote>
+                <div>
+                  <div className="font-semibold" style={{ color: 'var(--brand-dark)'}}>{story.name}</div>
+                  <div className="text-sm text-gray-600">{story.role}</div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Theme Features */}
+          {/* Platform Benefits */}
           <div className="rounded-3xl p-8 md:p-12" style={{ backgroundColor: 'var(--utility-white)'}}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--primary-green)'}}>
-                  <Layers className="h-8 w-8 text-white" />
+                  <Rocket className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-dark)'}}>50 Unique Designs</h3>
-                <p className="text-gray-600">From minimalist to futuristic, each theme is crafted for different content types and audiences.</p>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-dark)'}}>Launch Faster</h3>
+                <p className="text-gray-600">Get your professional blog live in minutes, not weeks. No technical skills required.</p>
               </div>
 
               <div>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--primary-green)'}}>
-                  <Sparkles className="h-8 w-8 text-white" />
+                  <TrendingUp className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-dark)'}}>Advanced Effects</h3>
-                <p className="text-gray-600">Glassmorphism, neumorphism, neon glows, and other cutting-edge visual effects.</p>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-dark)'}}>Grow Audience</h3>
+                <p className="text-gray-600">Built-in SEO, social sharing, and marketing tools help you reach more readers organically.</p>
               </div>
 
               <div>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--primary-green)'}}>
-                  <Target className="h-8 w-8 text-white" />
+                  <DollarSign className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-dark)'}}>Brand Integration</h3>
-                <p className="text-gray-600">Custom brand colors automatically applied across all themes with perfect harmony.</p>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--brand-dark)'}}>Monetize Easily</h3>
+                <p className="text-gray-600">Multiple revenue streams with subscriptions, premium content, and integrated payments.</p>
               </div>
             </div>
           </div>

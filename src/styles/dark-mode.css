@@ -1,0 +1,310 @@
+/* Dark Mode Variables */
+:root {
+  --dark-bg-primary: #0f0f0f;
+  --dark-bg-secondary: #1a1a1a;
+  --dark-bg-tertiary: #2a2a2a;
+  --dark-text-primary: #ffffff;
+  --dark-text-secondary: #e0e0e0;
+  --dark-text-muted: #a0a0a0;
+  --dark-border: #333333;
+  --dark-border-light: #404040;
+  --dark-accent: #F2B91C;
+  --dark-primary: #05B34D;
+  --dark-danger: #ef4444;
+  --dark-warning: #f59e0b;
+  --dark-success: #10b981;
+}
+
+/* Dark Mode Base Styles */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: var(--dark-bg-primary);
+  color: var(--dark-text-primary);
+}
+
+/* Dark Mode Component Styles */
+.dark .bg-white {
+  background-color: var(--dark-bg-secondary) !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: var(--dark-bg-primary) !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: var(--dark-bg-tertiary) !important;
+}
+
+.dark .bg-gray-200 {
+  background-color: var(--dark-bg-tertiary) !important;
+}
+
+.dark .text-gray-900 {
+  color: var(--dark-text-primary) !important;
+}
+
+.dark .text-gray-800 {
+  color: var(--dark-text-primary) !important;
+}
+
+.dark .text-gray-700 {
+  color: var(--dark-text-secondary) !important;
+}
+
+.dark .text-gray-600 {
+  color: var(--dark-text-secondary) !important;
+}
+
+.dark .text-gray-500 {
+  color: var(--dark-text-muted) !important;
+}
+
+.dark .text-gray-400 {
+  color: var(--dark-text-muted) !important;
+}
+
+.dark .border-gray-200 {
+  border-color: var(--dark-border) !important;
+}
+
+.dark .border-gray-300 {
+  border-color: var(--dark-border-light) !important;
+}
+
+/* Dark Mode Cards */
+.dark .card,
+.dark [class*="card"] {
+  background-color: var(--dark-bg-secondary);
+  border-color: var(--dark-border);
+}
+
+.dark .card:hover {
+  background-color: var(--dark-bg-tertiary);
+}
+
+/* Dark Mode Buttons */
+.dark .btn-primary,
+.dark button[class*="primary"] {
+  background-color: var(--dark-primary);
+  border-color: var(--dark-primary);
+  color: white;
+}
+
+.dark .btn-primary:hover {
+  background-color: #048a3d;
+  border-color: #048a3d;
+}
+
+.dark .btn-outline,
+.dark button[variant="outline"] {
+  background-color: transparent;
+  border-color: var(--dark-border-light);
+  color: var(--dark-text-primary);
+}
+
+.dark .btn-outline:hover {
+  background-color: var(--dark-bg-tertiary);
+  border-color: var(--dark-border-light);
+}
+
+/* Dark Mode Forms */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--dark-bg-tertiary);
+  border-color: var(--dark-border-light);
+  color: var(--dark-text-primary);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--dark-primary);
+  box-shadow: 0 0 0 3px rgba(5, 179, 77, 0.1);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--dark-text-muted);
+}
+
+/* Dark Mode Navigation */
+.dark nav {
+  background-color: var(--dark-bg-secondary);
+  border-color: var(--dark-border);
+}
+
+.dark .nav-link {
+  color: var(--dark-text-secondary);
+}
+
+.dark .nav-link:hover {
+  color: var(--dark-text-primary);
+  background-color: var(--dark-bg-tertiary);
+}
+
+.dark .nav-link.active {
+  color: var(--dark-primary);
+  background-color: rgba(5, 179, 77, 0.1);
+}
+
+/* Dark Mode Modals */
+.dark .modal,
+.dark [role="dialog"] {
+  background-color: var(--dark-bg-secondary);
+  border-color: var(--dark-border);
+}
+
+.dark .modal-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Dark Mode Dropdowns */
+.dark .dropdown-menu {
+  background-color: var(--dark-bg-secondary);
+  border-color: var(--dark-border);
+}
+
+.dark .dropdown-item {
+  color: var(--dark-text-secondary);
+}
+
+.dark .dropdown-item:hover {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+}
+
+/* Dark Mode Tables */
+.dark table {
+  background-color: var(--dark-bg-secondary);
+}
+
+.dark th {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+  border-color: var(--dark-border);
+}
+
+.dark td {
+  border-color: var(--dark-border);
+  color: var(--dark-text-secondary);
+}
+
+.dark tr:hover {
+  background-color: var(--dark-bg-tertiary);
+}
+
+/* Dark Mode Alerts */
+.dark .alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: var(--dark-success);
+  color: var(--dark-success);
+}
+
+.dark .alert-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: var(--dark-warning);
+  color: var(--dark-warning);
+}
+
+.dark .alert-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--dark-danger);
+  color: var(--dark-danger);
+}
+
+/* Dark Mode Badges */
+.dark .badge {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+}
+
+.dark .badge-primary {
+  background-color: var(--dark-primary);
+  color: white;
+}
+
+.dark .badge-secondary {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-secondary);
+}
+
+/* Dark Mode Code Blocks */
+.dark pre,
+.dark code {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+  border-color: var(--dark-border);
+}
+
+.dark .hljs {
+  background-color: var(--dark-bg-tertiary) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+/* Dark Mode Scrollbars */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--dark-bg-primary);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--dark-border-light);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-text-muted);
+}
+
+/* Dark Mode Transitions */
+.dark * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Dark Mode Theme-Specific Overrides */
+.dark.theme-hashnode-modern {
+  --theme-primary: var(--dark-primary);
+  --theme-secondary: var(--dark-bg-secondary);
+  --theme-accent: var(--dark-accent);
+}
+
+.dark.theme-medium-inspired {
+  --theme-primary: var(--dark-bg-secondary);
+  --theme-secondary: var(--dark-bg-primary);
+  --theme-accent: var(--dark-primary);
+}
+
+.dark.theme-notion-blocks {
+  --theme-primary: var(--dark-bg-tertiary);
+  --theme-secondary: var(--dark-bg-secondary);
+  --theme-accent: var(--dark-accent);
+}
+
+/* Dark Mode Custom Properties Integration */
+.dark {
+  --theme-dark-primary: var(--dark-primary);
+  --theme-dark-secondary: var(--dark-bg-secondary);
+  --theme-dark-accent: var(--dark-accent);
+  --theme-dark-bg: var(--dark-bg-primary);
+  --theme-dark-text: var(--dark-text-primary);
+}
+
+/* Dark Mode Print Styles */
+@media print {
+  .dark {
+    color-scheme: light;
+  }
+  
+  .dark body {
+    background-color: white !important;
+    color: black !important;
+  }
+}

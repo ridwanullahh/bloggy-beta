@@ -6,7 +6,7 @@ import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { useToast } from '../hooks/use-toast';
 import { getThemeById } from '../constants/themes';
-import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
+import { ComprehensiveThemeSystem } from '../components/themes/ComprehensiveThemeSystem';
 import { useBlogData } from '../hooks/use-blog-data';
 import enhancedSDK from '../lib/enhanced-sdk';
 import { ArrowLeft, Mail, MessageCircle, User } from 'lucide-react';
@@ -87,7 +87,7 @@ const BlogContact: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <UniversalThemeWrapper blog={blog} theme={theme!} pageType="contact">
+    <ComprehensiveThemeSystem blogSlug={blogSlug!} pageType="contact">
       <div className="min-h-screen bg-gray-50" style={{
         backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
         fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif',
@@ -205,7 +205,7 @@ const BlogContact: React.FC = () => {
         </div>
       </div>
       </div>
-    </UniversalThemeWrapper>
+    </ComprehensiveThemeSystem>
   );
 };
 

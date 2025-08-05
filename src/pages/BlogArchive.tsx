@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useToast } from '../hooks/use-toast';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import { getThemeById } from '../constants/themes';
-import { UniversalThemeWrapper } from '../components/themes/UniversalThemeWrapper';
+import { ComprehensiveThemeSystem } from '../components/themes/ComprehensiveThemeSystem';
 import { useBlogData } from '../hooks/use-blog-data';
 import { 
   Calendar, 
@@ -113,7 +113,7 @@ const BlogArchive: React.FC = () => {
   const theme = getThemeById(blog.theme);
 
   return (
-    <UniversalThemeWrapper blog={blog} theme={theme!} pageType="archive">
+    <ComprehensiveThemeSystem blogSlug={blogSlug!} pageType="archive">
       <div className="min-h-screen" style={{
         backgroundColor: theme?.styles.secondaryColor || '#F3F4F6',
         fontFamily: theme?.styles.fontFamily || 'Inter, sans-serif'
@@ -325,7 +325,7 @@ const BlogArchive: React.FC = () => {
         )}
       </div>
     </div>
-    </UniversalThemeWrapper>
+    </ComprehensiveThemeSystem>
   );
 };
 

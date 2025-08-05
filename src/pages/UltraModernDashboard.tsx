@@ -206,41 +206,41 @@ const UltraModernDashboard: React.FC = () => {
                 {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
               
-              <div className="flex items-center space-x-4">
-                <div 
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg"
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0"
                   style={{ background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-accent))' }}
                 >
-                  <Sparkles className="h-6 w-6" />
+                  <Sparkles className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold" style={{ color: 'var(--brand-dark)' }}>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-lg sm:text-xl lg:text-2xl font-bold truncate" style={{ color: 'var(--brand-dark)' }}>
                     Welcome back, {user?.firstName}! 👋
                   </h1>
-                  <p className="text-gray-600">Here's what's happening with your blogs today</p>
+                  <p className="text-sm sm:text-base text-gray-600 truncate">Here's what's happening with your blogs today</p>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <div className="relative">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="relative hidden lg:block">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="text"
                   placeholder="Search blogs, posts..."
-                  className="form-modern pl-10 w-80 hidden md:block"
+                  className="form-modern pl-10 w-64 xl:w-80"
                 />
               </div>
-              
-              <Button variant="outline" size="sm" className="relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+
+              <Button variant="outline" size="sm" className="relative flex-shrink-0">
+                <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></span>
               </Button>
-              
+
               <Link to="/create-blog">
-                <Button className="btn-primary-modern">
-                  <Plus className="h-5 w-5 mr-2" />
-                  Create Blog
+                <Button className="btn-primary-modern text-xs sm:text-sm">
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 sm:mr-2" />
+                  <span className="hidden sm:inline">Create Blog</span>
                 </Button>
               </Link>
             </div>
@@ -250,31 +250,31 @@ const UltraModernDashboard: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Grid - Ultra Modern */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
           {statCards.map((stat, index) => (
             <div key={index} className="stat-card group cursor-pointer">
               <div className="flex items-start justify-between mb-4">
-                <div 
-                  className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.bgGradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                <div
+                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${stat.bgGradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
                 >
                   <div className={`text-transparent bg-clip-text bg-gradient-to-r ${stat.gradient}`}>
                     {stat.icon}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="stat-value">{stat.value}</div>
-                  <div className="stat-label">{stat.title}</div>
+                <div className="text-right min-w-0 flex-1 ml-3">
+                  <div className="stat-value text-lg sm:text-xl lg:text-2xl truncate">{stat.value}</div>
+                  <div className="stat-label text-xs sm:text-sm truncate">{stat.title}</div>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between">
-                <div className={`stat-change flex items-center ${
+                <div className={`stat-change flex items-center text-xs sm:text-sm ${
                   stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  <TrendingUp className="h-4 w-4 mr-1" />
-                  {stat.change}
+                } min-w-0 flex-1`}>
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
+                  <span className="truncate">{stat.change}</span>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0" />
               </div>
             </div>
           ))}
@@ -284,20 +284,20 @@ const UltraModernDashboard: React.FC = () => {
           {/* Blogs Section - Ultra Modern */}
           <div className="lg:col-span-2">
             <div className="dashboard-card">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Blogs</h2>
-                  <p className="text-gray-600">Manage and monitor your blog performance</p>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Your Blogs</h2>
+                  <p className="text-sm sm:text-base text-gray-600">Manage and monitor your blog performance</p>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Button variant="outline" size="sm">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filter
+                <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
+                  <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+                    <Filter className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Filter</span>
                   </Button>
-                  <Link to="/create-blog">
-                    <Button className="btn-primary-modern">
-                      <Plus className="h-4 w-4 mr-2" />
-                      New Blog
+                  <Link to="/create-blog" className="flex-1 sm:flex-none">
+                    <Button className="btn-primary-modern w-full">
+                      <Plus className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">New Blog</span>
                     </Button>
                   </Link>
                 </div>

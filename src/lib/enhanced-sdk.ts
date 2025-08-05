@@ -155,14 +155,14 @@ class EnhancedSDK {
 
     const poll = async () => {
       try {
-        // Adaptive polling based on user activity
+        // More aggressive adaptive polling for real-time feel
         const timeSinceActivity = Date.now() - lastActivity;
         if (timeSinceActivity > 30000) { // 30 seconds of inactivity
           isUserActive = false;
-          pollInterval = 5000; // Slow down to 5 seconds when inactive
+          pollInterval = 2000; // Faster inactive polling: 2 seconds
         } else {
           isUserActive = true;
-          pollInterval = 1000; // Active polling at 1 second
+          pollInterval = 500; // Very fast active polling: 500ms
         }
 
         const data = await this.get(collection);
@@ -177,12 +177,23 @@ class EnhancedSDK {
           // Trigger immediate re-render for UI components
           window.dispatchEvent(new CustomEvent(`${collection}-updated`, { detail: data }));
 
+          // Trigger global update event for cross-component updates
+          window.dispatchEvent(new CustomEvent('global-data-update', {
+            detail: { collection, data, timestamp: Date.now() }
+          }));
+
           // If user is inactive but data changed, briefly increase polling frequency
           if (!isUserActive) {
-            pollInterval = 1000;
+            pollInterval = 500; // Immediate fast polling
             setTimeout(() => {
-              if (!isUserActive) pollInterval = 5000;
-            }, 10000); // Return to slow polling after 10 seconds
+              if (!isUserActive) pollInterval = 2000;
+            }, 15000); // Return to slower polling after 15 seconds
+          } else {
+            // If data changed while active, boost polling for a short time
+            pollInterval = 300; // Ultra-fast polling for 10 seconds
+            setTimeout(() => {
+              pollInterval = 500;
+            }, 10000);
           }
         }
 

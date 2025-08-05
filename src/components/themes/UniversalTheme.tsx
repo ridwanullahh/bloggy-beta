@@ -78,7 +78,7 @@ export const UniversalTheme: React.FC<UniversalThemeProps> = ({
 
   const getHeroTitleGradient = () => {
     if (themeConfig.id.includes('holographic') || themeConfig.id.includes('aurora')) {
-      return `linear-gradient(45deg, #ff6ec7, #00d4ff, #ff6ec7)`;
+      return `linear-gradient(45deg, ${colors.primary}, ${colors.accent}, ${colors.primary})`;
     } else if (themeConfig.id.includes('neon')) {
       return `linear-gradient(45deg, ${colors.accent}, #ffffff, ${colors.accent})`;
     }

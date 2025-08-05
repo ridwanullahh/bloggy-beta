@@ -305,16 +305,16 @@ const PostEditor: React.FC = () => {
     }
   };
 
-  // Proper autosave with 1-minute inactivity delay
+  // Optimized autosave - only for content changes with 1.5 minute inactivity delay
   useEffect(() => {
     const autoSave = setTimeout(() => {
-      if (formData.title.trim() !== '' || formData.content.trim() !== '') {
+      if (formData.content.trim() !== '' && formData.title.trim() !== '') {
         handleAutoSave();
       }
-    }, 60000); // 1 minute
+    }, 90000); // 1.5 minutes (90 seconds)
 
     return () => clearTimeout(autoSave);
-  }, [formData.title, formData.content, formData.excerpt]);
+  }, [formData.content]); // Only trigger on content changes
 
   const handleTagToggle = (tagName: string) => {
     setFormData(prev => ({

@@ -49,28 +49,94 @@ export const EnhancedBrandingManager: React.FC<EnhancedBrandingManagerProps> = (
 
   // Social media state
   const [socialMedia, setSocialMedia] = useState({
-    twitter: blog.customization?.socialMedia?.twitter || '',
-    facebook: blog.customization?.socialMedia?.facebook || '',
-    instagram: blog.customization?.socialMedia?.instagram || '',
-    linkedin: blog.customization?.socialMedia?.linkedin || '',
-    github: blog.customization?.socialMedia?.github || '',
-    youtube: blog.customization?.socialMedia?.youtube || '',
-    email: blog.customization?.socialMedia?.email || '',
-    enableTwitter: blog.customization?.socialMedia?.enableTwitter ?? true,
-    enableFacebook: blog.customization?.socialMedia?.enableFacebook ?? true,
-    enableInstagram: blog.customization?.socialMedia?.enableInstagram ?? true,
-    enableLinkedin: blog.customization?.socialMedia?.enableLinkedin ?? true,
-    enableGithub: blog.customization?.socialMedia?.enableGithub ?? true,
-    enableYoutube: blog.customization?.socialMedia?.enableYoutube ?? true,
+    enabled: blog.customization?.socialMedia?.enabled ?? true,
+    platforms: {
+      twitter: {
+        enabled: blog.customization?.socialMedia?.platforms?.twitter?.enabled ?? false,
+        handle: blog.customization?.socialMedia?.platforms?.twitter?.handle || '',
+        url: blog.customization?.socialMedia?.platforms?.twitter?.url || ''
+      },
+      facebook: {
+        enabled: blog.customization?.socialMedia?.platforms?.facebook?.enabled ?? false,
+        handle: blog.customization?.socialMedia?.platforms?.facebook?.handle || '',
+        url: blog.customization?.socialMedia?.platforms?.facebook?.url || ''
+      },
+      instagram: {
+        enabled: blog.customization?.socialMedia?.platforms?.instagram?.enabled ?? false,
+        handle: blog.customization?.socialMedia?.platforms?.instagram?.handle || '',
+        url: blog.customization?.socialMedia?.platforms?.instagram?.url || ''
+      },
+      linkedin: {
+        enabled: blog.customization?.socialMedia?.platforms?.linkedin?.enabled ?? false,
+        handle: blog.customization?.socialMedia?.platforms?.linkedin?.handle || '',
+        url: blog.customization?.socialMedia?.platforms?.linkedin?.url || ''
+      },
+      youtube: {
+        enabled: blog.customization?.socialMedia?.platforms?.youtube?.enabled ?? false,
+        handle: blog.customization?.socialMedia?.platforms?.youtube?.handle || '',
+        url: blog.customization?.socialMedia?.platforms?.youtube?.url || ''
+      },
+      github: {
+        enabled: blog.customization?.socialMedia?.platforms?.github?.enabled ?? false,
+        handle: blog.customization?.socialMedia?.platforms?.github?.handle || '',
+        url: blog.customization?.socialMedia?.platforms?.github?.url || ''
+      },
+      discord: {
+        enabled: blog.customization?.socialMedia?.platforms?.discord?.enabled ?? false,
+        handle: blog.customization?.socialMedia?.platforms?.discord?.handle || '',
+        url: blog.customization?.socialMedia?.platforms?.discord?.url || ''
+      },
+      telegram: {
+        enabled: blog.customization?.socialMedia?.platforms?.telegram?.enabled ?? false,
+        handle: blog.customization?.socialMedia?.platforms?.telegram?.handle || '',
+        url: blog.customization?.socialMedia?.platforms?.telegram?.url || ''
+      }
+    }
   });
 
   // Branding state
   const [branding, setBranding] = useState({
-    useGravatar: blog.customization?.branding?.useGravatar ?? false,
-    gravatarEmail: blog.customization?.branding?.gravatarEmail || '',
-    logoUrl: blog.customization?.branding?.logoUrl || '',
-    faviconUrl: blog.customization?.branding?.faviconUrl || ''
+    showBlogNameOnHomepage: blog.customization?.branding?.showBlogNameOnHomepage ?? false,
+    useGravatarInHeader: blog.customization?.branding?.useGravatarInHeader ?? true,
+    customLogo: blog.customization?.branding?.customLogo || '',
+    favicon: blog.customization?.branding?.favicon || '',
+    customCSS: blog.customization?.branding?.customCSS || ''
   });
+
+  // Font customization state
+  const [fonts, setFonts] = useState({
+    primaryFont: blog.customization?.fonts?.primaryFont || 'Inter',
+    headingFont: blog.customization?.fonts?.headingFont || 'Inter',
+    codeFont: blog.customization?.fonts?.codeFont || 'JetBrains Mono',
+    fontSource: blog.customization?.fonts?.fontSource || 'google',
+    customFontUrl: blog.customization?.fonts?.customFontUrl || ''
+  });
+
+  // Dark mode state
+  const [darkMode, setDarkMode] = useState({
+    enabled: blog.customization?.darkMode?.enabled ?? true,
+    defaultMode: blog.customization?.darkMode?.defaultMode || 'light',
+    customDarkColors: {
+      primary: blog.customization?.darkMode?.customDarkColors?.primary || '#05B34D',
+      secondary: blog.customization?.darkMode?.customDarkColors?.secondary || '#1a1a1a',
+      accent: blog.customization?.darkMode?.customDarkColors?.accent || '#F2B91C',
+      background: blog.customization?.darkMode?.customDarkColors?.background || '#0f0f0f',
+      text: blog.customization?.darkMode?.customDarkColors?.text || '#ffffff'
+    }
+  });
+
+  const googleFonts = [
+    'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Source Sans Pro',
+    'Raleway', 'Poppins', 'Nunito', 'Playfair Display', 'Merriweather',
+    'Lora', 'PT Sans', 'Ubuntu', 'Crimson Text', 'Libre Baskerville',
+    'Oswald', 'Quicksand', 'Fira Sans', 'Work Sans', 'JetBrains Mono',
+    'Fira Code', 'Source Code Pro', 'Inconsolata', 'Space Mono'
+  ];
+
+  const systemFonts = [
+    'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana',
+    'Courier New', 'Trebuchet MS', 'Comic Sans MS', 'Impact', 'Lucida Console'
+  ];
 
   const colorPalettes = [
     {
@@ -163,7 +229,9 @@ export const EnhancedBrandingManager: React.FC<EnhancedBrandingManagerProps> = (
           ...blog.customization,
           brandColors: colors,
           socialMedia: socialMedia,
-          branding: branding
+          branding: branding,
+          fonts: fonts,
+          darkMode: darkMode
         }
       };
 
