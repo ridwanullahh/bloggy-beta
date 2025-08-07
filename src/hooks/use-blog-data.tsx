@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Blog, Post, Category, Tag } from '../types/blog';
 import enhancedSDK from '../lib/enhanced-sdk';
+import { performanceCache, CacheKeys } from '../lib/performance-cache';
 
 export const useBlogData = () => {
   const { blogSlug } = useParams<{ blogSlug: string }>();
@@ -16,31 +17,31 @@ export const useBlogData = () => {
       if (!blogSlug) return;
 
       try {
-        const [allBlogs, allPosts, allCategories, allTags] = await Promise.all([
-          enhancedSDK.get<Blog>('blogs'),
-          enhancedSDK.get<Post>('posts'),
-          enhancedSDK.get<Category>('categories'),
-          enhancedSDK.get<Tag>('tags')
-        ]);
+        // Use optimized caching methods
+        const blog = await enhancedSDK.getBlog(blogSlug);
 
-        const foundBlog = allBlogs.find(b => b.slug === blogSlug && b.status === 'active');
-        
-        if (!foundBlog) {
+        if (!blog || blog.status !== 'active') {
           setBlog(null);
           setLoading(false);
           return;
         }
 
-        setBlog(foundBlog);
+        setBlog(blog);
 
-        const blogPosts = allPosts
-          .filter(p => p.blogId === foundBlog.id && p.status === 'published')
-          .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime());
-        
-        const blogCategories = allCategories.filter(c => c.blogId === foundBlog.id);
-        const blogTags = allTags.filter(t => t.blogId === foundBlog.id);
+        // Fetch related data in parallel using cached methods
+        const [blogPosts, blogCategories, blogTags] = await Promise.all([
+          enhancedSDK.getBlogPosts(blog.id, { status: 'published' }),
+          enhancedSDK.getBlogCategories(blog.id),
+          enhancedSDK.getBlogTags(blog.id)
+        ]);
 
-        setPosts(blogPosts);
+        // Sort posts by date
+        const sortedPosts = blogPosts.sort((a, b) =>
+          new Date(b.publishedAt || b.createdAt).getTime() -
+          new Date(a.publishedAt || a.createdAt).getTime()
+        );
+
+        setPosts(sortedPosts);
         setCategories(blogCategories);
         setTags(blogTags);
       } catch (error) {

@@ -1,6 +1,7 @@
 import sdk from './sdk-instance';
+import { performanceCache, CacheKeys, CacheTTL } from './performance-cache';
 
-// Enhanced SDK wrapper with queue system and real-time features
+// Enhanced SDK wrapper with queue system, real-time features, and performance caching
 class EnhancedSDK {
   private writeQueue: Array<() => Promise<any>> = [];
   private isProcessingQueue = false;
@@ -55,12 +56,16 @@ class EnhancedSDK {
     return this.retryOperation(() => sdk.getById<T>(collection, id));
   }
 
-  // Enhanced insert with queue and retry
+  // Enhanced insert with queue, retry, and cache invalidation
   async insert<T>(collection: string, data: Partial<T>): Promise<T> {
     return new Promise((resolve, reject) => {
       this.writeQueue.push(async () => {
         try {
           const result = await this.retryOperation(() => sdk.insert<T>(collection, data));
+
+          // Invalidate relevant caches
+          this.invalidateRelevantCaches(collection, data);
+
           this.notifySubscribers(collection, { type: 'insert', data: result });
           resolve(result);
         } catch (error) {
@@ -70,12 +75,16 @@ class EnhancedSDK {
     });
   }
 
-  // Enhanced update with queue and retry
+  // Enhanced update with queue, retry, and cache invalidation
   async update<T>(collection: string, id: string, data: Partial<T>): Promise<T> {
     return new Promise((resolve, reject) => {
       this.writeQueue.push(async () => {
         try {
           const result = await this.retryOperation(() => sdk.update<T>(collection, id, data));
+
+          // Invalidate relevant caches
+          this.invalidateRelevantCaches(collection, { ...data, id });
+
           this.notifySubscribers(collection, { type: 'update', data: result });
           resolve(result);
         } catch (error) {
@@ -364,6 +373,162 @@ class EnhancedSDK {
     };
   }
 
+  // Blog operations with enhanced caching and performance
+  async getBlog(slug: string) {
+    const cacheKey = CacheKeys.BLOG(slug);
+
+    return performanceCache.getOrFetch(
+      cacheKey,
+      async () => {
+        return this.retryOperation(async () => {
+          const result = await sdk.blogs.getBySlug(slug);
+          if (result.error) throw new Error(result.error.message);
+          return result.data;
+        });
+      },
+      CacheTTL.BLOG
+    );
+  }
+
+  async getBlogPosts(blogId: string, options: any = {}) {
+    const cacheKey = CacheKeys.BLOG_POSTS(blogId);
+
+    return performanceCache.getOrFetch(
+      cacheKey,
+      async () => {
+        return this.retryOperation(async () => {
+          const result = await sdk.posts.getByBlogId(blogId, options);
+          if (result.error) throw new Error(result.error.message);
+          return result.data;
+        });
+      },
+      CacheTTL.POSTS
+    );
+  }
+
+  async getBlogCategories(blogId: string) {
+    const cacheKey = CacheKeys.BLOG_CATEGORIES(blogId);
+
+    return performanceCache.getOrFetch(
+      cacheKey,
+      async () => {
+        return this.retryOperation(async () => {
+          const result = await sdk.categories.getByBlogId(blogId);
+          if (result.error) throw new Error(result.error.message);
+          return result.data;
+        });
+      },
+      CacheTTL.CATEGORIES
+    );
+  }
+
+  async getBlogTags(blogId: string) {
+    const cacheKey = CacheKeys.BLOG_TAGS(blogId);
+
+    return performanceCache.getOrFetch(
+      cacheKey,
+      async () => {
+        return this.retryOperation(async () => {
+          const result = await sdk.tags.getByBlogId(blogId);
+          if (result.error) throw new Error(result.error.message);
+          return result.data;
+        });
+      },
+      CacheTTL.TAGS
+    );
+  }
+
+  async getPost(slug: string) {
+    const cacheKey = CacheKeys.POST(slug);
+
+    return performanceCache.getOrFetch(
+      cacheKey,
+      async () => {
+        return this.retryOperation(async () => {
+          const result = await sdk.posts.getBySlug(slug);
+          if (result.error) throw new Error(result.error.message);
+          return result.data;
+        });
+      },
+      CacheTTL.POSTS
+    );
+  }
+
+  // Smart cache invalidation based on data changes
+  private invalidateRelevantCaches(collection: string, data: any) {
+    switch (collection) {
+      case 'blogs':
+        if (data.slug) {
+          performanceCache.delete(CacheKeys.BLOG(data.slug));
+        }
+        if (data.id) {
+          performanceCache.delete(CacheKeys.BLOG_POSTS(data.id));
+          performanceCache.delete(CacheKeys.BLOG_CATEGORIES(data.id));
+          performanceCache.delete(CacheKeys.BLOG_TAGS(data.id));
+          performanceCache.delete(CacheKeys.BLOG_STATS(data.id));
+        }
+        break;
+
+      case 'posts':
+        if (data.slug) {
+          performanceCache.delete(CacheKeys.POST(data.slug));
+        }
+        if (data.blogId) {
+          performanceCache.delete(CacheKeys.BLOG_POSTS(data.blogId));
+          performanceCache.delete(CacheKeys.RECENT_POSTS(data.blogId));
+          performanceCache.delete(CacheKeys.FEATURED_POSTS(data.blogId));
+          performanceCache.delete(CacheKeys.BLOG_STATS(data.blogId));
+        }
+        break;
+
+      case 'categories':
+        if (data.blogId) {
+          performanceCache.delete(CacheKeys.BLOG_CATEGORIES(data.blogId));
+          performanceCache.delete(CacheKeys.BLOG_STATS(data.blogId));
+        }
+        break;
+
+      case 'tags':
+        if (data.blogId) {
+          performanceCache.delete(CacheKeys.BLOG_TAGS(data.blogId));
+          performanceCache.delete(CacheKeys.BLOG_STATS(data.blogId));
+        }
+        break;
+    }
+  }
+
+  // Cache invalidation methods
+  invalidateBlogCache(slug: string) {
+    performanceCache.delete(CacheKeys.BLOG(slug));
+  }
+
+  invalidatePostsCache(blogId: string) {
+    performanceCache.delete(CacheKeys.BLOG_POSTS(blogId));
+    performanceCache.delete(CacheKeys.RECENT_POSTS(blogId));
+    performanceCache.delete(CacheKeys.FEATURED_POSTS(blogId));
+  }
+
+  invalidatePostCache(slug: string) {
+    performanceCache.delete(CacheKeys.POST(slug));
+  }
+
+  // Preload critical data
+  async preloadBlogData(slug: string) {
+    try {
+      const blog = await this.getBlog(slug);
+      if (blog) {
+        // Preload posts, categories, and tags in parallel
+        await Promise.all([
+          this.getBlogPosts(blog.id),
+          this.getBlogCategories(blog.id),
+          this.getBlogTags(blog.id)
+        ]);
+      }
+    } catch (error) {
+      console.warn('Failed to preload blog data:', error);
+    }
+  }
+
   // Cleanup method
   cleanup() {
     this.pollingIntervals.forEach((interval, key) => {
@@ -378,6 +543,7 @@ class EnhancedSDK {
     this.pollingIntervals.clear();
     this.subscribers.clear();
     this.writeQueue.length = 0;
+    performanceCache.clear();
   }
 }
 

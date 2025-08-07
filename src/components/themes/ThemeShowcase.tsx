@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BLOG_THEMES, getThemeCategories, getThemesByCategory } from '../../constants/themes';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Check, Eye, Palette, Sparkles, Zap, Layers } from 'lucide-react';
+import { themeRegistry } from './modular/ThemeRegistry';
+import { registerAllThemes } from './modular/register-themes';
+import { ThemePreview } from './modular/ThemePreview';
+import { ModularTheme } from './modular/types';
 
 interface ThemeShowcaseProps {
   selectedTheme: string;
@@ -21,10 +25,30 @@ export const ThemeShowcase: React.FC<ThemeShowcaseProps> = ({
   customColors
 }) => {
   const [filter, setFilter] = useState<string>('all');
-  const [previewTheme, setPreviewTheme] = useState<string | null>(null);
+  const [previewTheme, setPreviewTheme] = useState<ModularTheme | null>(null);
+  const [modularThemes, setModularThemes] = useState<ModularTheme[]>([]);
 
-  const categories = getThemeCategories();
-  const filteredThemes = getThemesByCategory(filter);
+  // Initialize modular themes
+  useEffect(() => {
+    registerAllThemes();
+    const themes = themeRegistry.getAllThemes();
+    setModularThemes(themes);
+  }, []);
+
+  // Combine legacy and modular themes
+  const legacyCategories = getThemeCategories();
+  const modularCategories = themeRegistry.getCategories();
+
+  const allCategories = [
+    { id: 'all', name: 'All Themes', count: BLOG_THEMES.length + modularThemes.length },
+    ...legacyCategories,
+    ...modularCategories
+  ];
+
+  const filteredLegacyThemes = getThemesByCategory(filter);
+  const filteredModularThemes = filter === 'all'
+    ? modularThemes
+    : modularThemes.filter(theme => theme.category === filter);
 
   const getThemePreview = (theme: any) => {
     const colors = customColors || {
@@ -213,7 +237,7 @@ export const ThemeShowcase: React.FC<ThemeShowcaseProps> = ({
 
       {/* Category Filter */}
       <div className="flex flex-wrap justify-center gap-2">
-        {categories.map(category => (
+        {allCategories.map(category => (
           <Button
             key={category.id}
             variant={filter === category.id ? "default" : "outline"}
@@ -231,7 +255,101 @@ export const ThemeShowcase: React.FC<ThemeShowcaseProps> = ({
 
       {/* Theme Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredThemes.map(theme => (
+        {/* Modular Themes (New System) */}
+        {filteredModularThemes.map(theme => (
+          <Card
+            key={theme.id}
+            className={`group cursor-pointer transition-all duration-300 hover:shadow-lg ${
+              selectedTheme === theme.id
+                ? 'ring-2 ring-blue-500 shadow-lg'
+                : 'hover:shadow-md'
+            }`}
+            onClick={() => onThemeSelect(theme.id)}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold">
+                  {theme.name}
+                  <Badge variant="outline" className="ml-2 text-xs bg-green-100 text-green-800">
+                    New
+                  </Badge>
+                </CardTitle>
+                {selectedTheme === theme.id && (
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                )}
+              </div>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {theme.description}
+              </p>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              {/* Enhanced Theme Preview */}
+              <div
+                className="w-full h-40 rounded-lg overflow-hidden border shadow-sm bg-gradient-to-br"
+                style={{
+                  background: `linear-gradient(135deg, ${theme.defaultStyles.colors.primary}, ${theme.defaultStyles.colors.secondary})`,
+                  fontFamily: theme.defaultStyles.typography.fontFamily
+                }}
+              >
+                <div className="h-full p-3 text-white">
+                  <div className="text-xs font-bold mb-2">{theme.name}</div>
+                  <div className="space-y-1">
+                    <div className="h-1 bg-white/60 rounded w-3/4"></div>
+                    <div className="h-1 bg-white/40 rounded w-1/2"></div>
+                    <div className="h-1 bg-white/40 rounded w-2/3"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Theme Details */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-gray-500">Category:</span>
+                  <Badge variant="outline" className="text-xs capitalize">
+                    {theme.category}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-gray-500">Features:</span>
+                  <div className="flex space-x-1">
+                    {theme.config.hasAnimations && <Badge variant="outline" className="text-xs">Animated</Badge>}
+                    {theme.config.supportsDarkMode && <Badge variant="outline" className="text-xs">Dark Mode</Badge>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPreviewTheme(theme);
+                  }}
+                >
+                  <Eye className="w-4 h-4 mr-1" />
+                  Preview
+                </Button>
+                <Button
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => onThemeSelect(theme.id)}
+                >
+                  {selectedTheme === theme.id ? 'Selected' : 'Select'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        {/* Legacy Themes */}
+        {filteredLegacyThemes.map(theme => (
           <Card 
             key={theme.id}
             className={`group cursor-pointer transition-all duration-300 hover:shadow-lg ${
@@ -396,10 +514,24 @@ export const ThemeShowcase: React.FC<ThemeShowcaseProps> = ({
         </div>
 
         <p className="text-sm text-gray-500">
-          All 50 themes support custom brand colors, homepage section toggles, and modern visual effects.
+          All themes support custom brand colors, homepage section toggles, and modern visual effects.
           Switch themes instantly without losing your content or customizations.
         </p>
       </div>
+
+      {/* Theme Preview Modal */}
+      {previewTheme && (
+        <ThemePreview
+          isOpen={!!previewTheme}
+          onClose={() => setPreviewTheme(null)}
+          theme={previewTheme}
+          onSelectTheme={(themeId) => {
+            onThemeSelect(themeId);
+            setPreviewTheme(null);
+          }}
+          currentTheme={selectedTheme}
+        />
+      )}
     </div>
   );
 };
