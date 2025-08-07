@@ -426,7 +426,7 @@ export const ThemeShowcase: React.FC<ThemeShowcaseProps> = ({
                   className="flex-1"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setPreviewTheme(theme.id);
+                    setPreviewTheme(theme);
                   }}
                 >
                   <Eye className="w-4 h-4 mr-1" />

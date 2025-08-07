@@ -10,25 +10,29 @@ const ModernMinimalArchive = ModernMinimalHomepage; // Reuse homepage layout for
 const ModernMinimalAbout = ModernMinimalSinglePost; // Reuse single post layout for about
 const ModernMinimalContact = ModernMinimalSinglePost; // Reuse single post layout for contact
 
+import React from 'react';
+
 // Simple post card component
-const ModernMinimalPostCard: React.FC<any> = ({ post, onClick }) => (
-  <article className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-    <div className="p-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight">
-        {post.title}
-      </h3>
-      <p className="text-gray-600 mb-4">
-        {post.excerpt || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
-      </p>
-      <button
-        onClick={() => onClick(post)}
-        className="text-blue-600 hover:text-blue-700 font-medium text-sm"
-      >
-        Read More →
-      </button>
-    </div>
-  </article>
-);
+const ModernMinimalPostCard: React.FC<any> = ({ post, onClick }) => {
+  return (
+    <article className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight">
+          {post.title}
+        </h3>
+        <p className="text-gray-600 mb-4">
+          {post.excerpt || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
+        </p>
+        <button
+          onClick={() => onClick(post)}
+          className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+        >
+          Read More →
+        </button>
+      </div>
+    </article>
+  );
+};
 
 export const modernMinimalComponents: ModularThemeComponents = {
   // Page layouts
