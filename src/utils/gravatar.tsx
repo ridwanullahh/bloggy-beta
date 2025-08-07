@@ -278,3 +278,4 @@ export const Gravatar: React.FC<GravatarProps> = ({
 };
 
 export default GravatarService;
+
