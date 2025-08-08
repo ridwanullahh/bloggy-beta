@@ -312,3 +312,4 @@ export default {
   theme: hashnodeTheme,
   components: hashnodeComponents
 };
+

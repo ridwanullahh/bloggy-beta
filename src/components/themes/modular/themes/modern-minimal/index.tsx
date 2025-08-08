@@ -1,3 +1,4 @@
+import React from 'react';
 import { ModularThemeComponents } from '../../types';
 import { modernMinimalTheme } from './theme';
 import { ModernMinimalHeader } from './Header';
@@ -9,8 +10,6 @@ import { ModernMinimalSinglePost } from './SinglePost';
 const ModernMinimalArchive = ModernMinimalHomepage; // Reuse homepage layout for archive
 const ModernMinimalAbout = ModernMinimalSinglePost; // Reuse single post layout for about
 const ModernMinimalContact = ModernMinimalSinglePost; // Reuse single post layout for contact
-
-import React from 'react';
 
 // Simple post card component
 const ModernMinimalPostCard: React.FC<any> = ({ post, onClick }) => {
@@ -101,3 +100,4 @@ export default {
   theme: modernMinimalTheme,
   components: modernMinimalComponents
 };
+

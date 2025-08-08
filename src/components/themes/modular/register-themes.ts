@@ -1,9 +1,9 @@
 import { themeRegistry } from './ThemeRegistry';
 import modernMinimal from './themes/modern-minimal';
 import hashnode from '../hashnode';
-import { mediumTheme } from '../medium/theme';
-import { MediumHeader } from '../medium/Header';
-import { MediumHomepage } from '../medium/Homepage';
+// Prefer .tsx index for hashnode since it contains JSX
+// Vite will resolve index.tsx automatically
+import medium from '../medium';
 
 // Register all available themes
 export const registerAllThemes = () => {
@@ -23,65 +23,12 @@ export const registerAllThemes = () => {
     () => Promise.resolve(hashnode.components)
   );
 
-  // Register Medium theme (partial implementation for demo)
-  const mediumComponents = {
-    homepage: {
-      header: { name: 'MediumHeader', component: MediumHeader },
-      footer: { name: 'HashnodeFooter', component: hashnode.components.homepage.footer.component },
-      content: { name: 'MediumHomepage', component: MediumHomepage }
-    },
-    singlePost: {
-      header: { name: 'MediumHeader', component: MediumHeader },
-      footer: { name: 'HashnodeFooter', component: hashnode.components.homepage.footer.component },
-      content: { name: 'HashnodeSinglePost', component: hashnode.components.singlePost.content.component }
-    },
-    archive: {
-      header: { name: 'MediumHeader', component: MediumHeader },
-      footer: { name: 'HashnodeFooter', component: hashnode.components.homepage.footer.component },
-      content: { name: 'HashnodeArchive', component: hashnode.components.archive.content.component }
-    },
-    about: {
-      header: { name: 'MediumHeader', component: MediumHeader },
-      footer: { name: 'HashnodeFooter', component: hashnode.components.homepage.footer.component },
-      content: { name: 'HashnodeAbout', component: hashnode.components.about.content.component }
-    },
-    contact: {
-      header: { name: 'MediumHeader', component: MediumHeader },
-      footer: { name: 'HashnodeFooter', component: hashnode.components.homepage.footer.component },
-      content: { name: 'HashnodeContact', component: hashnode.components.contact.content.component }
-    },
-    category: {
-      header: { name: 'MediumHeader', component: MediumHeader },
-      footer: { name: 'HashnodeFooter', component: hashnode.components.homepage.footer.component },
-      content: { name: 'HashnodeArchive', component: hashnode.components.archive.content.component }
-    },
-    tag: {
-      header: { name: 'MediumHeader', component: MediumHeader },
-      footer: { name: 'HashnodeFooter', component: hashnode.components.homepage.footer.component },
-      content: { name: 'HashnodeArchive', component: hashnode.components.archive.content.component }
-    },
-    postCard: hashnode.components.postCard,
-    postList: hashnode.components.postList,
-    postGrid: hashnode.components.postGrid,
-    featuredPost: hashnode.components.featuredPost,
-    authorCard: hashnode.components.authorCard,
-    categoryCard: hashnode.components.categoryCard,
-    tagCloud: hashnode.components.tagCloud,
-    newsletter: hashnode.components.newsletter,
-    searchBox: hashnode.components.searchBox,
-    pagination: hashnode.components.pagination,
-    breadcrumb: hashnode.components.breadcrumb,
-    socialShare: hashnode.components.socialShare,
-    relatedPosts: hashnode.components.relatedPosts,
-    comments: hashnode.components.comments,
-    tableOfContents: hashnode.components.tableOfContents
-  };
-
+  // Register Medium theme (completed)
   themeRegistry.registerTheme(
     'medium',
-    mediumTheme,
-    mediumComponents,
-    () => Promise.resolve(mediumComponents)
+    medium.theme,
+    medium.components,
+    () => Promise.resolve(medium.components)
   );
 
   // Register additional themes (we'll create these)

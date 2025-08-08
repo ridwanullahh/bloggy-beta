@@ -52,15 +52,15 @@ export const MediumHomepage: React.FC<MediumHomepageProps> = ({
   return (
     <div className="medium-homepage">
       {/* Hero Section */}
-      <section className="bg-yellow-400 py-20">
+      <section className="py-20 medium-hero">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-6xl md:text-8xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight">
             Stay curious.
           </h1>
-          <p className="text-xl md:text-2xl text-gray-800 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto leading-relaxed">
             Discover stories, thinking, and expertise from writers on any topic.
           </p>
-          <button className="bg-gray-900 text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-gray-800 transition-colors">
+          <button className="px-8 py-3 rounded-full text-lg font-medium hero-cta">
             Start reading
           </button>
         </div>
@@ -266,12 +266,14 @@ export const MediumHomepage: React.FC<MediumHomepageProps> = ({
           font-family: var(--theme-font-family);
           color: var(--theme-color-text);
         }
-        
         .medium-homepage h1,
         .medium-homepage h2,
-        .medium-homepage h3 {
-          font-family: var(--theme-font-heading);
-        }
+        .medium-homepage h3 { font-family: var(--theme-font-heading); }
+        .medium-hero { background-color: var(--theme-color-accent); }
+        .medium-hero h1 { color: var(--theme-color-text); }
+        .medium-hero p { color: var(--theme-color-text); opacity: .9; }
+        .hero-cta { background-color: var(--theme-color-text); color: var(--theme-color-background); }
+        .hero-cta:hover { filter: brightness(.95); }
       `}</style>
     </div>
   );
