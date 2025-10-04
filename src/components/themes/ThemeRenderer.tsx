@@ -1,10 +1,6 @@
 import React from 'react';
 import { Blog, Post } from '../../types/blog';
 import { getThemeById } from '../../constants/themes';
-import { HashNodeModernTheme } from './HashNodeModernTheme';
-import { MediumInspiredTheme } from './MediumInspiredTheme';
-import { NotionBlocksTheme } from './NotionBlocksTheme';
-import { GhostPublicationTheme } from './GhostPublicationTheme';
 import { UniversalTheme } from './UniversalTheme';
 
 interface ThemeRendererProps {
@@ -57,23 +53,11 @@ export const ThemeRenderer: React.FC<ThemeRendererProps> = ({
     );
   }
 
-  // Handle specific custom themes that need special components
-  switch (blog.theme) {
-    case 'hashnode-modern':
-      return <HashNodeModernTheme {...themeProps} />;
-    case 'medium-inspired':
-      return <MediumInspiredTheme {...themeProps} />;
-    case 'notion-blocks':
-      return <NotionBlocksTheme {...themeProps} />;
-    case 'ghost-publication':
-      return <GhostPublicationTheme {...themeProps} />;
-    default:
-      // Use universal theme for all other themes
-      return (
-        <UniversalTheme
-          {...themeProps}
-          themeConfig={themeConfig}
-        />
-      );
-  }
+  // Use universal theme for all themes
+  return (
+    <UniversalTheme
+      {...themeProps}
+      themeConfig={themeConfig}
+    />
+  );
 };
