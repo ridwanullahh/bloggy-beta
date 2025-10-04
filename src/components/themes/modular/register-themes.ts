@@ -1,20 +1,10 @@
 import { themeRegistry } from './ThemeRegistry';
-import modernMinimal from './themes/modern-minimal';
 import hashnode from '../hashnode';
-// Prefer .tsx index for hashnode since it contains JSX
-// Vite will resolve index.tsx automatically
 import medium from '../medium';
+import techCorporate from '../tech-corporate';
 
 // Register all available themes
 export const registerAllThemes = () => {
-  // Register Modern Minimal theme
-  themeRegistry.registerTheme(
-    'modern-minimal',
-    modernMinimal.theme,
-    modernMinimal.components,
-    () => Promise.resolve(modernMinimal.components)
-  );
-
   // Register Hashnode theme
   themeRegistry.registerTheme(
     'hashnode',
@@ -23,12 +13,20 @@ export const registerAllThemes = () => {
     () => Promise.resolve(hashnode.components)
   );
 
-  // Register Medium theme (completed)
+  // Register Medium theme
   themeRegistry.registerTheme(
     'medium',
     medium.theme,
     medium.components,
     () => Promise.resolve(medium.components)
+  );
+
+  // Register Tech Corporate theme
+  themeRegistry.registerTheme(
+    'tech-corporate',
+    techCorporate.theme,
+    techCorporate.components,
+    () => Promise.resolve(techCorporate.components)
   );
 
   // Register additional themes (we'll create these)

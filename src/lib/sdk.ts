@@ -425,6 +425,51 @@ class UniversalSDK {
       return [];
     }
   }
+
+  // Convenience methods for common operations
+  blogs = {
+    getBySlug: async (slug: string) => {
+      const blogs = await this.get('blogs');
+      const blog = blogs.find((b: any) => b.slug === slug);
+      return { data: blog || null, error: blog ? null : { message: 'Blog not found' } };
+    },
+    getById: async (id: string) => {
+      const blog = await this.getItem('blogs', id);
+      return { data: blog, error: blog ? null : { message: 'Blog not found' } };
+    }
+  };
+
+  posts = {
+    getByBlogId: async (blogId: string, options: any = {}) => {
+      const posts = await this.get('posts');
+      let filtered = posts.filter((p: any) => p.blogId === blogId);
+      if (options.status) {
+        filtered = filtered.filter((p: any) => p.status === options.status);
+      }
+      return { data: filtered, error: null };
+    },
+    getBySlug: async (slug: string) => {
+      const posts = await this.get('posts');
+      const post = posts.find((p: any) => p.slug === slug);
+      return { data: post || null, error: post ? null : { message: 'Post not found' } };
+    }
+  };
+
+  categories = {
+    getByBlogId: async (blogId: string) => {
+      const categories = await this.get('categories');
+      const filtered = categories.filter((c: any) => c.blogId === blogId);
+      return { data: filtered, error: null };
+    }
+  };
+
+  tags = {
+    getByBlogId: async (blogId: string) => {
+      const tags = await this.get('tags');
+      const filtered = tags.filter((t: any) => t.blogId === blogId);
+      return { data: filtered, error: null };
+    }
+  };
 }
 
 export default UniversalSDK;
